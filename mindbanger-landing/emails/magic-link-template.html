@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 24px;
+      font-weight: bold;
+      color: #f8fafc;
+      text-decoration: none;
+    }
+    .card {
+      background-color: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+    }
+    .title {
+      font-family: Georgia, serif;
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #f8fafc;
+    }
+    .text {
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .button {
+      display: inline-block;
+      background: linear-gradient(to right, #fde68a, #f59e0b, #d97706);
+      color: #0f172a;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.39);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #64748b;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="logo">Mindbanger Daily</span>
+    </div>
+    
+    <div class="card">
+      <h1 class="title">Your Magic Link</h1>
+      <p class="text">
+        Click the button below to securely sign in to your Mindbanger Daily account. <br/>
+        No password required.
+      </p>
+      
+      <a href="{{ .ConfirmationURL }}" class="button">
+        Sign in to The Vault
+      </a>
+      
+      <p style="margin-top: 32px; color: #64748b; font-size: 12px;">
+        This link expires in 1 hour. If you didn't request this, you can safely ignore this email.
+      </p>
+    </div>
+    
+    <div class="footer">
+      Mindbanger Daily <br/>
+      The way your mind is set begins to shape your reality.
+    </div>
+  </div>
+</body>
+</html>

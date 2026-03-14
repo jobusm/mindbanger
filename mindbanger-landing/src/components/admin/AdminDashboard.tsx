@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { QRCodeSVG } from "qrcode.react";
 import { Lock, Smartphone, KeyRound, AlertTriangle } from "lucide-react";
-import AdminDashboard from "./AdminPanel";
+import AdminPanel from "./AdminPanel";
 
 const ADMIN_EMAIL = 'miroslav.jobus@gmail.com';
 
@@ -117,7 +117,7 @@ export default function MfaLock() {
   }
 
   if (mfaStatus === 'verified') {
-    return <AdminDashboard />;
+    return <AdminPanel />;
   }
 
   return (

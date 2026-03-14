@@ -1,16 +1,31 @@
 // src/app/login/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+
+  useEffect(() => {
+    // Ak užívateľ príde s tokenom v URL (napr. z emailu)
+    // alebo je už prihlásený, presmerujeme ho do appky
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        router.push('/app/today');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();

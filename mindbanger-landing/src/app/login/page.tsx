@@ -10,22 +10,36 @@ import { supabase } from '@/lib/supabase';
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isProcessingHash, setIsProcessingHash] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
   useEffect(() => {
-    // Ak užívateľ príde s tokenom v URL (napr. z emailu)
-    // alebo je už prihlásený, presmerujeme ho do appky
+    // 1. Skontrolujeme, či na stránku prichádza hash fragment z e-mailu
+    if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+      setIsProcessingHash(true);
+    }
+
+    // 2. Vynútime aby si Supabase okamžite "zjedol" token z URL a vytvoril session a cookies
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        // Používame window.location.href pre "hard" redirect,
+        // aby sa nové cookies spoľahlivo stihli preniesť na bezpečný server v /app
+        window.location.href = '/app/today';
+      }
+    });
+
+    // Záchytná sieť pre akékoľvek iné zmeny auth stavu
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        router.push('/app/today');
+        window.location.href = '/app/today';
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [router]);
+  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,8 +84,14 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <form onSubmit={handleAuth} className="space-y-6">
+        {isProcessingHash ? (
+          <div className="bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl text-center space-y-4">
+            <Loader2 size={32} className="animate-spin text-amber-500 mx-auto" />
+            <p className="text-slate-300 font-medium font-serif">Overujem prístupový kód...</p>
+          </div>
+        ) : (
+          <div className="bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <form onSubmit={handleAuth} className="space-y-6">
 
             {message && (
               <div className={`p-4 rounded-lg text-sm ${
@@ -115,7 +135,8 @@ export default function LoginPage() {
              <Link href="/" className="text-xs text-slate-500 hover:text-slate-400 transition-colors">
                 Back to home
              </Link>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

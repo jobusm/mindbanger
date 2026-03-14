@@ -10,8 +10,12 @@ export async function POST(req: Request) {
 
     const supabase = await createAdminClient();
 
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com';
-    const redirectUrl = `${origin}/app/today`;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost') 
+      ? 'https://www.mindbanger.com' 
+      : (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com');
+      
+    // Aby sme mali istotu, že sa vždy vráti na správnu app doménu a nie na localhost z nejakej cache
+    const redirectUrl = `${siteUrl}/app/today`;
 
     // 1. Vygeneruje prihlasovací token ale NEPOŠLE HO! (chceme plnú kontrolu my)
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({

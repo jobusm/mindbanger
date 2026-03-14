@@ -10,11 +10,12 @@ export async function POST(req: Request) {
 
     const supabase = await createAdminClient();
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost') 
-      ? 'https://www.mindbanger.com' 
-      : (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com');
-      
-    // Aby sme mali istotu, že sa vždy vráti na správnu app doménu a nie na localhost z nejakej cache
+    
+    const prodUrl = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
+    const anyUrl = process.env.VERCEL_URL;
+    const baseDomain = prodUrl ? prodUrl : anyUrl;
+    
+    const siteUrl = baseDomain ? `https://${baseDomain}` : 'https://www.mindbanger.com';
     const redirectUrl = `${siteUrl}/app/today`;
 
     // 1. Vygeneruje prihlasovací token ale NEPOŠLE HO! (chceme plnú kontrolu my)

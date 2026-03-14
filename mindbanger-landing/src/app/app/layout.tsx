@@ -39,6 +39,8 @@ export default async function AppLayout({
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-lg mx-auto p-4 md:px-8 md:py-10 animate-in fade-in duration-500">
+        {children}
+      </main>
     </div>
   );
 }

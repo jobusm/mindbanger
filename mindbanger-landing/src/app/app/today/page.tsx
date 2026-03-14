@@ -93,7 +93,7 @@ export default async function TodayPage() {
             <div className="mb-10">
               <AudioPlayer 
                 src={audioSignatureUrl} 
-                title={Daily Reset � \} 
+                title={`Daily Reset • ${signal.title}`} 
               />
             </div>
           )}

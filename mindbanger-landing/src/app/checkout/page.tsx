@@ -53,6 +53,8 @@ export default function CheckoutPage() {
             referred_by: referredBy,
             preferred_language: preferredLanguage,
             timezone: localTimezone
+          }
+        }
       });
 
       if (signUpError) {

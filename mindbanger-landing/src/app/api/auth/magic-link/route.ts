@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       type: 'magiclink',
       email: email,
       options: {
-        redirectTo: redirectUrl,
+        redirectTo: `${siteUrl}/auth/callback?next=/app/today`,
       }
     });
 

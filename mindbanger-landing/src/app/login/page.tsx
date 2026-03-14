@@ -34,7 +34,7 @@ export default function LoginPage() {
           password,
         });
         if (error) throw error;
-        router.push('/'); // Redirect to dashboard or home after login
+        router.push('/app/today'); // Presmerovanie rovno do VIP zóny po prihlásení
       }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message });

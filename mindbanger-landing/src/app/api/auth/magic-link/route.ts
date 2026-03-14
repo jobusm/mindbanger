@@ -52,7 +52,7 @@ export async function POST(req: Request) {
             Wait for the page to load, no password is required.
           </p>
           
-          <a href="\${magicLink}" class="button">
+          <a href="${magicLink}" class="button">
             Sign in to The Vault
           </a>
           

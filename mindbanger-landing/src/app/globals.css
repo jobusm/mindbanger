@@ -5,6 +5,8 @@
   --color-brand-dark: #0f172a;
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
+  /* Appended safe area spacing for mobile PWA */
+  --spacing-safe-bottom: env(safe-area-inset-bottom);
 }
 
 /* Custom CSS utilities and animations */

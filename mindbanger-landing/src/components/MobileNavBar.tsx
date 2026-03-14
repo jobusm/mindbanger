@@ -1,0 +1,71 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Home, Library, Headphones, Settings } from 'lucide-react';
+
+export default function MobileNavBar() {
+  const pathname = usePathname();
+
+  const navItems = [
+    { name: 'Today', icon: Home, href: '/app/today' },
+    { name: 'Archive', icon: Library, href: '/app/archive' },
+    { name: 'Resets', icon: Headphones, href: '/app/resets' },
+    { name: 'Account', icon: Settings, href: '/app/account' },
+  ];
+
+  return (
+    <>
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-lg border-t border-white/10 z-50 rounded-t-2xl pb-safe">
+        <ul className="flex items-center justify-around px-2 py-3">
+          {navItems.map((item) => {
+            const isActive = pathname?.startsWith(item.href);
+            const Icon = item.icon;
+            return (
+              <li key={item.name} className="flex-1">
+                <Link
+                  href={item.href}
+                  className={`flex flex-col items-center justify-center space-y-1 w-full transition-colors ${
+                    isActive ? 'text-amber-500' : 'text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  <Icon size={24} strokeWidth={isActive ? 2.5 : 1.5} />
+                  <span className="text-[10px] font-medium tracking-wide">
+                    {item.name}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Desktop Side/Top Navigation Shell (Optional fallback for PC viewers) */}
+      <nav className="hidden md:flex fixed top-0 left-0 w-full h-16 bg-slate-900 border-b border-white/5 px-8 items-center justify-between z-50">
+        <div className="font-serif font-bold text-xl text-amber-500 tracking-wide">
+          MINDBANGER
+        </div>
+        <ul className="flex items-center space-x-8">
+            {navItems.map((item) => {
+              const isActive = pathname?.startsWith(item.href);
+              const Icon = item.icon;
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center space-x-2 transition-colors ${
+                      isActive ? 'text-amber-500' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Icon size={18} />
+                    <span className="text-sm font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
+        </ul>
+      </nav>
+    </>
+  );
+}

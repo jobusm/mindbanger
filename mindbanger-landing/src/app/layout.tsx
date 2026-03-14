@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
+import { Suspense } from 'react';
+import AffiliateTracker from '@/components/AffiliateTracker';
 
 const inter = Inter({
   variable: '--font-sans',
@@ -27,6 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} scroll-smooth antialiased`}>
       <body className="bg-slate-950 text-slate-100 font-sans">
+        <Suspense fallback={null}>
+          <AffiliateTracker />
+        </Suspense>
         {children}
       </body>
     </html>

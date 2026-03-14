@@ -10,10 +10,16 @@ export async function POST(req: Request) {
 
     const supabase = await createAdminClient();
 
+    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com';
+    const redirectUrl = `${origin}/app/today`;
+
     // 1. Vygeneruje prihlasovací token ale NEPOŠLE HO! (chceme plnú kontrolu my)
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
+      options: {
+        redirectTo: redirectUrl,
+      }
     });
 
     if (linkError) {
@@ -52,9 +58,14 @@ export async function POST(req: Request) {
             Wait for the page to load, no password is required.
           </p>
           
-          <a href="${magicLink}" class="button">
+          <a href="${magicLink}" clicktracking="off" class="button">
             Sign in to The Vault
           </a>
+
+          <p style="margin-top: 32px; color: #64748b; font-size: 11px;">
+            If the button doesn't work, copy and paste this link into your browser:<br/><br/>
+            <span style="color: #475569; word-break: break-all;">${magicLink}</span>
+          </p>
           
           <p style="margin-top: 32px; color: #64748b; font-size: 11px;">
             This link expires soon. If you didn't request this, you can safely ignore this email.

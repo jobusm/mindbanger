@@ -122,7 +122,15 @@ export default function AdminPanel() {
             {editingSignal.id ? 'Upraviť signál' : 'Nový signál'}
           </h2>
           <form onSubmit={saveSignal} className="space-y-6">
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-4 gap-6">
+              <div>
+                <label className="block text-sm text-slate-400 mb-2">Jazyk</label>
+                <select value={editingSignal.language} onChange={e => setEditingSignal({...editingSignal, language: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
+                  <option value="sk">Slovenčina (sk)</option>
+                  <option value="en">English (en)</option>
+                  <option value="cs">Čeština (cs)</option>
+                </select>
+              </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-2">Dátum</label>
                 <input type="date" value={editingSignal.date} onChange={e => setEditingSignal({...editingSignal, date: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required />
@@ -191,6 +199,7 @@ export default function AdminPanel() {
             <thead className="bg-slate-900 text-slate-400">
               <tr>
                 <th className="p-4 font-medium">Stav</th>
+                <th className="p-4 font-medium">Jazyk</th>
                 <th className="p-4 font-medium">Dátum</th>
                 <th className="p-4 font-medium">Téma / Nadpis</th>
                 <th className="p-4 font-medium">Audio</th>
@@ -204,6 +213,9 @@ export default function AdminPanel() {
                     {sig.is_published 
                       ? <CheckCircle2 size={18} className="text-emerald-500" /> 
                       : <Circle size={18} className="text-slate-600" />}
+                  </td>
+                  <td className="p-4 font-bold text-xs uppercase text-slate-500">
+                    {sig.language}
                   </td>
                   <td className="p-4 text-white font-medium whitespace-nowrap">
                     <div className="flex items-center space-x-2">

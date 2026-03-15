@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { Suspense } from 'react';
@@ -16,9 +16,21 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
+export const viewport: Viewport = {
+  themeColor: '#0f172a',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: 'Mindbanger Daily | Daily mental clarity & focus',
   description: 'Daily mind signals for clarity, calm & focus. Created by a Life Coach & Hypnotherapist. The way your mind is set begins to shape your reality.',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Mindbanger',
+  },
 };
 
 export default function RootLayout({

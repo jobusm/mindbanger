@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useDictionary } from './LanguageProvider';
 import { UserPlus, Bell, BrainCircuit } from 'lucide-react';
 
 const steps = [
@@ -23,6 +24,7 @@ const steps = [
 ];
 
 export default function HowItWorksSection() {
+  const { dict } = useDictionary();
   return (
     <section className="py-24 px-6 bg-slate-950 relative">
       <div className="max-w-6xl mx-auto space-y-16">
@@ -41,7 +43,7 @@ export default function HowItWorksSection() {
               </div>
               
               <div className="space-y-2 max-w-xs">
-                <h3 className="text-xl font-bold text-white">{step.title}</h3>
+                <h3 className="text-xl font-bold text-white">{dict?.landing?.howItWorksSteps?.[idx]?.title || step.title}</h3>
                 <p className="text-slate-400 leading-relaxed text-sm">
                   {step.desc}
                 </p>

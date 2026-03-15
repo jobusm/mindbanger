@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useDictionary } from './LanguageProvider';
 import { LayoutTemplate, Radio, Target, Sparkles, Headphones } from 'lucide-react';
 
 const features = [
@@ -33,13 +34,14 @@ const features = [
 ];
 
 export default function DailyRitualSection() {
+  const { dict } = useDictionary();
   return (
     <section className="py-24 bg-slate-950 px-6 relative overflow-hidden">
       <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-slate-900 via-slate-900/50 to-slate-950 pointer-events-none" />
       
       <div className="max-w-4xl mx-auto text-center space-y-12 relative z-10">
         <h2 className="text-3xl md:text-5xl font-serif text-white leading-tight">
-          Every day inside Mindbanger Daily:
+          {dict?.landing?.dailyRitual?.title || 'Every day inside Mindbanger Daily:'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
@@ -54,8 +56,8 @@ export default function DailyRitualSection() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed font-light">{feature.desc}</p>
+                <h3 className="text-lg font-bold text-white mb-2">{dict?.landing?.dailyRitual?.features?.[idx]?.title || feature.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed font-light">{dict?.landing?.dailyRitual?.features?.[idx]?.desc || feature.desc}</p>
               </div>
             </div>
           ))}

@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useDictionary } from './LanguageProvider';
 import { Check } from 'lucide-react';
 
 const benefits = [
@@ -14,6 +15,7 @@ const benefits = [
 ];
 
 export default function BenefitsSection() {
+  const { dict } = useDictionary();
   return (
     <section className="py-24 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 px-6 relative overflow-hidden">
       {/* Subtle Background Elements */}

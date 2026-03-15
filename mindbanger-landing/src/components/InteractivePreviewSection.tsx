@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useDictionary } from './LanguageProvider';
 import { Focus, Zap, RefreshCw } from 'lucide-react';
 
 const options = [
@@ -26,6 +27,7 @@ const options = [
 ];
 
 export default function InteractivePreviewSection() {
+  const { dict } = useDictionary();
   const [active, setActive] = useState<string | null>(null);
 
   return (

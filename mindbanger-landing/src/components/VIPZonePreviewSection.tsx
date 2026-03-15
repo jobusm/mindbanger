@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useDictionary } from './LanguageProvider';
 import { Calendar, Save, Radio, BatteryCharging } from 'lucide-react';
 
 const cards = [
@@ -28,6 +29,7 @@ const cards = [
 ];
 
 export default function VIPZonePreviewSection() {
+  const { dict } = useDictionary();
   return (
     <section className="py-24 bg-slate-950 px-6 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/10 via-slate-950 to-indigo-900/10 pointer-events-none" />

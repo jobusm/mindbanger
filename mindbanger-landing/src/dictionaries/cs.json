@@ -3,13 +3,13 @@
     "title": "Předplať si denní mentální jasnost",
     "subtitle": "Okamžitě si odemkni prémiové členství.",
     "productInfo": "Mindbanger Denník",
-    "price": "€7,99",
+    "price": "7,99�",
     "perMonth": "/ měsíčně",
     "features": [
       "Denní signál mysli",
       "Denní zaměření",
       "Denní afirmace",
-      "Audio restart",
+      "Denn� audio ment�ln� nastaven�",
       "Přístup do archivu",
       "Bonusové restarty"
     ],
@@ -90,7 +90,7 @@
   },
   "landing": {
     "waitlist": {
-      "placeholder": "Tvoje e-mailová adresa",
+      "placeholder": "Tv�j e-mail",
       "button": "Přidat se",
       "limited": "Zatím přijímáme pouze omezený počet členů.",
       "success": "Jste na seznamu!",
@@ -108,7 +108,7 @@
       "titlePart1": "Nastavte svou mysl na ",
       "titleHighlight": "úspěch",
       "titlePart2": " každý den",
-      "subtitle": "Denní signály mysli pro jasnost, klid a soustředění.<br className=\"hidden md:block\" />Vytvořeno životním koučem a hypnoterapeutem.",
+      "subtitle": "Denn� nastaven� mysli pro jasnost, klid a soust�ed�n�.<br className=\"hidden md:block\" />Vytvo�eno �ivotn�m kou�em a hypnoterapeutem.",
       "quote": "Způsob, jakým je vaše mysl nastavena, začíná formovat vaši realitu.",
       "widgetTitle": "Dnešní Signál",
       "widgetBadge": "Jasnost",
@@ -116,7 +116,7 @@
       "widgetQuote": "„Návratem k sobě se vracím k jasnosti.“",
       "widgetBtn": "Přehrát dnešní audio",
       "widgetFooter": "Nový signál každý den. <br/> Silnější vnitřní směřování postupem času.",
-      "subtitleDesc": "Denní signály pro jasnost, klid a soustředění.",
+      "subtitleDesc": "Denn� nastaven� mysli pro jasnost, klid a soust�ed�n�.",
       "subtitleAuthor": "Vytvořeno životním koučem a hypnoterapeutem."
     },
     "dailyRitual": {
@@ -215,28 +215,28 @@
     "about": {
       "badge": "O tvůrci",
       "role": "Životní kouč, hypnoterapeut a průvodce mentálním výkonem.",
-      "quote1": "Mindbanger Daily byl vytvořen, aby pomohl lidem formovat každý den zevnitř ven – prostřednictvím",
+      "quote1": "Mindbanger Daily byl vytvo�en, aby pom�hal lidem formovat ka�d� sv�j den pro �ivotn� pohodu, �sp�ch a radost ze �ivota prost�ednictv�m ",
       "span1": "jasnosti",
       "quote2": ", ",
       "span2": "klidu",
       "quote3": ", ",
-      "span3": "soustředění",
+      "span3": "p�irozen�ho soust�ed�n�",
       "quote4": " a ",
-      "span4": "záměrného mentálního směřování",
+      "span4": "c�len�ho ment�ln�ho sm��ov�n� a nastaven� mysli",
       "quote5": "."
     },
     "pricing": {
       "title1": "Jednoduchá denní podpora.",
       "title2": "Jeden měsíční plán.",
       "planName": "Mindbanger Daily",
-      "price": "€7.90",
+      "price": "7,99�",
       "period": "/ měsíc",
       "subtitle": "Méně než jedna káva týdně.",
       "features": [
         "Denní mind signál",
         "Denní zaměření",
         "Denní afirmace",
-        "Audio reset",
+        "Denn� audio ment�ln� nastaven�",
         "Přístup do archivu",
         "Bonusové resety"
       ],
@@ -251,7 +251,7 @@
         },
         {
           "q": "Je toto meditační aplikace?",
-          "a": "Ne. Jde o denní rituál mysli určený pro jasnost, klid a směřování."
+          "a": "Ne, jde o denn� ritu�l mysli, kter� je ur�en� pro z�sk�n� jasnosti, klidu a pozitivn�ho denn�ho sm��ov�n�. Sou��st� tohoto ritu�lu je ale tak� i kr�tk� denn� meditace."
         },
         {
           "q": "Mohu to kdykoliv zrušit?",
@@ -275,7 +275,7 @@
       "footer": "Přidejte se na čekací listinu Mindbanger Daily"
     },
     "footer": {
-      "tagline": "Denní signály pro jasnost, klid a soustředění.",
+      "tagline": "Denn� nastaven� mysli pro jasnost, klid a soust�ed�n�.",
       "login": "Přihlásit",
       "join": "Přidat se",
       "privacy": "Soukromí",

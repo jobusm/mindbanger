@@ -55,7 +55,7 @@ export default function WaitlistForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full flex flex-col space-y-3">
-      <div className="relative flex items-center w-full max-w-md mx-auto md:mx-0">
+      <div className="flex flex-col sm:relative sm:flex-row items-center w-full max-w-md mx-auto md:mx-0">
         <input
           type="email"
           required
@@ -63,12 +63,12 @@ export default function WaitlistForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={status === 'loading'}
-          className="w-full pl-5 pr-32 py-4 bg-white/5 border border-white/10 rounded-full text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 disabled:opacity-50"
+          className="w-full pl-5 pr-5 sm:pr-40 py-4 bg-white/5 border border-white/10 rounded-full text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={status === 'loading' || !email}
-          className="absolute right-1 top-1 bottom-1 px-6 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold flex items-center justify-center disabled:opacity-75 transition-all hover:scale-105"
+          className="w-full sm:w-auto mt-3 sm:mt-0 sm:absolute sm:right-1 sm:top-1 sm:bottom-1 py-4 sm:py-0 px-6 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold flex items-center justify-center disabled:opacity-75 transition-all hover:scale-105"
         >
           {status === 'loading' ? (
             <Loader2 className="w-5 h-5 animate-spin" />

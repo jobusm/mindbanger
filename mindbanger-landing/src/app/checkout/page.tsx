@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight, Loader2, Check } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useDictionary } from '@/lib/i18n-client';
+import { useEffect } from 'react';
 
 function CheckoutContent() {
   const { dict, lang, mounted } = useDictionary();
@@ -18,8 +19,26 @@ function CheckoutContent() {
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
   
   const searchParams = useSearchParams();
+  const router = useRouter();
   const refMode = searchParams.get('refMode');
   const refCode = searchParams.get('refCode');
+  const inviteCode = searchParams.get('invite');
+
+  useEffect(() => {
+    // SECURITY: Lock checkout behind a beta invite token while waitlist is running
+    if (inviteCode !== 'beta2026') {
+      router.push('/');
+    }
+  }, [inviteCode, router]);
+
+  if (inviteCode !== 'beta2026') {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-amber-500 mb-4" />
+        <p>Redirecting to waitlist...</p>
+      </div>
+    );
+  }
 
   const handleCheckoutFlow = async (e: React.FormEvent) => {
     e.preventDefault();

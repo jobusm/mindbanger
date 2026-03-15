@@ -33,11 +33,51 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId;
         const subscriptionId = session.subscription as string;
         const customerId = session.customer as string;
+        const refCode = session.metadata?.refCode;
+        const refMode = session.metadata?.refMode;
 
         if (userId && subscriptionId) {
           // Zapíšeme odber do DB
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           
+          
+          // Affiliate DB Insert
+          if (refCode && refMode && refCode !== userId) {
+            try {
+              // Find affiliate mapped to refCode
+              const { data: affiliate } = await supabase
+                .from('affiliates')
+                .select('id')
+                .eq('user_id', refCode)
+                .single();
+
+              if (affiliate) {
+                let commissionAmount = 0;
+                let commissionModel = 'second_month';
+                
+                // For simplified POC, assume 100 EUR plan
+                if (refMode === 'A') {
+                  commissionModel = 'second_month';
+                  commissionAmount = 100; // 100% of second month
+                } else if (refMode === 'B') {
+                  commissionModel = 'lifetime_20';
+                  commissionAmount = 20; // 20% recurring
+                }
+
+                await supabase.from('referrals').insert({
+                  affiliate_id: affiliate.id,
+                  referred_user_id: userId,
+                  status: 'pending', // paid out after delay
+                  commission_amount: commissionAmount,
+                  commission_model: commissionModel
+                });
+                console.log(`[Stripe Webhook] Referral logged for affiliate ${affiliate.id}`);
+              }
+            } catch (err) {
+              console.error('Failed to register referral:', err);
+            }
+          }
+
           await supabase.from('subscriptions').upsert({
             id: subscriptionId,
             user_id: userId,

@@ -5,12 +5,14 @@ import SubscriptionsManager from "./SubscriptionsManager";
 import ResetsManager from "./ResetsManager";
 import AffiliateManager from "./AffiliateManager";
 import { Radio, Users, RefreshCw, Megaphone } from "lucide-react";
+import HealthCheckWidget from "./HealthCheckWidget";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'signals' | 'subscriptions' | 'resets' | 'affiliate'>('signals');
 
   return (
     <>
+      <HealthCheckWidget />
       <div className="flex border-b border-white/10 mb-6 space-x-8 overflow-x-auto">
         <button
           onClick={() => setActiveTab('signals')}

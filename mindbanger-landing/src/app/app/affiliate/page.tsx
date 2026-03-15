@@ -2,7 +2,8 @@ import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import AffiliateTracker from '@/components/AffiliateTracker';
-import { ArrowUpRight, Copy, Users, Wallet, Check, Play, Download, Image as ImageIcon } from 'lucide-react';
+import { ArrowUpRight, Users, Wallet, Check, Play, Download, Image as ImageIcon } from 'lucide-react';
+import CopyLink from '@/components/CopyLink';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // We just make everyone an affiliate directly.
@@ -82,20 +83,7 @@ export default async function AffiliateDashboardPage() {
             </p>
             <div className="pt-4">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Your Referral Link (Ref A)</label>
-              <div className="flex bg-black/40 border border-white/10 rounded-lg p-1">
-                <input 
-                  type="text" 
-                  readOnly 
-                  className="bg-transparent text-sm text-slate-300 w-full px-3 py-2 outline-none" 
-                  value={`https://mindbanger.com/checkout?refMode=A&refCode=${user.id}`}
-                />
-                <button 
-                  className="bg-white/5 hover:bg-white/10 text-white p-2 rounded-md transition-colors"
-                  title="We will add a copy logic here via client component later"
-                >
-                  <Copy size={16} />
-                </button>
-              </div>
+              <CopyLink link={`https://mindbanger.com/checkout?refMode=A&refCode=${user.id}`} />
             </div>
           </div>
         </div>
@@ -115,19 +103,7 @@ export default async function AffiliateDashboardPage() {
             </p>
             <div className="pt-4">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Your Referral Link (Ref B)</label>
-              <div className="flex bg-black/40 border border-white/10 rounded-lg p-1">
-                <input 
-                  type="text" 
-                  readOnly 
-                  className="bg-transparent text-sm text-slate-300 w-full px-3 py-2 outline-none" 
-                  value={`https://mindbanger.com/checkout?refMode=B&refCode=${user.id}`}
-                />
-                <button 
-                  className="bg-white/5 hover:bg-white/10 text-white p-2 rounded-md transition-colors"
-                >
-                  <Copy size={16} />
-                </button>
-              </div>
+              <CopyLink link={`https://mindbanger.com/checkout?refMode=B&refCode=${user.id}`} />
             </div>
           </div>
         </div>

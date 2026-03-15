@@ -3,7 +3,11 @@
 import React, { useState } from 'react';
 import { ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 
+import { useDictionary } from './LanguageProvider';
+
 export default function WaitlistForm() {
+  const globalDict = useDictionary();
+  const dict = globalDict?.landing?.waitlist;
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -41,9 +45,9 @@ export default function WaitlistForm() {
     return (
       <div className="flex flex-col items-center justify-center p-6 bg-green-500/10 border border-green-500/20 rounded-2xl animate-in zoom-in-95 duration-300">
         <CheckCircle className="text-green-400 w-10 h-10 mb-3" />
-        <h3 className="text-green-100 font-bold text-lg mb-1">You are on the list!</h3>
+        <h3 className="text-green-100 font-bold text-lg mb-1">{dict?.success || 'You are on the list!'}</h3>
         <p className="text-green-200/70 text-sm text-center">
-          We will let you know as soon as the next wave opens.
+          {dict?.successSub || 'We will let you know as soon as the next wave opens.'}
         </p>
       </div>
     );
@@ -55,7 +59,7 @@ export default function WaitlistForm() {
         <input
           type="email"
           required
-          placeholder="Your email address"
+          placeholder={dict?.placeholder || 'Your email address'}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={status === 'loading'}
@@ -69,8 +73,7 @@ export default function WaitlistForm() {
           {status === 'loading' ? (
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            <>
-              Join <ArrowRight className="w-4 h-4 ml-1" />
+            <> {dict?.button || 'Join'} <ArrowRight className="w-4 h-4 ml-1" />
             </>
           )}
         </button>
@@ -78,7 +81,7 @@ export default function WaitlistForm() {
       {status === 'error' && (
         <p className="text-red-400 text-sm text-center md:text-left pl-4">{errorMsg}</p>
       )}
-      <p className="text-xs text-slate-500 text-center md:text-left pl-4">We are currently accepting a limited number of members.</p>
+      <p className="text-xs text-slate-500 text-center md:text-left pl-4">{dict?.limited || 'We are currently accepting a limited number of members.'}</p>
     </form>
   );
 }

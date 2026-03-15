@@ -87,5 +87,197 @@
   "resets": {
     "backToProducts": "Späť na zoznam produktov",
     "audioNotAvailable": "Audio zatiaľ nie je k dispozícii."
+  },
+  "landing": {
+    "waitlist": {
+      "placeholder": "Tvoja e-mailová adresa",
+      "button": "Pridať sa",
+      "limited": "Zatiaľ prijímame iba obmedzený počet členov.",
+      "success": "Ste na zozname!",
+      "successSub": "Dáme vám vedieť hneď, ako spustíme ďalšiu vlnu."
+    },
+    "navbar": {
+      "features": "Funkcie",
+      "howItWorks": "Ako to funguje",
+      "faq": "�ast� ot�zky",
+      "joinSub": "Prida� sa",
+      "login": "Prihl�si�"
+    },
+    "hero": {
+      "badge": "Mindbanger Daily",
+      "titlePart1": "Nastavte svoju myse� na ",
+      "titleHighlight": "�spech",
+      "titlePart2": " ka�d�  de�",
+      "subtitle": "Denn� sign�ly mysle pre jasnos�, pokoj a s�stredenie.<br className=\"hidden md:block\" />Vytvoren� �ivotn�m kou�om a hypnoterapeutom.",
+      "quote": "�To, ako je nastaven� tvoja myse�, za��na formova� tvoju realitu.�",
+      "widgetTitle": "Dne�n� Sign�l",
+      "widgetBadge": "Jasnos�",
+      "widgetHeadline": "Zjednodu�te si dnes jednu vec",
+      "widgetQuote": "�N�vratom k sebe sa vraciam k jasnosti.�",
+      "widgetBtn": "Prehra� dne�n� audio",
+      "widgetFooter": "Nov� sign�l ka�d� de�. <br/> Silnej�ie vn�torn� smerovanie postupom �asu."
+    },
+    "dailyRitual": {
+      "title": "Každý deň v Mindbanger Daily:",
+      "features": [
+        {
+          "title": "Téma dňa",
+          "desc": "Určite si svoje denné smerovanie."
+        },
+        {
+          "title": "Denný Mind Signál",
+          "desc": "Vedená správa pre vaše nastavenie mysle."
+        },
+        {
+          "title": "Dnešné zameranie",
+          "desc": "Jeden praktický posun pre tento deň."
+        },
+        {
+          "title": "Afirmácia",
+          "desc": "Silné posilňujúce prehlásenie."
+        },
+        {
+          "title": "Audio Reset",
+          "desc": "Krátky upokojujúci hlasový reset."
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "Ako to funguje",
+      "steps": [
+        {
+          "title": "Pridať sa",
+          "desc": "Začnite svoje členstvo za necelú minútu."
+        },
+        {
+          "title": "Prijmite svoj denný signál",
+          "desc": "Získajte čerstvú správu, zameranie, afirmáciu a audio reset."
+        },
+        {
+          "title": "Zlepšujte svoju myseľ denne",
+          "desc": "Postupom času si vytvoríte viac jasnosti, emocionálnej stability a smerovania."
+        }
+      ]
+    },
+    "interactivePreview": {
+      "title": "Vyberte si slovo, ktoré vás ako prvé pritiahne",
+      "options": [
+        {
+          "keyword": "Jasnosť",
+          "desc": "Potrebujete menej hluku a jeden skutočný smer."
+        },
+        {
+          "keyword": "Odvaha",
+          "desc": "Malý úprimný krok dokáže zmeniť viac ako premýšľanie."
+        },
+        {
+          "keyword": "Reset",
+          "desc": "Dnes máte šancu uvoľniť včerajšiu záťaž."
+        }
+      ],
+      "buttonActive": "Odomknúť celý denný signál pre {active}",
+      "buttonInactive": "Odomknúť celý denný signál"
+    },
+    "benefits": {
+      "title": "Mindbanger Daily je pre vás, ak chcete…",
+      "items": [
+        "Začať svoje rána s väčšou jasnosťou",
+        "Znížiť vnútorný hluk a nadmerné premýšľanie",
+        "Cítiť sa pokojnejšie a sústredenejšie",
+        "Denne posilňovať svoje nastavenie mysle",
+        "Znovu sa spojiť so sebou samým",
+        "Prechádzať dňom s jasnejším smerovaním"
+      ]
+    },
+    "vipZone": {
+      "title": "Vo vnútri VIP Zóny",
+      "cards": [
+        {
+          "title": "Dnes",
+          "desc": "Váš denný signál, zameranie, afirmácia a audio."
+        },
+        {
+          "title": "Archív",
+          "desc": "Prístup k predchádzajúcim denným signálom kedykoľvek."
+        },
+        {
+          "title": "Rýchle resety",
+          "desc": "Pokojný reset, Reset sústredenia, Spánkový reset a ďalšie."
+        },
+        {
+          "title": "Začnite tu",
+          "desc": "Jednoduchý návod ako rituál používať pre najlepšie výsledky."
+        }
+      ]
+    },
+    "about": {
+      "badge": "O Tvorcovi",
+      "role": "�ivotn� kou�, hypnoterapeut a sprievodca ment�lnym v�konom.",
+      "quote1": "Mindbanger Daily bol vytvoren�, aby pomohol �u�om formova� ka�d� de� zvn�tra von � prostredn�ctvom",
+      "span1": "jasnosti",
+      "quote2": ", ",
+      "span2": "pokoja",
+      "quote3": ", ",
+      "span3": "s�stredenia",
+      "quote4": " a ",
+      "span4": "z�mern�ho ment�lneho smerovania",
+      "quote5": "."
+    },
+    "pricing": {
+      "title1": "Jednoduchá denná podpora.",
+      "title2": "Jeden mesačný plán.",
+      "planName": "Mindbanger Daily",
+      "price": "€7.90",
+      "period": "/ mesiac",
+      "subtitle": "Menej ako jedna káva týždenne.",
+      "features": [
+        "Denný mind signál",
+        "Denné zameranie",
+        "Denná afirmácia",
+        "Audio reset",
+        "Prístup do archívu",
+        "Bonusové resety"
+      ],
+      "cancelText": "Zrušenie kedykoľvek. Žiadne otázky."
+    },
+    "faq": {
+      "title": "Otázky",
+      "faqs": [
+        {
+          "q": "Čo získam každý deň?",
+          "a": "Dennú tému, krátky signál, zameranie, afirmáciu a audio reset."
+        },
+        {
+          "q": "Je toto meditačná aplikácia?",
+          "a": "Nie. Ide o denný rituál mysle určený pre jasnosť, pokoj a smerovanie."
+        },
+        {
+          "q": "Môžem to kedykoľvek zrušiť?",
+          "a": "Áno."
+        },
+        {
+          "q": "Je obsah v slovenčine?",
+          "a": "Áno. Aplikácia sa prispôsobí vášmu jazyku."
+        },
+        {
+          "q": "Mám prístup k predchádzajúcim dňom?",
+          "a": "Áno, prostredníctvom archívu."
+        }
+      ]
+    },
+    "finalCta": {
+      "badge": "Začnite svoj denný reset",
+      "title1": "Nastavte svoju myseľ.",
+      "title2": "Formujte svoj deň.",
+      "quote": "\"Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.\"",
+      "footer": "Pridajte sa na čakaciu listinu Mindbanger Daily"
+    },
+    "footer": {
+      "tagline": "Denné signály pre jasnosť, pokoj a sústredenie.",
+      "login": "Prihlásiť",
+      "join": "Pridať sa",
+      "privacy": "Súkromie",
+      "terms": "Podmienky"
+    }
   }
 }

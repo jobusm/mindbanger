@@ -1,5 +1,6 @@
 // src/components/FAQSection.tsx
 'use client';
+import { useDictionary } from './LanguageProvider';
 
 import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
@@ -28,6 +29,7 @@ const faqs = [
 ];
 
 export default function FAQSection() {
+  const { dict } = useDictionary();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (idx: number) => {
@@ -37,10 +39,10 @@ export default function FAQSection() {
   return (
     <section className="py-24 bg-slate-950 px-6 relative">
       <div className="max-w-2xl mx-auto space-y-12 relative z-10">
-        <h2 className="text-3xl md:text-5xl font-serif text-white text-center tracking-tight">Questions</h2>
+        <h2 className="text-3xl md:text-5xl font-serif text-white text-center tracking-tight">{dict?.landing?.faq?.title || 'Questions'}</h2>
 
         <div className="space-y-4">
-          {faqs.map((item, idx) => (
+          {(dict?.landing?.faq?.faqs || faqs).map((item, idx) => (
             <div 
               key={idx}
               className="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm"

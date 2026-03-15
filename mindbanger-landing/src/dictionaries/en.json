@@ -87,5 +87,197 @@
   "resets": {
     "backToProducts": "Back to products",
     "audioNotAvailable": "Audio not available yet."
+  },
+  "landing": {
+    "waitlist": {
+      "placeholder": "Your email address",
+      "button": "Join",
+      "limited": "We are currently accepting a limited number of members.",
+      "success": "You are on the list!",
+      "successSub": "We will let you know as soon as the next wave opens."
+    },
+    "navbar": {
+      "features": "Features",
+      "howItWorks": "How it works",
+      "faq": "FAQ",
+      "joinSub": "Join Waitlist",
+      "login": "Login"
+    },
+    "hero": {
+      "badge": "Mindbanger Daily",
+      "titlePart1": "Set yourself up for ",
+      "titleHighlight": "success",
+      "titlePart2": " every day",
+      "subtitle": "Daily mind signals for clarity, calm & focus.<br className=\"hidden md:block\" />Created by a Life Coach & Hypnotherapist.",
+      "quote": "�The way your mind is set begins to shape your reality.�",
+      "widgetTitle": "Today's Signal",
+      "widgetBadge": "Clarity",
+      "widgetHeadline": "Simplify one thing today",
+      "widgetQuote": "\"I return to clarity by returning to myself.\"",
+      "widgetBtn": "Play Today�s Audio",
+      "widgetFooter": "A new signal every day. <br/> A stronger inner direction over time."
+    },
+    "dailyRitual": {
+      "title": "Every day inside Mindbanger Daily:",
+      "features": [
+        {
+          "title": "Theme of the Day",
+          "desc": "Set your daily direction."
+        },
+        {
+          "title": "Daily Mind Signal",
+          "desc": "Guided message for your mindset."
+        },
+        {
+          "title": "Today’s Focus",
+          "desc": "One practical shift for the day."
+        },
+        {
+          "title": "Affirmation",
+          "desc": "A powerful reinforcing statement."
+        },
+        {
+          "title": "Audio Reset",
+          "desc": "A short calming voice reset."
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "steps": [
+        {
+          "title": "Join",
+          "desc": "Start your membership in less than a minute."
+        },
+        {
+          "title": "Receive your daily signal",
+          "desc": "Get a fresh message, focus, affirmation and audio reset."
+        },
+        {
+          "title": "Build a stronger mind daily",
+          "desc": "Create more clarity, emotional stability and direction over time."
+        }
+      ]
+    },
+    "interactivePreview": {
+      "title": "Choose the word that pulls you in first",
+      "options": [
+        {
+          "keyword": "Clarity",
+          "desc": "You need less noise and one true direction."
+        },
+        {
+          "keyword": "Courage",
+          "desc": "A small honest step can change more than overthinking."
+        },
+        {
+          "keyword": "Reset",
+          "desc": "Today is a chance to release yesterday’s weight."
+        }
+      ],
+      "buttonActive": "Unlock the full daily signal for {active}",
+      "buttonInactive": "Unlock the full daily signal"
+    },
+    "benefits": {
+      "title": "Mindbanger Daily is for you if you want to…",
+      "items": [
+        "Start your mornings with more clarity",
+        "Reduce inner noise and overthinking",
+        "Feel calmer and more focused",
+        "Strengthen your mindset daily",
+        "Reconnect with yourself",
+        "Move through the day with more direction"
+      ]
+    },
+    "vipZone": {
+      "title": "Inside the VIP Zone",
+      "cards": [
+        {
+          "title": "Today",
+          "desc": "Your daily signal, focus, affirmation and audio."
+        },
+        {
+          "title": "Archive",
+          "desc": "Access previous daily signals anytime."
+        },
+        {
+          "title": "Quick Resets",
+          "desc": "Calm Reset, Focus Reset, Sleep Reset and more."
+        },
+        {
+          "title": "Start Here",
+          "desc": "Simple guidance on how to use the ritual for best results."
+        }
+      ]
+    },
+    "about": {
+      "badge": "About the Creator",
+      "role": "Life Coach, Hypnotherapist, and mental performance guide.",
+      "quote1": "Mindbanger Daily was created to help people shape each day from the inside out � through",
+      "span1": "clarity",
+      "quote2": ", ",
+      "span2": "calm",
+      "quote3": ", ",
+      "span3": "focus",
+      "quote4": " and ",
+      "span4": "intentional mental direction",
+      "quote5": "."
+    },
+    "pricing": {
+      "title1": "Simple daily support.",
+      "title2": "One monthly plan.",
+      "planName": "Mindbanger Daily",
+      "price": "€7.90",
+      "period": "/ month",
+      "subtitle": "Less than a cup of coffee per week.",
+      "features": [
+        "Daily mind signal",
+        "Daily focus",
+        "Daily affirmation",
+        "Audio reset",
+        "Archive access",
+        "Bonus resets"
+      ],
+      "cancelText": "Cancel anytime. No questions asked."
+    },
+    "faq": {
+      "title": "Questions",
+      "faqs": [
+        {
+          "q": "What do I get every day?",
+          "a": "A daily theme, short signal, focus, affirmation and audio reset."
+        },
+        {
+          "q": "Is this a meditation app?",
+          "a": "No. It is a daily mind ritual designed for clarity, calm and direction."
+        },
+        {
+          "q": "Can I cancel anytime?",
+          "a": "Yes."
+        },
+        {
+          "q": "Is the content in English?",
+          "a": "Yes. English is the main version."
+        },
+        {
+          "q": "Do I get access to past days?",
+          "a": "Yes, through the archive."
+        }
+      ]
+    },
+    "finalCta": {
+      "badge": "Start your daily reset",
+      "title1": "Set your mind.",
+      "title2": "Shape your day.",
+      "quote": "\"The way your mind is set begins to shape your reality.\"",
+      "footer": "Join Mindbanger Daily Waitlist"
+    },
+    "footer": {
+      "tagline": "Daily signals for clarity, calm & focus.",
+      "login": "Login",
+      "join": "Join",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
   }
 }

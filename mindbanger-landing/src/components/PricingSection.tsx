@@ -40,7 +40,7 @@ export default function PricingSection() {
           <p className="text-slate-400 text-sm mb-8">{dict?.landing?.pricing?.subtitle || 'Less than a cup of coffee per week.'}</p>
 
           <div className="space-y-4 mb-8 text-left max-w-sm mx-auto">
-            {(dict?.landing?.pricing?.features || features).map((feat, idx) => (
+            {(dict?.landing?.pricing?.features || features).map((feat: string, idx: number) => (
               <div key={idx} className="flex items-center space-x-3 text-slate-300">
                 <Check size={18} className="text-amber-500 flex-shrink-0" />
                 <span>{feat}</span>

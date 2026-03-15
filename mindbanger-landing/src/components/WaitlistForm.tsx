@@ -6,7 +6,7 @@ import { ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 import { useDictionary } from './LanguageProvider';
 
 export default function WaitlistForm() {
-  const globalDict = useDictionary();
+  const { dict: globalDict } = useDictionary();
   const dict = globalDict?.landing?.waitlist;
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');

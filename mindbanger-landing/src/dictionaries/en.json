@@ -109,13 +109,15 @@
       "titleHighlight": "success",
       "titlePart2": " every day",
       "subtitle": "Daily mind signals for clarity, calm & focus.<br className=\"hidden md:block\" />Created by a Life Coach & Hypnotherapist.",
-      "quote": "�The way your mind is set begins to shape your reality.�",
+      "quote": "\"The way your mind is set begins to shape your reality.\"",
       "widgetTitle": "Today's Signal",
       "widgetBadge": "Clarity",
       "widgetHeadline": "Simplify one thing today",
       "widgetQuote": "\"I return to clarity by returning to myself.\"",
       "widgetBtn": "Play Today�s Audio",
-      "widgetFooter": "A new signal every day. <br/> A stronger inner direction over time."
+      "widgetFooter": "A new signal every day. <br/> A stronger inner direction over time.",
+      "subtitleDesc": "Daily mind signals for clarity, calm & focus.",
+      "subtitleAuthor": "Created by a Life Coach & Hypnotherapist."
     },
     "dailyRitual": {
       "title": "Every day inside Mindbanger Daily:",

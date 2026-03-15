@@ -4,6 +4,7 @@
 import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import WaitlistForm from './WaitlistForm';
+import { useDictionary } from './LanguageProvider';
 
 export default function FinalCTASection() {
   const { dict } = useDictionary();

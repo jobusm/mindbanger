@@ -5,7 +5,7 @@ const LanguageContext = createContext<any>(null);
 
 export function LanguageProvider({ children, dict }: { children: React.ReactNode, dict: any }) {
   return (
-    <LanguageContext.Provider value={dict}>
+    <LanguageContext.Provider value={{ dict }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -14,7 +14,7 @@ export function LanguageProvider({ children, dict }: { children: React.ReactNode
 export function useDictionary() {
   const context = useContext(LanguageContext);
   if (!context) {
-    return null;
+    return { dict: null };
   }
   return context;
 }

@@ -1,11 +1,13 @@
 // src/components/HeroSection.tsx
 'use client';
+import { useDictionary } from './LanguageProvider';
 
 import React from 'react';
 import { ArrowRight, Play, Sun, Sparkles } from 'lucide-react';
 import WaitlistForm from './WaitlistForm';
 
 export default function HeroSection() {
+  const { dict } = useDictionary();
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden bg-gradient-to-b from-slate-950 via-[#0f172a] to-[#1e1b4b]">
       {/* Background Effects */}
@@ -20,21 +22,21 @@ export default function HeroSection() {
         <div className="text-center md:text-left space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse box-shadow-[0_0_8px_2px_rgba(251,191,36,0.5)]"></span>
-            <span className="text-xs font-medium text-amber-100 tracking-wider uppercase">Mindbanger Daily</span>
+            <span className="text-xs font-medium text-amber-100 tracking-wider uppercase">{dict?.landing?.hero?.badge || 'Mindbanger Daily'}</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
-            Set yourself up for <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600">success</span> every day
+            {dict?.landing?.hero?.titlePart1 || 'Set yourself up for '}<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600">{dict?.landing?.hero?.titleHighlight || 'success'}</span>{dict?.landing?.hero?.titlePart2 || ' every day'}
           </h1>
           
           <p className="text-lg md:text-xl text-slate-300 max-w-md mx-auto md:mx-0 leading-relaxed font-light">
-            Daily mind signals for clarity, calm & focus. 
+            {dict?.landing?.hero?.subtitleDesc || 'Daily mind signals for clarity, calm & focus.'} 
             <br className="hidden md:block" />
-            Created by a Life Coach & Hypnotherapist.
+            {dict?.landing?.hero?.subtitleAuthor || 'Created by a Life Coach & Hypnotherapist.'}
           </p>
 
           <p className="italic text-slate-400 text-sm font-medium border-l-2 border-indigo-500/50 pl-4 py-1">
-            “The way your mind is set begins to shape your reality.”
+            {dict?.landing?.hero?.quote || '"The way your mind is set begins to shape your reality."'}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4 w-full">
@@ -57,7 +59,7 @@ export default function HeroSection() {
               
               {/* Card Title */}
               <div className="flex justify-between items-center text-white/50 text-xs tracking-widest uppercase">
-                <span>Today's Signal</span>
+                <span>{dict?.landing?.hero?.widgetTitle || "Today's Signal"}</span>
                 <span>{new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</span>
               </div>
 
@@ -69,17 +71,17 @@ export default function HeroSection() {
                   <span className="p-2 bg-amber-500/20 rounded-full text-amber-400">
                     <Sun size={18} />
                   </span>
-                  <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">Clarity</span>
+                  <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">{dict?.landing?.hero?.widgetBadge || 'Clarity'}</span>
                 </div>
 
-                <h3 className="text-2xl font-serif text-white mb-2 leading-tight">Simplify one thing today</h3>
+                <h3 className="text-2xl font-serif text-white mb-2 leading-tight">{dict?.landing?.hero?.widgetHeadline || 'Simplify one thing today'}</h3>
                 <p className="text-indigo-200/80 text-sm font-light italic mb-6">
-                  "I return to clarity by returning to myself."
+                  {dict?.landing?.hero?.widgetQuote || '"I return to clarity by returning to myself."'}
                 </p>
 
                 <button className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-center gap-2 text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-indigo-500/20">
                   <Play size={16} fill="currentColor" />
-                  Play Today’s Audio
+                  {dict?.landing?.hero?.widgetBtn || 'Play Today’s Audio'}
                 </button>
               </div>
 
@@ -87,7 +89,7 @@ export default function HeroSection() {
               <div className="text-center space-y-2 pt-2">
                 <div className="h-0.5 w-12 bg-white/10 mx-auto rounded-full" />
                 <p className="text-xs text-slate-400/80 font-medium">
-                  A new signal every day. <br/> A stronger inner direction over time.
+                  {dict?.landing?.hero?.widgetFooter || 'A new signal every day. <br/> A stronger inner direction over time.'}
                 </p>
               </div>
 

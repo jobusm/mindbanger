@@ -42,8 +42,8 @@ export default function FAQSection() {
         <h2 className="text-3xl md:text-5xl font-serif text-white text-center tracking-tight">{dict?.landing?.faq?.title || 'Questions'}</h2>
 
         <div className="space-y-4">
-          {(dict?.landing?.faq?.faqs || faqs).map((item, idx) => (
-            <div 
+          {(dict?.landing?.faq?.faqs || faqs).map((item: { q: string, a: string }, idx: number) => (
+            <div
               key={idx}
               className="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm"
             >

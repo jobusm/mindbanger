@@ -1,21 +1,4 @@
-﻿{
-  "waitlist": {
-    "title": "Zatiaľ obmedzujeme prístup",
-    "subtitle": "Pripoj sa na čakaciu listinu pre prednostný prístup.",
-    "emailPlaceholder": "Tvoja emailová adresa",
-    "button": "Pridať sa na čakaciu listinu",
-    "success": "Pridané!",
-    "successMessage": "Dáme ti vedieť hneď, ako otvoríme miesto."
-  },
-  "login": {
-    "title": "Vitaj späť",
-    "subtitle": "Zadaj svoj e-mail pre prijatie odkazu na prihlásenie.",
-    "emailPlaceholder": "tvoj@email.com",
-    "button": "Poslať odkaz",
-    "back": "Späť na úvod",
-    "magicLinkSent": "Odkaz odoslaný!",
-    "magicLinkMessage": "Skontroluj si e-mail s odkazom na prihlásenie."
-  },
+{
   "checkout": {
     "title": "Predplať si dennú mentálnu čistotu",
     "subtitle": "Okamžite si odomkni prémiové členstvo.",
@@ -32,38 +15,74 @@
     ],
     "formTitle": "Vytvoriť účet a zaplatiť",
     "firstName": "Krstné meno (Voliteľné)",
-    "firstNamePlaceholder": "Napr. Ján",
+    "firstNamePlaceholder": "Tvoje meno",
     "email": "E-mailová adresa",
     "emailPlaceholder": "ty@priklad.sk",
-    "submitBtn": "Pokračovať k platbe",
-    "secureInfo": "Bezpečná platba cez Stripe. Zrušiť môžeš kedykoľvek."
+    "password": "Vytvoriť heslo",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Pokračovať k platbe",
+    "processing": "Spracúva sa...",
+    "cancelAnytime": "Zrušiť kedykoľvek. Bezpečne spravované cez Stripe.",
+    "alreadyHaveAccount": "Už máš účet? Prihlás sa najprv"
   },
-  "portal": {
-    "title": "Tvoj denný reštart",
-    "greeting": "Dobré ráno",
-    "signalTab": "Dnešný signál",
-    "archiveTab": "Archív",
-    "settingsTab": "Nastavenia",
-    "focusLabel": "Zameranie",
-    "affirmationLabel": "Afirmácia",
-    "playAudio": "Prehrať audio reštart",
-    "audioUnsupported": "Tvoj prehliadač nepodporuje audio element.",
-    "archiveTitle": "Archív signálov mysle",
-    "noArchive": "Zatiaľ nemáš uložené žiadne minulé signály."
+  "nav": {
+    "today": "Dnes",
+    "archive": "Archív",
+    "resets": "Reštarty",
+    "account": "Účet",
+    "affiliate": "Affiliate"
+  },
+  "today": {
+    "goodMorning": "Dobré ráno",
+    "todaysSignal": "Dnešný Signál",
+    "dailyReset": "Denný Reštart",
+    "todaysFocus": "Dnešné zameranie",
+    "affirmation": "Afirmácia",
+    "tuning": "Ladenie frekvencie...",
+    "notBroadcasted": "Dnešný signál ešte nebol vysielaný. Skús to neskôr pre svoj denný reštart.",
+    "markCompleted": "Označiť za hotové"
+  },
+  "audio": {
+    "playing": "Prehráva sa",
+    "paused": "Pozastavené",
+    "play": "Prehrať",
+    "pause": "Pozastaviť"
+  },
+  "archive": {
+    "title": "Tvoj Mindbanger Archív",
+    "subtitle": "Prístup ku všetkému, čo ti bolo vysielané odkedy si sa pripojil na našu frekvenciu.",
+    "tabDaily": "Denné Signály",
+    "tabProducts": "Rýchle Reštarty",
+    "libraryEmpty": "Vaša knižnica je zatiaľ prázdna",
+    "checkBack": "Zajtra tu nájdeš svoj prvý odomknutý signál.",
+    "preparing": "Pripravujeme nové resety",
+    "workingOnIt": "Pracujeme na tom, aby sme sem čoskoro pridali ďalšie špecializované audio reštarty.",
+    "readReset": "Načítať reset",
+    "temporalLockText": "Temporal Content Lock aktívny. Vaša cesta a archív začínajú plynúť dnešným dňom. Každý ďalší deň tu nájdete predošlé rituály, ktoré môžete kedykoľvek zopakovať.",
+    "audioAdjust": "Audio Session",
+    "quickReset": "Rýchly Reset",
+    "startReset": "Začať reset",
+    "noResetsText": "Rýchle zvukové resety na zmenu vášho stavu už čoskoro pribudnú do archívu."
   },
   "settings": {
-    "title": "Nastavenia",
-    "account": "Účet",
-    "email": "E-mail",
-    "subscription": "Predplatné",
-    "status": "Stav",
-    "manageBilling": "Spravovať fakturáciu a predplatné",
-    "language": "Jazyk",
-    "logout": "Odhlásiť sa",
-    "deleteTitle": "Zmazať účet",
-    "deleteWarning": "Týmto natrvalo vymažeš svoj účet, históriu a predplatné.",
-    "deleteBtn": "Zmazať môj účet",
-    "confirmDelete": "Určite chceš zmazať svoj účet?"
+    "loading": "Načítavam nastavenia...",
+    "title": "Nastavenia účtu",
+    "subtitle": "Prispôsobte si svoj Mindbanger zážitok.",
+    "nameLabel": "Vaše Meno",
+    "namePlaceholder": "Tvoje meno",
+    "languageLabel": "Jazyk obsahu",
+    "langEn": "Angličtina (English)",
+    "langSk": "Slovenčina (Slovak)",
+    "langCs": "Čeština (Czech)",
+    "languageDesc": "Určuje v akom jazyku dostanete denný signál.",
+    "timezoneLabel": "Moje Časové Pásmo",
+    "timezoneDesc": "Dôležité, ak cestujete. Pomáha nám odomknúť dnešný obsah presne pre váš lokálny čas.",
+    "saveBtn": "Uložiť nastavenia",
+    "savingBtn": "Ukladám...",
+    "dangerZone": "Správa odberu & Odhlásenie",
+    "dangerDesc": "Tu si môžete spravovať svoju kartu, faktúry cez Stripe alebo sa odhlásiť z aplikácie.",
+    "manageStripe": "Spravovať Predplatné v Stripe",
+    "logoutBtn": "Odhlásiť sa"
   },
   "resets": {
     "backToProducts": "Späť na zoznam produktov",
@@ -80,25 +99,25 @@
     "navbar": {
       "features": "Funkcie",
       "howItWorks": "Ako to funguje",
-      "faq": "Časté otázky",
-      "joinSub": "Pridať sa",
-      "login": "Prihlásiť"
+      "faq": "�ast� ot�zky",
+      "joinSub": "Prida� sa",
+      "login": "Prihl�si�"
     },
     "hero": {
       "badge": "Mindbanger Daily",
-      "titlePart1": "Nastavte svoju myseľ na ",
-      "titleHighlight": "úspech",
-      "titlePart2": " každý deň",
-      "subtitle": "Denné signály mysle pre jasnosť, pokoj a sústredenie.<br className=\"hidden md:block\" />Vytvorené životným koučom a hypnoterapeutom.",
-      "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
-      "widgetTitle": "Dnešný Signál",
-      "widgetBadge": "Jasnosť",
-      "widgetHeadline": "Zjednodušte si dnes jednu vec",
-      "widgetQuote": "„Návratom k sebe sa vraciam k jasnosti.“",
-      "widgetBtn": "Prehrať dnešné audio",
-      "widgetFooter": "Nový signál každý deň. <br/> Silnejšie vnútorné smerovanie postupom času.",
-      "subtitleDesc": "Denné signály pre jasnosť, pokoj a sústredenie.",
-      "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom."
+      "titlePart1": "Nastavte svoju myse� na ",
+      "titleHighlight": "�spech",
+      "titlePart2": " ka�d�  de�",
+      "subtitle": "Denn� sign�ly mysle pre jasnos�, pokoj a s�stredenie.<br className=\"hidden md:block\" />Vytvoren� �ivotn�m kou�om a hypnoterapeutom.",
+      "quote": "Sp�sob, ak�m je va�a myse� nastaven�, za��na formova� va�u realitu.",
+      "widgetTitle": "Dne�n� Sign�l",
+      "widgetBadge": "Jasnos�",
+      "widgetHeadline": "Zjednodu�te si dnes jednu vec",
+      "widgetQuote": "�N�vratom k sebe sa vraciam k jasnosti.�",
+      "widgetBtn": "Prehra� dne�n� audio",
+      "widgetFooter": "Nov� sign�l ka�d� de�. <br/> Silnej�ie vn�torn� smerovanie postupom �asu.",
+      "subtitleDesc": "Denn� sign�ly pre jasnos�, pokoj a s�stredenie.",
+      "subtitleAuthor": "Vytvoren� �ivotn�m kou�om a hypnoterapeutom."
     },
     "dailyRitual": {
       "title": "Každý deň v Mindbanger Daily:",
@@ -195,15 +214,15 @@
     },
     "about": {
       "badge": "O Tvorcovi",
-      "role": "Životný kouč, hypnoterapeut a sprievodca mentálnym výkonom.",
-      "quote1": "Mindbanger Daily bol vytvorený, aby pomohol ľuďom formovať každý deň zvnútra von – prostredníctvom",
+      "role": "�ivotn� kou�, hypnoterapeut a sprievodca ment�lnym v�konom.",
+      "quote1": "Mindbanger Daily bol vytvoren�, aby pomohol �u�om formova� ka�d� de� zvn�tra von � prostredn�ctvom",
       "span1": "jasnosti",
       "quote2": ", ",
       "span2": "pokoja",
       "quote3": ", ",
-      "span3": "sústredenia",
+      "span3": "s�stredenia",
       "quote4": " a ",
-      "span4": "zámerného mentálneho smerovania",
+      "span4": "z�mern�ho ment�lneho smerovania",
       "quote5": "."
     },
     "pricing": {
@@ -252,7 +271,7 @@
       "badge": "Začnite svoj denný reset",
       "title1": "Nastavte svoju myseľ.",
       "title2": "Formujte svoj deň.",
-      "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
+      "quote": "\"Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.\"",
       "footer": "Pridajte sa na čakaciu listinu Mindbanger Daily"
     },
     "footer": {

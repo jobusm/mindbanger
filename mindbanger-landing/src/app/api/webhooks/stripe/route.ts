@@ -48,6 +48,51 @@ export async function POST(req: Request) {
             currency: session.currency || 'eur',
             customer_email: session.customer_details?.email || ''
           });
+
+          // Send welcome email via Brevo
+          const email = session.customer_details?.email;
+          if (email && process.env.BREVO_API_KEY) {
+            try {
+              const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                  'accept': 'application/json',
+                  'api-key': process.env.BREVO_API_KEY,
+                  'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                  sender: {
+                    name: 'Mindbanger Daily',
+                    email: 'hello@mindbanger.com' 
+                  },
+                  to: [
+                    {
+                      email: email,
+                      name: session.customer_details?.name || 'Vzácny Člen'
+                    }
+                  ],
+                  subject: 'Welcome to Mindbanger Daily',
+                  htmlContent: `
+                    <div style="font-family: sans-serif; background-color: #111; color: #fff; padding: 40px; text-align: center;">
+                      <h1 style="color: #ffd700;">Vitajte v Mindbanger Daily</h1>
+                      <p style="font-size: 18px; line-height: 1.5; color: #ccc;">
+                        Vaša myseľ sa práve stala vaším najsilnejším nástrojom.
+                      </p>
+                      <a href="https://mindbanger.com/login" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #ffd700; color: #000; text-decoration: none; font-weight: bold; border-radius: 4px;">Prihlásiť sa</a>
+                    </div>
+                  `
+                })
+              });
+              
+              if (!brevoRes.ok) {
+                console.error('Brevo API error:', await brevoRes.text());
+              } else {
+                console.log('Welcome email sent via Brevo to', email);
+              }
+            } catch (err) {
+              console.error('Failed to send Brevo welcome email:', err);
+            }
+          }
         }
         break;
       }

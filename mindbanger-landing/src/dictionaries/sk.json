@@ -3,13 +3,13 @@
     "title": "Predplať si dennú mentálnu čistotu",
     "subtitle": "Okamžite si odomkni prémiové členstvo.",
     "productInfo": "Mindbanger Denník",
-    "price": "7,99�",
+    "price": "7,99€",
     "perMonth": "/ mesačne",
     "features": [
       "Denný signál mysle",
       "Denné zameranie",
       "Denná afirmácia",
-      "Denn� audio ment�lne nastavenie",
+      "Denné audio mentálne nastavenie",
       "Prístup do archívu",
       "Bonusové reštarty"
     ],
@@ -108,7 +108,7 @@
       "titlePart1": "Nastavte svoju myseľ na ",
       "titleHighlight": "úspech",
       "titlePart2": " každý deň",
-      "subtitle": "Denn� nastavenie mysle pre jasnos�, pokoj a s�stredenie.<br className=\"hidden md:block\" />Vytvoren� �ivotn�m kou�om a hypnoterapeutom.",
+      "subtitle": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.<br className=\"hidden md:block\" />Vytvorené životným koučom a hypnoterapeutom.",
       "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
       "widgetTitle": "Dnešný Signál",
       "widgetBadge": "Jasnosť",
@@ -116,7 +116,7 @@
       "widgetQuote": "„Návratom k sebe sa vraciam k jasnosti.“",
       "widgetBtn": "Prehrať dnešné audio",
       "widgetFooter": "Nový signál každý deň. <br/> Silnejšie vnútorné smerovanie postupom času.",
-      "subtitleDesc": "Denn� nastavenie mysle pre jasnos�, pokoj a s�stredenie.",
+      "subtitleDesc": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.",
       "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom."
     },
     "dailyRitual": {
@@ -215,28 +215,28 @@
     "about": {
       "badge": "O Tvorcovi",
       "role": "Životný kouč, hypnoterapeut a sprievodca mentálnym výkonom.",
-      "quote1": "Mindbanger Daily bol vytvoren�, aby pom�hal �u�om formova� ka�d� svoj de� pre �ivotn� pohodu, �spech a rados� zo �ivota prostredn�ctvom ",
+      "quote1": "Mindbanger Daily bol vytvorený aby pomáhal ľuďom formovať každý svoj deň pre životnú pohodu, úspech a radosť zo života prostredníctvom ",
       "span1": "jasnosti",
       "quote2": ", ",
       "span2": "pokoja",
       "quote3": ", ",
-      "span3": "prirodzen�ho s�stredenia",
+      "span3": "prirodzeného sústredenia",
       "quote4": " a ",
-      "span4": "cielen�ho ment�lneho smerovania a nastavenia mysle",
+      "span4": "cieleného mentálneho smerovania a nastavenia mysle",
       "quote5": "."
     },
     "pricing": {
       "title1": "Jednoduchá denná podpora.",
       "title2": "Jeden mesačný plán.",
       "planName": "Mindbanger Daily",
-      "price": "7,99�",
+      "price": "7,99€",
       "period": "/ mesiac",
       "subtitle": "Menej ako jedna káva týždenne.",
       "features": [
         "Denný mind signál",
         "Denné zameranie",
         "Denná afirmácia",
-        "Denn� audio ment�lne nastavenie",
+        "Denné audio mentálne nastavenie",
         "Prístup do archívu",
         "Bonusové resety"
       ],
@@ -251,7 +251,7 @@
         },
         {
           "q": "Je toto meditačná aplikácia?",
-          "a": "Nie, ide o denn� ritu�l mysle, ktor� je ur�en� pre z�skanie jasnosti, pokoja a pozit�vneho denn�ho smerovania. S��as�ou tohoto ritu�lu ale je tie� aj kr�tka denn� medit�cia."
+          "a": "Nie, ide o denný rituál mysle, ktorý je určený pre získanie jasnosti, pokoja a pozitívneho denného smerovania. Súčasťou tohoto rituálu ale je tiež aj krátka denná meditácia."
         },
         {
           "q": "Môžem to kedykoľvek zrušiť?",
@@ -275,7 +275,7 @@
       "footer": "Pridajte sa na čakaciu listinu Mindbanger Daily"
     },
     "footer": {
-      "tagline": "Denn� nastavenie mysle pre jasnos�, pokoj a s�stredenie.",
+      "tagline": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.",
       "login": "Prihlásiť",
       "join": "Pridať sa",
       "privacy": "Súkromie",

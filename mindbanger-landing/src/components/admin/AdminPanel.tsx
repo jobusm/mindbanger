@@ -2,10 +2,11 @@
 import React, { useState } from "react";
 import SignalsManager from "./SignalsManager";
 import SubscriptionsManager from "./SubscriptionsManager";
-import { Radio, Users } from "lucide-react";
+import ResetsManager from "./ResetsManager";
+import { Radio, Users, RefreshCw } from "lucide-react";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'subscriptions'>('signals');
+  const [activeTab, setActiveTab] = useState<'signals' | 'subscriptions' | 'resets'>('signals');
 
   return (
     <>
@@ -22,6 +23,17 @@ export default function AdminPanel() {
           <span className="font-medium">Denné Signály</span>
         </button>
         <button
+          onClick={() => setActiveTab('resets')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors ${
+            activeTab === 'resets' 
+              ? 'border-amber-500 text-amber-500' 
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <RefreshCw size={20} />
+          <span className="font-medium">Manažér Resetov</span>
+        </button>
+        <button
           onClick={() => setActiveTab('subscriptions')}
           className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors ${
             activeTab === 'subscriptions' 
@@ -34,7 +46,9 @@ export default function AdminPanel() {
         </button>
       </div>
 
-      {activeTab === 'signals' ? <SignalsManager /> : <SubscriptionsManager />}
+      {activeTab === 'signals' && <SignalsManager />}
+      {activeTab === 'resets' && <ResetsManager />}
+      {activeTab === 'subscriptions' && <SubscriptionsManager />}
     </>
   );
 }

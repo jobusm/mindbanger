@@ -99,25 +99,25 @@
     "navbar": {
       "features": "Funkcie",
       "howItWorks": "Ako to funguje",
-      "faq": "�ast� ot�zky",
-      "joinSub": "Prida� sa",
-      "login": "Prihl�si�"
+      "faq": "Časté otázky",
+      "joinSub": "Pridať sa",
+      "login": "Prihlásiť"
     },
     "hero": {
       "badge": "Mindbanger Daily",
-      "titlePart1": "Nastavte svoju myse� na ",
-      "titleHighlight": "�spech",
-      "titlePart2": " ka�d�  de�",
-      "subtitle": "Denn� sign�ly mysle pre jasnos�, pokoj a s�stredenie.<br className=\"hidden md:block\" />Vytvoren� �ivotn�m kou�om a hypnoterapeutom.",
-      "quote": "Sp�sob, ak�m je va�a myse� nastaven�, za��na formova� va�u realitu.",
-      "widgetTitle": "Dne�n� Sign�l",
-      "widgetBadge": "Jasnos�",
-      "widgetHeadline": "Zjednodu�te si dnes jednu vec",
-      "widgetQuote": "�N�vratom k sebe sa vraciam k jasnosti.�",
-      "widgetBtn": "Prehra� dne�n� audio",
-      "widgetFooter": "Nov� sign�l ka�d� de�. <br/> Silnej�ie vn�torn� smerovanie postupom �asu.",
-      "subtitleDesc": "Denn� sign�ly pre jasnos�, pokoj a s�stredenie.",
-      "subtitleAuthor": "Vytvoren� �ivotn�m kou�om a hypnoterapeutom."
+      "titlePart1": "Nastavte svoju myseľ na ",
+      "titleHighlight": "úspech",
+      "titlePart2": " každý deň",
+      "subtitle": "Denné signály mysle pre jasnosť, pokoj a sústredenie.<br className=\"hidden md:block\" />Vytvorené životným koučom a hypnoterapeutom.",
+      "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
+      "widgetTitle": "Dnešný Signál",
+      "widgetBadge": "Jasnosť",
+      "widgetHeadline": "Zjednodušte si dnes jednu vec",
+      "widgetQuote": "„Návratom k sebe sa vraciam k jasnosti.“",
+      "widgetBtn": "Prehrať dnešné audio",
+      "widgetFooter": "Nový signál každý deň. <br/> Silnejšie vnútorné smerovanie postupom času.",
+      "subtitleDesc": "Denné signály pre jasnosť, pokoj a sústredenie.",
+      "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom."
     },
     "dailyRitual": {
       "title": "Každý deň v Mindbanger Daily:",
@@ -214,15 +214,15 @@
     },
     "about": {
       "badge": "O Tvorcovi",
-      "role": "�ivotn� kou�, hypnoterapeut a sprievodca ment�lnym v�konom.",
-      "quote1": "Mindbanger Daily bol vytvoren�, aby pomohol �u�om formova� ka�d� de� zvn�tra von � prostredn�ctvom",
+      "role": "Životný kouč, hypnoterapeut a sprievodca mentálnym výkonom.",
+      "quote1": "Mindbanger Daily bol vytvorený, aby pomohol ľuďom formovať každý deň zvnútra von – prostredníctvom",
       "span1": "jasnosti",
       "quote2": ", ",
       "span2": "pokoja",
       "quote3": ", ",
-      "span3": "s�stredenia",
+      "span3": "sústredenia",
       "quote4": " a ",
-      "span4": "z�mern�ho ment�lneho smerovania",
+      "span4": "zámerného mentálneho smerovania",
       "quote5": "."
     },
     "pricing": {
@@ -271,7 +271,7 @@
       "badge": "Začnite svoj denný reset",
       "title1": "Nastavte svoju myseľ.",
       "title2": "Formujte svoj deň.",
-      "quote": "\"Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.\"",
+      "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
       "footer": "Pridajte sa na čakaciu listinu Mindbanger Daily"
     },
     "footer": {

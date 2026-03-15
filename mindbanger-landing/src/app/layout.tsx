@@ -6,13 +6,13 @@ import AffiliateTracker from '@/components/AffiliateTracker';
 
 const inter = Inter({
   variable: '--font-sans',
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   display: 'swap',
 });
 
 const playfair = Playfair_Display({
   variable: '--font-serif',
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   display: 'swap',
 });
 

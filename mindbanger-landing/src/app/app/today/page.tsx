@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import { getSecureAudioUrl } from '@/lib/cloudflare-r2';
 import AudioPlayer from '@/components/AudioPlayer';
 import { getDictionary } from '@/lib/i18n';
+import CompleteButton from '@/components/CompleteButton';
 
 export const revalidate = 0; // Ensure fresh data on every load for 'today'
 
@@ -88,7 +89,7 @@ export default async function TodayPage() {
           </h2>
           
           <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg">
-            <p>{signal.focus}</p>
+            <p>{signal.signal_text}</p>
           </div>
 
           {/* Audio Player Injection */}
@@ -103,10 +104,10 @@ export default async function TodayPage() {
 
           {/* Focus & Affirmation Block */}
           <div className="grid md:grid-cols-2 gap-4">
-            {signal.focus && (
+            {signal.focus_text && (
               <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
                 <h3 className="text-xs text-slate-500 uppercase tracking-widest mb-2">{t.todaysFocus}</h3>
-                <p className="text-slate-200 font-medium">{signal.focus}</p>
+                <p className="text-slate-200 font-medium">{signal.focus_text}</p>
               </div>
             )}
             
@@ -135,9 +136,7 @@ export default async function TodayPage() {
       {/* Done Button */}
       {signal && (
         <div className="pt-4 flex justify-center pb-8">
-          <button className="px-8 py-3 rounded-full bg-white/5 text-slate-300 font-medium hover:bg-white/10 hover:text-white transition-colors border border-white/10">
-            {t.markCompleted}
-          </button>
+          <CompleteButton signalId={signal.id} label={t.markCompleted} />
         </div>
       )}
 

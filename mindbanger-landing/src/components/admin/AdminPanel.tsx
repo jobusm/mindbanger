@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import SignalsManager from "./SignalsManager";
 import SubscriptionsManager from "./SubscriptionsManager";
-import ResetsManager from "./ResetsManager";
+import ResetsManager from "@/components/admin/ResetsManager";
 import AffiliateManager from "./AffiliateManager";
 import { Radio, Users, RefreshCw, Megaphone } from "lucide-react";
-import HealthCheckWidget from "./HealthCheckWidget";
+import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'signals' | 'subscriptions' | 'resets' | 'affiliate'>('signals');
@@ -67,3 +67,5 @@ export default function AdminPanel() {
     </>
   );
 }
+
+// trigger ts server update

@@ -37,21 +37,35 @@ export default async function AffiliateDashboardPage() {
 
   const affiliate = await ensureAffiliate(supabase, user.id);
 
-  // Stats dummy for now
-  const { count: pendingRefA = 0 } = await supabase
+  // Fetch all referrals to calculate stats
+  const { data: allReferrals } = await supabase
     .from('referrals')
-    .select('*', { count: 'exact', head: true })
-    .eq('affiliate_id', affiliate.id)
-    .eq('commission_model', 'second_month')
-    .eq('status', 'pending');
+    .select('commission_model, status, commission_amount')
+    .eq('affiliate_id', affiliate.id);
 
-  const { count: activeRefB = 0 } = await supabase
-    .from('referrals')
-    .select('*', { count: 'exact', head: true })
-    .eq('affiliate_id', affiliate.id)
-    .eq('commission_model', 'lifetime_20')
-    .eq('status', 'paid'); // Paid indicates active recurring
-    
+  let pendingRefA = 0;
+  let activeRefB = 0;
+  let unpaidBalance = 0;
+  let totalEarned = 0;
+
+  if (allReferrals) {
+    allReferrals.forEach(ref => {
+      if (ref.commission_model === 'second_month' && ref.status === 'pending') {
+        pendingRefA++;
+      }
+      if (ref.commission_model === 'lifetime_20' && ref.status === 'paid') {
+        activeRefB++;
+      }
+      
+      const amount = Number(ref.commission_amount) || 0;
+      if (ref.status === 'pending') {
+        unpaidBalance += amount;
+      } else if (ref.status === 'paid') {
+        totalEarned += amount;
+      }
+    });
+  }
+
   const { data: materials } = await supabase
     .from('affiliate_materials')
     .select('*')
@@ -130,14 +144,14 @@ export default async function AffiliateDashboardPage() {
             <Wallet size={16} />
             <span className="text-sm">Unpaid Balance</span>
           </div>
-          <div className="text-2xl font-bold text-amber-500">€0.00</div>
+          <div className="text-2xl font-bold text-amber-500">€{unpaidBalance.toFixed(2)}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
             <Check size={16} />
             <span className="text-sm">Total Earned</span>
           </div>
-          <div className="text-2xl font-bold text-emerald-500">€0.00</div>
+          <div className="text-2xl font-bold text-emerald-500">€{totalEarned.toFixed(2)}</div>
         </div>
       </div>
 

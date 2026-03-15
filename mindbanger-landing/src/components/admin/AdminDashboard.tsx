@@ -59,11 +59,13 @@ export default function MfaLock() {
           const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
             factorType: 'totp',
             issuer: 'Mindbanger Admin',
-            friendlyName: session.user.email
+            friendlyName: `${session.user.email} - ${new Date().getTime()}`
           });
           
           if (enrollError) throw enrollError;
-          setQrCode(enrollData.totp.qr_code);
+          // IMPORTANT: `qrCode` for QRCodeSVG must be the raw URI (otpauth://...)
+          // The `enrollData.totp.qr_code` contains a gigantic SVG path string that crashes the QRCodeSVG generator because it's "too long".
+          setQrCode(enrollData.totp.uri);
           setFactorId(enrollData.id);
           setMfaStatus('needs_enroll');
         }

@@ -43,13 +43,11 @@ export async function POST(req: Request) {
             status: subscription.status,
             price_id: subscription.items.data[0].price.id,
             current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            country: session.customer_details?.address?.country || 'Unknown',
+            amount_total: session.amount_total ? session.amount_total / 100 : 0,
+            currency: session.currency || 'eur',
+            customer_email: session.customer_details?.email || ''
           });
-
-          // Aktualizácia profilu (vieme že user je s 'premium' alebo aktívny)
-          await supabase.from('profiles').update({
-            subscription_status: 'premium',
-            stripe_customer_id: customerId
-          }).eq('id', userId);
         }
         break;
       }

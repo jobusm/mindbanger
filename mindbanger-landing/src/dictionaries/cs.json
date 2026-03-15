@@ -1,0 +1,91 @@
+{
+  "checkout": {
+    "title": "Předplať si denní mentální jasnost",
+    "subtitle": "Okamžitě si odemkni prémiové členství.",
+    "productInfo": "Mindbanger Denník",
+    "price": "€7,99",
+    "perMonth": "/ měsíčně",
+    "features": [
+      "Denní signál mysli",
+      "Denní zaměření",
+      "Denní afirmace",
+      "Audio restart",
+      "Přístup do archivu",
+      "Bonusové restarty"
+    ],
+    "formTitle": "Vytvořit účet a zaplatit",
+    "firstName": "Křestní jméno (Volitelné)",
+    "firstNamePlaceholder": "Tvoje jméno",
+    "email": "E-mailová adresa",
+    "emailPlaceholder": "ty@priklad.cz",
+    "password": "Vytvořit heslo",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Pokračovat k platbě",
+    "processing": "Zpracovává se...",
+    "cancelAnytime": "Zrušit kdykoliv. Bezpečně spravováno přes Stripe.",
+    "alreadyHaveAccount": "Už máš účet? Přihlas se nejdřív"
+  },
+  "nav": {
+    "today": "Dnes",
+    "archive": "Archiv",
+    "resets": "Restart",
+    "account": "Účet",
+    "affiliate": "Affiliate"
+  },
+  "today": {
+    "goodMorning": "Dobré ráno",
+    "todaysSignal": "Dnešní Signál",
+    "dailyReset": "Denní Restart",
+    "todaysFocus": "Dnešní zaměření",
+    "affirmation": "Afirmace",
+    "tuning": "Ladění frekvence...",
+    "notBroadcasted": "Dnešní signál ještě nebyl vysílán. Zkus to později pro svůj denní restart.",
+    "markCompleted": "Označit za hotové"
+  },
+  "audio": {
+    "playing": "Přehrává se",
+    "paused": "Pozastaveno",
+    "play": "Přehrát",
+    "pause": "Pozastavit"
+  },
+  "archive": {
+    "title": "Tvoje Mindbanger Archiv",
+    "subtitle": "Přístup ke všemu, co ti bylo vysíláno od doby, co ses připojil na naši frekvenci.",
+    "tabDaily": "Denní Signály",
+    "tabProducts": "Rychlé Restartování",
+    "libraryEmpty": "Vaše knihovna je zatím prázdná",
+    "checkBack": "Zítra zde najdeš svůj první odemčený signál.",
+    "preparing": "Připravujeme nové restarty",
+    "workingOnIt": "Pracujeme na tom, abychom sem brzy přidali další specializované audio restarty.",
+    "readReset": "Přečíst reset",
+    "temporalLockText": "Temporal Content Lock je aktivní. Vaše cesta a archiv začínají dnešním dnem. Každý další den zde najdete předchozí rituály, které můžete kdykoli zopakovat.",
+    "audioAdjust": "Audio Session",
+    "quickReset": "Rychlý Restart",
+    "startReset": "Začít restart",
+    "noResetsText": "Rychlé zvukové restarty pro změnu vašeho stavu budou brzy přidány do archivu."
+  },
+  "settings": {
+    "loading": "Načítám nastavení...",
+    "title": "Nastavení účtu",
+    "subtitle": "Přizpůsobte si svůj Mindbanger zážitek.",
+    "nameLabel": "Vaše Jméno",
+    "namePlaceholder": "Tvoje jméno",
+    "languageLabel": "Jazyk obsahu",
+    "langEn": "Angličtina (English)",
+    "langSk": "Slovenčina (Slovak)",
+    "langCs": "Čeština (Czech)",
+    "languageDesc": "Určuje v jakém jazyce dostanete denní signál.",
+    "timezoneLabel": "Moje Časové Pásmo",
+    "timezoneDesc": "Důležité, pokud cestujete. Pomáhá nám odemknout dnešní obsah přesně pro váš lokální čas.",
+    "saveBtn": "Uložit nastavení",
+    "savingBtn": "Ukládám...",
+    "dangerZone": "Správa odběru & Odhlášení",
+    "dangerDesc": "Zde si můžete spravovat svou kartu, faktury přes Stripe nebo se odhlásit z aplikace.",
+    "manageStripe": "Spravovat Předplatné ve Stripe",
+    "logoutBtn": "Odhlásit se"
+  },
+  "resets": {
+    "backToProducts": "Zpět na seznam produktů",
+    "audioNotAvailable": "Audio zatím není k dispozici."
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "checkout": {
+    "title": "Predplať si dennú mentálnu čistotu",
+    "subtitle": "Okamžite si odomkni prémiové členstvo.",
+    "productInfo": "Mindbanger Denník",
+    "price": "€7,99",
+    "perMonth": "/ mesačne",
+    "features": [
+      "Denný signál mysle",
+      "Denné zameranie",
+      "Denná afirmácia",
+      "Audio reštart",
+      "Prístup do archívu",
+      "Bonusové reštarty"
+    ],
+    "formTitle": "Vytvoriť účet a zaplatiť",
+    "firstName": "Krstné meno (Voliteľné)",
+    "firstNamePlaceholder": "Tvoje meno",
+    "email": "E-mailová adresa",
+    "emailPlaceholder": "ty@priklad.sk",
+    "password": "Vytvoriť heslo",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Pokračovať k platbe",
+    "processing": "Spracúva sa...",
+    "cancelAnytime": "Zrušiť kedykoľvek. Bezpečne spravované cez Stripe.",
+    "alreadyHaveAccount": "Už máš účet? Prihlás sa najprv"
+  },
+  "nav": {
+    "today": "Dnes",
+    "archive": "Archív",
+    "resets": "Reštarty",
+    "account": "Účet",
+    "affiliate": "Affiliate"
+  },
+  "today": {
+    "goodMorning": "Dobré ráno",
+    "todaysSignal": "Dnešný Signál",
+    "dailyReset": "Denný Reštart",
+    "todaysFocus": "Dnešné zameranie",
+    "affirmation": "Afirmácia",
+    "tuning": "Ladenie frekvencie...",
+    "notBroadcasted": "Dnešný signál ešte nebol vysielaný. Skús to neskôr pre svoj denný reštart.",
+    "markCompleted": "Označiť za hotové"
+  },
+  "audio": {
+    "playing": "Prehráva sa",
+    "paused": "Pozastavené",
+    "play": "Prehrať",
+    "pause": "Pozastaviť"
+  },
+  "archive": {
+    "title": "Tvoj Mindbanger Archív",
+    "subtitle": "Prístup ku všetkému, čo ti bolo vysielané odkedy si sa pripojil na našu frekvenciu.",
+    "tabDaily": "Denné Signály",
+    "tabProducts": "Rýchle Reštarty",
+    "libraryEmpty": "Vaša knižnica je zatiaľ prázdna",
+    "checkBack": "Zajtra tu nájdeš svoj prvý odomknutý signál.",
+    "preparing": "Pripravujeme nové resety",
+    "workingOnIt": "Pracujeme na tom, aby sme sem čoskoro pridali ďalšie špecializované audio reštarty.",
+    "readReset": "Načítať reset",
+    "temporalLockText": "Temporal Content Lock aktívny. Vaša cesta a archív začínajú plynúť dnešným dňom. Každý ďalší deň tu nájdete predošlé rituály, ktoré môžete kedykoľvek zopakovať.",
+    "audioAdjust": "Audio Session",
+    "quickReset": "Rýchly Reset",
+    "startReset": "Začať reset",
+    "noResetsText": "Rýchle zvukové resety na zmenu vášho stavu už čoskoro pribudnú do archívu."
+  },
+  "settings": {
+    "loading": "Načítavam nastavenia...",
+    "title": "Nastavenia účtu",
+    "subtitle": "Prispôsobte si svoj Mindbanger zážitok.",
+    "nameLabel": "Vaše Meno",
+    "namePlaceholder": "Tvoje meno",
+    "languageLabel": "Jazyk obsahu",
+    "langEn": "Angličtina (English)",
+    "langSk": "Slovenčina (Slovak)",
+    "langCs": "Čeština (Czech)",
+    "languageDesc": "Určuje v akom jazyku dostanete denný signál.",
+    "timezoneLabel": "Moje Časové Pásmo",
+    "timezoneDesc": "Dôležité, ak cestujete. Pomáha nám odomknúť dnešný obsah presne pre váš lokálny čas.",
+    "saveBtn": "Uložiť nastavenia",
+    "savingBtn": "Ukladám...",
+    "dangerZone": "Správa odberu & Odhlásenie",
+    "dangerDesc": "Tu si môžete spravovať svoju kartu, faktúry cez Stripe alebo sa odhlásiť z aplikácie.",
+    "manageStripe": "Spravovať Predplatné v Stripe",
+    "logoutBtn": "Odhlásiť sa"
+  },
+  "resets": {
+    "backToProducts": "Späť na zoznam produktov",
+    "audioNotAvailable": "Audio zatiaľ nie je k dispozícii."
+  }
+}

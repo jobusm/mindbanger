@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/lib/supabase-server';
+import { welcomeEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-02-25.clover',
@@ -53,6 +54,14 @@ export async function POST(req: Request) {
           const email = session.customer_details?.email;
           if (email && process.env.BREVO_API_KEY) {
             try {
+              let userLang = 'en';
+              const { data: profile } = await supabase.from('profiles').select('preferred_language').eq('id', userId).single();
+              if (profile?.preferred_language) {
+                userLang = profile.preferred_language;
+              }
+              const template = welcomeEmailTemplates[userLang as keyof typeof welcomeEmailTemplates] || welcomeEmailTemplates.en;
+              const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, template.url);
+
               const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
@@ -62,8 +71,8 @@ export async function POST(req: Request) {
                 },
                 body: JSON.stringify({
                   sender: {
-                    name: 'Mindbanger Daily',
-                    email: 'hello@mindbanger.com' 
+                    name: 'Mindbanger',
+                    email: 'hello@mindbanger.com'
                   },
                   to: [
                     {
@@ -71,19 +80,10 @@ export async function POST(req: Request) {
                       name: session.customer_details?.name || 'Vzácny Člen'
                     }
                   ],
-                  subject: 'Welcome to Mindbanger Daily',
-                  htmlContent: `
-                    <div style="font-family: sans-serif; background-color: #111; color: #fff; padding: 40px; text-align: center;">
-                      <h1 style="color: #ffd700;">Vitajte v Mindbanger Daily</h1>
-                      <p style="font-size: 18px; line-height: 1.5; color: #ccc;">
-                        Vaša myseľ sa práve stala vaším najsilnejším nástrojom.
-                      </p>
-                      <a href="https://mindbanger.com/login" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #ffd700; color: #000; text-decoration: none; font-weight: bold; border-radius: 4px;">Prihlásiť sa</a>
-                    </div>
-                  `
+                  subject: template.subject,
+                  htmlContent: htmlContent
                 })
               });
-              
               if (!brevoRes.ok) {
                 console.error('Brevo API error:', await brevoRes.text());
               } else {

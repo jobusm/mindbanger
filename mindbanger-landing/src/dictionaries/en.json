@@ -1,0 +1,91 @@
+{
+  "checkout": {
+    "title": "Subscribe to your daily mental clarity",
+    "subtitle": "Unlock the premium membership immediately.",
+    "productInfo": "Mindbanger Daily",
+    "price": "€7.99",
+    "perMonth": "/ month",
+    "features": [
+      "Daily mind signal",
+      "Daily focus",
+      "Daily affirmation",
+      "Audio reset",
+      "Archive access",
+      "Bonus resets"
+    ],
+    "formTitle": "Create account & checkout",
+    "firstName": "First Name (Optional)",
+    "firstNamePlaceholder": "Your name",
+    "email": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "password": "Create Password",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Continue to Payment",
+    "processing": "Processing...",
+    "cancelAnytime": "Cancel anytime. Managed securely by Stripe.",
+    "alreadyHaveAccount": "Already have an account? Log in first"
+  },
+  "nav": {
+    "today": "Today",
+    "archive": "Archive",
+    "resets": "Resets",
+    "account": "Account",
+    "affiliate": "Affiliate"
+  },
+  "today": {
+    "goodMorning": "Good morning",
+    "todaysSignal": "Todays Signal",
+    "dailyReset": "Daily Reset",
+    "todaysFocus": "Todays Focus",
+    "affirmation": "Affirmation",
+    "tuning": "Tuning the frequency...",
+    "notBroadcasted": "Todays signal hasn\t been broadcasted yet. Check back a little later for your daily reset.",
+    "markCompleted": "Mark as completed"
+  },
+  "audio": {
+    "playing": "Playing",
+    "paused": "Paused",
+    "play": "Play",
+    "pause": "Pause"
+  },
+  "archive": {
+    "title": "Your Mindbanger Archive",
+    "subtitle": "Access everything broadcasted to you since you joined our frequency.",
+    "tabDaily": "Daily Signals",
+    "tabProducts": "Quick Resets",
+    "libraryEmpty": "Your library is currently empty",
+    "checkBack": "Check back tomorrow for your first unlocked signal",
+    "preparing": "Preparing new resets",
+    "workingOnIt": "We are working on bringing more specialized audio resets here soon.",
+    "readReset": "Read reset",
+    "temporalLockText": "Temporal Content Lock is active. Your journey and archive begin today. Moving forward, each new day unlocks the previous daily signals here for you to replay anytime.",
+    "audioAdjust": "Audio Session",
+    "quickReset": "Quick Reset",
+    "startReset": "Start reset",
+    "noResetsText": "Quick audio resets to shift your state will be added to the Vault soon."
+  },
+  "settings": {
+    "loading": "Loading settings...",
+    "title": "Account Settings",
+    "subtitle": "Customize your Mindbanger experience.",
+    "nameLabel": "Your Name",
+    "namePlaceholder": "Your name",
+    "languageLabel": "Content Language",
+    "langEn": "English (English)",
+    "langSk": "Slovenčina (Slovak)",
+    "langCs": "Čeština (Czech)",
+    "languageDesc": "Determines the language of your daily signal.",
+    "timezoneLabel": "My Timezone",
+    "timezoneDesc": "Important if you travel. Helps us unlock today's content exactly for your local time.",
+    "saveBtn": "Save settings",
+    "savingBtn": "Saving...",
+    "dangerZone": "Subscription & Sign Out",
+    "dangerDesc": "Manage your card, invoices via Stripe, or sign out.",
+    "manageStripe": "Manage Subscription in Stripe",
+    "logoutBtn": "Sign Out"
+  },
+  "resets": {
+    "backToProducts": "Back to products",
+    "audioNotAvailable": "Audio not available yet."
+  }
+}

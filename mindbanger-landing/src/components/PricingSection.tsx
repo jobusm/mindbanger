@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Check } from 'lucide-react';
+import WaitlistForm from './WaitlistForm';
 
 const features = [
   'Daily mind signal',
@@ -45,11 +46,11 @@ export default function PricingSection() {
             ))}
           </div>
 
-          <button className="w-full py-4 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold text-lg shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] transform hover:scale-105 transition-all duration-300">
-            Join Now
-          </button>
-          
-          <p className="mt-4 text-xs text-slate-500 font-medium">Cancel anytime. No questions asked.</p>
+          <div className="pt-4 px-0 md:px-8">
+            <WaitlistForm />
+          </div>
+
+          <p className="mt-6 text-xs text-slate-500 font-medium">Cancel anytime. No questions asked.</p>
         </div>
       </div>
     </section>

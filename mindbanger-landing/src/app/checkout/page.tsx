@@ -5,17 +5,12 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight, Loader2, Check } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-
-const features = [
-  'Daily mind signal',
-  'Daily focus',
-  'Daily affirmation',
-  'Audio reset',
-  'Archive access',
-  'Bonus resets',
-];
+import { useDictionary } from '@/lib/i18n-client';
 
 function CheckoutContent() {
+  const { dict, lang, mounted } = useDictionary();
+  const t = dict.checkout;
+
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,16 +33,10 @@ function CheckoutContent() {
       // Získame ref ak existuje v prehliadači
       const referredBy = typeof window !== 'undefined' ? localStorage.getItem('mindbanger_ref') : null;
       
-      // Zistíme jazyk z prehliadača ak ide o jeden z podporovaných (sk, cs, en)
-      let preferredLanguage = 'en';
-        let localTimezone = 'UTC';
-        if (typeof window !== 'undefined') {
-          const lang = navigator.language.slice(0, 2);
-          if (['sk', 'cs', 'en'].includes(lang)) {
-            preferredLanguage = lang;
-          }
-          localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-        }
+      let localTimezone = 'UTC';
+      if (typeof window !== 'undefined') {
+        localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      }
 
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -56,7 +45,7 @@ function CheckoutContent() {
           data: {
             full_name: firstName,
             referred_by: referredBy,
-            preferred_language: preferredLanguage,
+            preferred_language: lang,
             timezone: localTimezone
           }
         }
@@ -118,18 +107,18 @@ function CheckoutContent() {
           
           <div className="space-y-4">
              <h1 className="text-4xl md:text-5xl font-serif text-white leading-tight">
-               Subscribe to your daily mental clarity
+               {t.title}
              </h1>
-             <p className="text-slate-400">Unlock the premium membership immediately.</p>
+             <p className="text-slate-400">{t.subtitle}</p>
           </div>
 
           <div className="bg-slate-900/80 border border-amber-500/30 rounded-3xl p-8 shadow-[0_0_30px_rgba(234,179,8,0.05)] relative overflow-hidden">
-            <h3 className="text-lg font-medium text-amber-500 uppercase tracking-widest mb-2">Mindbanger Daily</h3>
+            <h3 className="text-lg font-medium text-amber-500 uppercase tracking-widest mb-2">{t.productInfo}</h3>
             <div className="text-5xl font-bold text-white mb-6">
-              €7.99<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">/ month</span>
+              {t.price}<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">{t.perMonth}</span>
             </div>
             <div className="space-y-4 text-left">
-              {features.map((feat, idx) => (
+              {t.features.map((feat, idx) => (
                 <div key={idx} className="flex items-center space-x-3 text-slate-300">
                   <Check size={18} className="text-amber-500 flex-shrink-0" />
                   <span>{feat}</span>
@@ -143,7 +132,7 @@ function CheckoutContent() {
       {/* Right Pane - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10">
         <div className="max-w-md w-full">
-           <h2 className="text-2xl font-bold text-white mb-6">Create account & checkout</h2>
+           <h2 className="text-2xl font-bold text-white mb-6">{t.formTitle}</h2>
            
            <form onSubmit={handleCheckoutFlow} className="space-y-6">
             {message && (
@@ -156,10 +145,10 @@ function CheckoutContent() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">First Name (Optional)</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">{t.firstName}</label>
                 <input
                   type="text"
-                  placeholder="Your name"
+                  placeholder={t.firstNamePlaceholder}
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
@@ -167,10 +156,10 @@ function CheckoutContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">{t.email}</label>
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -179,10 +168,10 @@ function CheckoutContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">Create Password</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">{t.password}</label>
                 <input
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t.passwordPlaceholder}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -200,23 +189,23 @@ function CheckoutContent() {
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
-                  Preparing secure checkout...
+                  {t.processing}
                 </>
               ) : (
                 <>
-                  Subscribe Now
+                  {t.submit}
                   <ArrowRight size={18} />
                 </>
               )}
             </button>
             <p className="text-center text-xs text-slate-500 font-medium pt-2">
-              Cancel anytime. Managed securely by Stripe.
+              {t.cancelAnytime}
             </p>
           </form>
           
           <div className="mt-8 text-center border-t border-slate-800 pt-6">
              <Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors">
-                Already have an account? Log in first
+                {t.alreadyHaveAccount}
              </Link>
           </div>
         </div>

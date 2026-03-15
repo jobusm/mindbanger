@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Play, Pause } from 'lucide-react';
+import { useDictionary } from '@/lib/i18n-client';
 
 interface AudioPlayerProps {
   src: string;
@@ -11,6 +12,7 @@ interface AudioPlayerProps {
 }
 
 export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger" }: AudioPlayerProps) {
+  const { dict } = useDictionary();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -106,8 +108,10 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
               <p className="text-slate-400 text-sm font-medium">{author}</p>
             </div>
             {/* Play Button */}
-            <button 
+            <button
               onClick={togglePlay}
+              aria-label={isPlaying ? (dict.audio?.pause || 'Pause') : (dict.audio?.play || 'Play')}
+              title={isPlaying ? (dict.audio?.pause || 'Pause') : (dict.audio?.play || 'Play')}
               className="flex-shrink-0 w-12 h-12 bg-white/10 hover:bg-amber-500 hover:text-slate-900 text-amber-500 border border-white/5 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)]"
             >
               {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}

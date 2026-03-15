@@ -5,6 +5,7 @@ import AudioPlayer from '@/components/AudioPlayer';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { getDictionary } from '@/lib/i18n';
 
 export const revalidate = 0;
 
@@ -23,6 +24,7 @@ export default async function ResetDetailPage({ params }: { params: Promise<{ id
     .single();
 
   const userLang = profile?.preferred_language || 'en';
+  const dict = getDictionary(userLang);
 
   // Načítať konkrétny reset (musí byť published)
   const { data: resetData } = await supabase
@@ -56,7 +58,7 @@ export default async function ResetDetailPage({ params }: { params: Promise<{ id
       
       {/* Back to archive tab products */}
       <Link href="/app/archive?tab=products" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors">
-        <ArrowLeft size={16} className="mr-2" /> Späť na zoznam produktov
+        <ArrowLeft size={16} className="mr-2" /> {dict.resets?.backToProducts || "Back to products"}
       </Link>
 
       <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-6 md:p-10 relative overflow-hidden shadow-xl mt-4">
@@ -95,7 +97,7 @@ export default async function ResetDetailPage({ params }: { params: Promise<{ id
           </div>
         ) : (
           <div className="bg-slate-900/50 border border-slate-800 border-dashed rounded-3xl p-8 text-center text-slate-500">
-            Audio zatiaľ nie je k dispozícii.
+            {dict.resets?.audioNotAvailable || "Audio not available yet."}
           </div>
         )}
       </div>

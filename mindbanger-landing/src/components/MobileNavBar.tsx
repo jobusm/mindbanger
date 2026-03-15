@@ -2,16 +2,20 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Library, Headphones, Settings } from 'lucide-react';
+import { Home, Library, Headphones, Settings, Link as LinkIcon } from 'lucide-react';
+import { useDictionary } from '@/lib/i18n-client';
 
 export default function MobileNavBar() {
   const pathname = usePathname();
+  const { dict } = useDictionary();
+  const t = dict.nav || { today: 'Today', archive: 'Archive', resets: 'Resets', account: 'Account', affiliate: 'Affiliate' };
 
   const navItems = [
-    { name: 'Today', icon: Home, href: '/app/today' },
-    { name: 'Archive', icon: Library, href: '/app/archive' },
-    { name: 'Resets', icon: Headphones, href: '/app/resets' },
-    { name: 'Account', icon: Settings, href: '/app/account' },
+    { name: t.today, icon: Home, href: '/app/today' },
+    { name: t.archive, icon: Library, href: '/app/archive' },
+    { name: t.resets, icon: Headphones, href: '/app/resets' },
+    { name: t.affiliate, icon: LinkIcon, href: '/app/affiliate' },
+    { name: t.account, icon: Settings, href: '/app/settings' },
   ];
 
   return (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
+import { getDictionary } from '@/lib/i18n';
 
 export const revalidate = 0; // Vždy dynamické kvôli prepočtu dní a časového zámku
 
@@ -23,6 +24,8 @@ export default async function ArchivePage({ searchParams }: PageProps) {
     .single();
 
   const userLang = profile?.preferred_language || 'en';
+  const dict = getDictionary(userLang);
+  const t = dict.archive;
   
   // Získať dátum, od ktorého má používateľ prístup (Temporal Content Lock)
   // Ak existuje predplatné s earlier date, dalo by sa zobrať to, ale pre jednoduchosť berieme vytvorenie profilu.
@@ -77,20 +80,14 @@ export default async function ArchivePage({ searchParams }: PageProps) {
       {/* Header */}
       <header className="space-y-6 mb-10">
          <h1 className="text-3xl md:text-4xl font-serif text-white">
-           The Vault
+           {t.title}
          </h1>
-         <p className="text-slate-400 max-w-lg leading-relaxed">
-           Vývoj mentálnej jasnosti nie je lineárny. Prístup máte zabezpečený ku všetkým resetom od prvého dňa vášho predplatného.
-         </p>
+         <p className="text-slate-400 max-w-lg leading-relaxed">{t.subtitle}</p>
          
          {/* Custom Tabs */}
          <div className="flex bg-slate-900/40 p-1.5 rounded-full w-fit border border-white/5 shadow-xl backdrop-blur-md">
-           <Link href="?tab=daily" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'daily' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
-             Denný Archív
-           </Link>
-           <Link href="?tab=products" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'products' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
-             Samostatné Produkty
-           </Link>
+           <Link href="?tab=daily" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'daily' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>{t.tabDaily}</Link>
+           <Link href="?tab=products" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'products' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>{t.tabProducts}</Link>
          </div>
       </header>
 
@@ -123,7 +120,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
                 </p>
 
                 <div className="flex items-center text-amber-500/70 text-sm font-medium mt-auto group-hover:text-amber-400 transition-colors">
-                  Read reset <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                  {t.readReset} <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </div>
             </Link>
@@ -134,9 +131,9 @@ export default async function ArchivePage({ searchParams }: PageProps) {
           <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-4 text-2xl">
             🕰️
           </div>
-          <h2 className="text-xl font-serif text-white mb-2">Vaša knižnica je zatiaľ prázdna</h2>
+          <h2 className="text-xl font-serif text-white mb-2">{t.libraryEmpty}</h2>
           <p className="text-slate-400 max-w-sm text-sm">
-            Temporal Content Lock aktívny. Vaša cesta a archív začínajú plynúť dnešným dňom. Každý ďalší deň tu nájdete predošlé rituály, ktoré môžete kedykoľvek zopakovať.
+            {t.temporalLockText}
           </p>
         </div>
       )) : (
@@ -159,7 +156,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
                     </div>
                     <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                      <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Audio Úprava</span>
+                      <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">{t.audioAdjust}</span>
                     </div>
                   </div>
 
@@ -171,9 +168,9 @@ export default async function ArchivePage({ searchParams }: PageProps) {
                   </p>
 
                   <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-xs text-slate-500 font-medium tracking-wide uppercase">Rýchly Reset</span>
+                    <span className="text-xs text-slate-500 font-medium tracking-wide uppercase">{t.quickReset}</span>
                     <div className="flex items-center text-amber-500 text-sm font-semibold opacity-80 group-hover:opacity-100 transition-opacity">
-                      Začať reset <span className="ml-2 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+                      {t.startReset} <span className="ml-2 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
                     </div>
                   </div>
                 </div>
@@ -185,9 +182,9 @@ export default async function ArchivePage({ searchParams }: PageProps) {
               <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-4 text-2xl">
                 🎧
               </div>
-              <h2 className="text-xl font-serif text-white mb-2">Pripravujeme nové resety</h2>
+              <h2 className="text-xl font-serif text-white mb-2">{t.preparing}</h2>
               <p className="text-slate-400 max-w-sm text-sm">
-                Rýchle zvukové resety na úpravu vášho stavu už čoskoro pribudnú do Vaultu.
+                {t.noResetsText}
               </p>
             </div>
           )}

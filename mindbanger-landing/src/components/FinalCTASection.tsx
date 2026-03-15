@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import WaitlistForm from './WaitlistForm';
 
 export default function FinalCTASection() {
   return (
@@ -26,17 +27,11 @@ export default function FinalCTASection() {
           "The way your mind is set begins to shape your reality."
         </p>
 
-        <div className="pt-8">
-          <button className="group relative px-10 py-5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold text-lg shadow-[0_0_30px_rgba(251,191,36,0.4)] hover:shadow-[0_0_50px_rgba(251,191,36,0.6)] transform hover:scale-105 transition-all duration-300 overflow-hidden">
-            <span className="relative z-10 flex items-center gap-2">
-              Start your daily reset
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
-          </button>
+        <div className="pt-8 max-w-md mx-auto">
+          <WaitlistForm />
         </div>
 
-        <p className="text-sm text-slate-500 font-semibold tracking-wide uppercase">Join Mindbanger Daily</p>
+        <p className="text-sm text-slate-500 font-semibold tracking-wide uppercase">Join Mindbanger Daily Waitlist</p>
       </div>
     </section>
   );

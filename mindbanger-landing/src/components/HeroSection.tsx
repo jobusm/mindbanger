@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { ArrowRight, Play, Sun, Sparkles } from 'lucide-react';
+import WaitlistForm from './WaitlistForm';
 
 export default function HeroSection() {
   return (
@@ -36,14 +37,8 @@ export default function HeroSection() {
             “The way your mind is set begins to shape your reality.”
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4">
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-white font-bold shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:bg-yellow-400 transition-all transform hover:-translate-y-1">
-              Start Mindbanger Daily
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800/50 border border-slate-700 text-slate-200 font-medium hover:bg-slate-700/50 hover:text-white transition-all backdrop-blur-sm flex items-center justify-center gap-2 group">
-              See how it works
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4 w-full">
+            <WaitlistForm />
           </div>
         </div>
 

@@ -90,9 +90,11 @@ export async function POST(req: Request) {
             customer_email: session.customer_details?.email || ''
           });
 
-          // PREPOJENIE STRIPE CUSTOMERA S PROFILOM (Customer Portal Fix)
+          // PREPOJENIE STRIPE CUSTOMERA S PROFILOM (Customer Portal Fix) A OKAMZITA AKTIVACIA
           if (customerId) {
-            await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', userId);
+            await supabase.from('profiles').update({ stripe_customer_id: customerId, subscription_status: 'premium' }).eq('id', userId);
+          } else {
+            await supabase.from('profiles').update({ subscription_status: 'premium' }).eq('id', userId);
           }
 
           // Send welcome email via Brevo
@@ -159,7 +161,7 @@ export async function POST(req: Request) {
           // Ak ho vymazali / alebo vypršalo
           if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
              await supabase.from('profiles').update({ subscription_status: 'canceled' }).eq('id', userId);
-          } else if (subscription.status === 'active') {
+          } else if (['active', 'trialing', 'past_due'].includes(subscription.status)) {
              await supabase.from('profiles').update({ subscription_status: 'premium' }).eq('id', userId);
           }
         }

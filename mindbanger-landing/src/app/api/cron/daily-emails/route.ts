@@ -49,6 +49,20 @@ export async function GET(request: Request) {
       return new Response('Server Error', { status: 500 });
     }
 
+    // Fetch today's signals to get themes
+    const today = new Date().toISOString().split('T')[0];
+    const { data: dailySignals } = await supabase
+      .from('daily_signals')
+      .select('language, theme')
+      .eq('date', today);
+
+    const themesByLang: Record<string, string> = {};
+    if (dailySignals) {
+      dailySignals.forEach(s => {
+        themesByLang[s.language] = s.theme;
+      });
+    }
+
     // Group emails by language
     const langGroups: Record<string, string[]> = { en: [], sk: [], cs: [] };
     
@@ -72,10 +86,19 @@ export async function GET(request: Request) {
       if (emails.length === 0) continue;
 
       const template = dailyEmailTemplates[lang as keyof typeof dailyEmailTemplates];
+      
+      let dynamicBody = template.body;
+      const theme = themesByLang[lang];
+      if (theme) {
+        if (lang === 'sk') dynamicBody += `<br><br><strong>Téma dňa:</strong> ${theme}`;
+        else if (lang === 'cs') dynamicBody += `<br><br><strong>Téma dne:</strong> ${theme}`;
+        else dynamicBody += `<br><br><strong>Today's Focus:</strong> ${theme}`;
+      }
+
       const htmlContent = generateEmailHtml(
-        template.headline, 
-        template.body, 
-        template.cta, 
+        template.headline,
+        dynamicBody,
+        template.cta,
         template.url
       );
 

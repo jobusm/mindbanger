@@ -1,4 +1,5 @@
 "use client";
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Edit2, Trash2, Calendar, Radio, CheckCircle2, Circle } from "lucide-react";
@@ -85,7 +86,7 @@ export default function SignalsManager() {
         setIsFormOpen(false);
         fetchSignals();
       } else {
-        alert(error.message);
+        toast.error(error.message);
       }
     } else {
       // Insert
@@ -94,7 +95,7 @@ export default function SignalsManager() {
         setIsFormOpen(false);
         fetchSignals();
       } else {
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }
@@ -104,7 +105,7 @@ export default function SignalsManager() {
     if (!file || !editingSignal) return;
 
     if (!file.name.toLowerCase().endsWith('.mp3')) {
-      alert('Prosím, nahrajte iba .mp3 súbory.');
+      toast.error('Prosím, nahrajte iba .mp3 súbory.');
       return;
     }
 
@@ -144,10 +145,10 @@ export default function SignalsManager() {
 
       // 3. Update state with public URL
       setEditingSignal({ ...editingSignal, audio_url: publicUrl });
-      alert('Súbor bol úspešne nahratý!');
+      toast.success('Súbor bol úspešne nahratý!');
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Nastala chyba pri nahrávaní súboru.');
+      toast.error(error.message || 'Nastala chyba pri nahrávaní súboru.');
     } finally {
       setIsUploading(false);
     }
@@ -246,10 +247,10 @@ export default function SignalsManager() {
 
             <div className="flex justify-end space-x-4 pt-4 border-t border-slate-800">
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2 rounded-lg text-slate-400 hover:text-white transition-colors">
-                Zrušiť
+                Cancel
               </button>
               <button type="submit" className="px-8 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition-colors">
-                Uložiť Signál
+                Save Signál
               </button>
             </div>
           </form>

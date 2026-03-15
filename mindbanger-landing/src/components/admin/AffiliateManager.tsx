@@ -1,4 +1,5 @@
 "use client";
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Trash2, Megaphone, Image as ImageIcon, Video, UploadCloud } from "lucide-react";
@@ -49,7 +50,7 @@ export default function AffiliateManager() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Naozaj vymazať tento materiál?')) return;
+    if (!confirm('Are you sure you want to delete this material?')) return;
     const { error } = await supabase.from('affiliate_materials').delete().eq('id', id);
     if (!error) fetchMaterials();
   }
@@ -59,12 +60,12 @@ export default function AffiliateManager() {
     if (!file || !editingMaterial) return;
 
     if (editingMaterial.type === 'Banner' && !file.type.startsWith('image/')) {
-      alert('Pre typ Banner zvoľte obrázok.');
+      toast.error('Please select an image for the Banner type.');
       return;
     }
     
     if (editingMaterial.type === 'Video' && !file.type.startsWith('video/')) {
-      alert('Pre typ Video zvoľte video súbor.');
+      toast.error('Please select a video file for the Video type.');
       return;
     }
 
@@ -79,7 +80,7 @@ export default function AffiliateManager() {
         }),
       });
 
-      if (!res.ok) throw new Error('Nepodarilo sa zistiť URL pre nahratie.');
+      if (!res.ok) throw new Error('Failed to get upload URL.');
 
       const { uploadUrl, publicUrl } = await res.json();
 
@@ -89,13 +90,13 @@ export default function AffiliateManager() {
         body: file,
       });
 
-      if (!uploadRes.ok) throw new Error('Nepodarilo sa nahrať súbor na server.');
+      if (!uploadRes.ok) throw new Error('Failed to upload file to server.');
 
       setEditingMaterial({ ...editingMaterial, url: publicUrl });
-      alert('Súbor nahraný!');
+      toast.success('File uploaded!');
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Nastala chyba pri nahrávaní.');
+      toast.error(error.message || 'Error during upload.');
     } finally {
       setIsUploading(false);
     }
@@ -106,7 +107,7 @@ export default function AffiliateManager() {
     if (!editingMaterial) return;
     
     if (!editingMaterial.url) {
-      alert('Najprv musíte nahrať súbor (URL chýba!)');
+      toast.error('Najprv musíte nahrať súbor (URL chýba!)');
       return;
     }
 
@@ -115,7 +116,7 @@ export default function AffiliateManager() {
       setIsFormOpen(false);
       fetchMaterials();
     } else {
-      alert(error.message);
+      toast.error(error.message);
     }
   }
 
@@ -125,20 +126,20 @@ export default function AffiliateManager() {
     <div className="py-6 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-serif text-white mb-2">Promo Materiály</h2>
-          <p className="text-slate-400">Správa banerov a videí pre affiliate partnerov</p>
+          <h2 className="text-2xl font-serif text-white mb-2">Promo Materials</h2>
+          <p className="text-slate-400">Management of banners and videos for affiliate partners</p>
         </div>
         <button
           onClick={handleNew}
           className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-3 rounded-xl font-bold flex items-center transition-colors"
         >
-          <Plus size={20} className="mr-2" /> Pridať Materiál
+          <Plus size={20} className="mr-2" /> Add Material
         </button>
       </div>
 
       {isFormOpen && editingMaterial && (
         <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 md:p-8 mb-10 relative">
-          <h2 className="text-xl text-white font-bold mb-6">Pridať nový materiál</h2>
+          <h2 className="text-xl text-white font-bold mb-6">Add new material</h2>
           <form onSubmit={saveMaterial} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
@@ -154,7 +155,7 @@ export default function AffiliateManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-400 mb-2">Typ záznamu</label>
+                  <label className="block text-sm text-slate-400 mb-2">Record type</label>
                   <select value={editingMaterial.type} onChange={e => setEditingMaterial({...editingMaterial, type: e.target.value as 'Banner'|'Video'})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
                     <option value="Banner">Banner</option>
                     <option value="Video">Video</option>
@@ -166,17 +167,17 @@ export default function AffiliateManager() {
                 <input type="text" value={editingMaterial.resolution || ''} onChange={e => setEditingMaterial({...editingMaterial, resolution: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Napr. 1080x1080 or 16:9" />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Súbor na nahratie</label>
+                <label className="block text-sm text-slate-400 mb-2">File to upload</label>
                 <div className={`border-2 border-dashed rounded-lg p-4 text-center ${editingMaterial.url ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-950'}`}>
                   {editingMaterial.url ? (
                     <div className="text-green-400 flex items-center justify-center">
                       <ImageIcon className="mr-2" size={20} />
-                      Súbor pridaný
+                      File added
                     </div>
                   ) : (
                     <label className="cursor-pointer flex flex-col items-center justify-center text-slate-400 hover:text-white transition-colors">
                       <UploadCloud size={32} className="mb-2" />
-                      {isUploading ? <span>Nahrávam...</span> : <span>Kliknite pre nahratie {editingMaterial.type}</span>}
+                      {isUploading ? <span>Nahrávam...</span> : <span>Click to upload {editingMaterial.type}</span>}
                       <input type="file" className="hidden" accept={editingMaterial.type === 'Banner' ? 'image/*' : 'video/*'} onChange={handleFileUpload} disabled={isUploading} />
                     </label>
                   )}

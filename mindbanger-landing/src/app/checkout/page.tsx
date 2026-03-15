@@ -68,7 +68,7 @@ function CheckoutContent() {
       // 1. Create or log in the user quickly
       let userId: string | undefined;
       
-      // Získame ref ak existuje v prehliadači
+      // Get ref if exists in browser
       const referredBy = typeof window !== 'undefined' ? localStorage.getItem('mindbanger_ref') : null;
       
       let localTimezone = 'UTC';
@@ -90,7 +90,7 @@ function CheckoutContent() {
       });
 
       if (signUpError) {
-        // Občas môže byť user už registrovaný, skúsime ho prihlásiť
+        // Sometimes the user is already registered, try to log them in
         if (signUpError.message.includes('already registered') || signUpError.status === 400) {
            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
              email,
@@ -121,7 +121,7 @@ function CheckoutContent() {
       if (stripeError) throw new Error(stripeError);
       if (!url) throw new Error("Could not redirect to payment gateway.");
 
-      // 3. Odkrokuj preč na Stripe
+      // 3. Redirect to Stripe
       window.location.href = url;
 
     } catch (error: any) {

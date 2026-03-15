@@ -1,4 +1,5 @@
 "use client";
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Edit2, Trash2, Radio, CheckCircle2, Circle, Calendar } from "lucide-react";
@@ -75,7 +76,7 @@ export default function ResetsManager() {
         setIsFormOpen(false);
         fetchResets();
       } else {
-        alert(error.message);
+        toast.error(error.message);
       }
     } else {
       // Insert
@@ -84,7 +85,7 @@ export default function ResetsManager() {
         setIsFormOpen(false);
         fetchResets();
       } else {
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }
@@ -94,7 +95,7 @@ export default function ResetsManager() {
     if (!file || !editingReset) return;
 
     if (!file.name.toLowerCase().endsWith('.mp3')) {
-      alert('Prosím, nahrajte iba .mp3 súbory.');
+      toast.error('Prosím, nahrajte iba .mp3 súbory.');
       return;
     }
 
@@ -134,10 +135,10 @@ export default function ResetsManager() {
 
       // 3. Update state with public URL
       setEditingReset({ ...editingReset, audio_url: publicUrl });
-      alert('Súbor bol úspešne nahratý!');
+      toast.success('Súbor bol úspešne nahratý!');
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Nastala chyba pri nahrávaní súboru.');
+      toast.error(error.message || 'Nastala chyba pri nahrávaní súboru.');
     } finally {
       setIsUploading(false);
     }

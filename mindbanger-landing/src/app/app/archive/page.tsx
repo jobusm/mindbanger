@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
 import { getDictionary } from '@/lib/i18n';
 
-export const revalidate = 0; // Vždy dynamické kvôli prepočtu dní a časového zámku
+export const revalidate = 0; // Always dynamic due to day calculation and temporal content lock
 
 type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -16,7 +16,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
 
-  // Zistiť profil používateľa (jazyk + dátum registrácie pre časový zámok)
+  // Get user profile (language + registration date for temporal lock)
   const { data: profile } = await supabase
     .from('profiles')
     .select('preferred_language, created_at')
@@ -27,7 +27,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   const dict = getDictionary(userLang);
   const t = dict.archive;
   
-  // Získať dátum, od ktorého má používateľ prístup (Temporal Content Lock)
+  // Get date from which user has access (Temporal Content Lock)
   // Ak existuje predplatné s earlier date, dalo by sa zobrať to, ale pre jednoduchosť berieme vytvorenie profilu.
   const accessStartDate = new Date(profile?.created_at || Date.now());
   const formattedLockDate = accessStartDate.toISOString().split('T')[0];

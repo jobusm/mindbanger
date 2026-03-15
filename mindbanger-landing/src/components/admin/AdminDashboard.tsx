@@ -72,7 +72,7 @@ export default function MfaLock() {
       }
     } catch (e: any) {
       console.error(e);
-      setError("Chyba pri overovaní MFA: " + e.message);
+      setError("Error verifying MFA: " + e.message);
     }
     
     setLoading(false);
@@ -99,7 +99,7 @@ export default function MfaLock() {
       // Ak úspešne, re-loadneme session aby malo AAL2
       setMfaStatus('verified');
     } catch (e: any) {
-      setError("Neplatný kód. Skúste to znova.");
+      setError("Invalid code. Skúste to znova.");
     }
     setLoading(false);
   }

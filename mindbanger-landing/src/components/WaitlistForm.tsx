@@ -41,9 +41,9 @@ export default function WaitlistForm() {
     return (
       <div className="flex flex-col items-center justify-center p-6 bg-green-500/10 border border-green-500/20 rounded-2xl animate-in zoom-in-95 duration-300">
         <CheckCircle className="text-green-400 w-10 h-10 mb-3" />
-        <h3 className="text-green-100 font-bold text-lg mb-1">Ste na zozname!</h3>
+        <h3 className="text-green-100 font-bold text-lg mb-1">You are on the list!</h3>
         <p className="text-green-200/70 text-sm text-center">
-          Dáme vám vedieť hneď, ako spustíme ďalšiu vlnu.
+          We will let you know as soon as the next wave opens.
         </p>
       </div>
     );
@@ -55,7 +55,7 @@ export default function WaitlistForm() {
         <input
           type="email"
           required
-          placeholder="Tvoja e-mailová adresa"
+          placeholder="Your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={status === 'loading'}
@@ -70,7 +70,7 @@ export default function WaitlistForm() {
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
             <>
-              Pridať sa <ArrowRight className="w-4 h-4 ml-1" />
+              Join <ArrowRight className="w-4 h-4 ml-1" />
             </>
           )}
         </button>
@@ -78,7 +78,7 @@ export default function WaitlistForm() {
       {status === 'error' && (
         <p className="text-red-400 text-sm text-center md:text-left pl-4">{errorMsg}</p>
       )}
-      <p className="text-xs text-slate-500 text-center md:text-left pl-4">Zatiaľ prijímame iba obmedzený počet členov.</p>
+      <p className="text-xs text-slate-500 text-center md:text-left pl-4">We are currently accepting a limited number of members.</p>
     </form>
   );
 }

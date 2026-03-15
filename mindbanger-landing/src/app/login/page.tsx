@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
   useEffect(() => {
-    // Vynútime aby si Supabase okamžite prečítal session ak náhodou existuje
+    // Force Supabase to immediately read the session if it exists
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         window.location.href = '/app/today';
@@ -49,13 +49,13 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-         throw new Error(data.error || 'Server nedokázal odoslať email s kódom.');
+         throw new Error(data.error || 'Failed to send the email code.');
       }
 
       setStep('otp');
-      setMessage({ type: 'success', text: '6-miestny kód bol odoslaný na tvoj email.' });
+      setMessage({ type: 'success', text: 'A 6-digit code has been sent to your email.' });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Nepodarilo sa odoslať kód.' });
+      setMessage({ type: 'error', text: error.message || 'Failed to send code.' });
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export default function LoginPage() {
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otpCode.length !== 6) {
-      setMessage({ type: 'error', text: 'Kód musí mať presne 6 číslic.' });
+      setMessage({ type: 'error', text: 'Code must be exactly 6 digits.' });
       return;
     }
 
@@ -75,14 +75,14 @@ export default function LoginPage() {
       const { data, error } = await supabase.auth.verifyOtp({
         email,
         token: otpCode,
-        type: 'magiclink' // alebo 'email', obe fungujú pre email_otp z property action link
+        type: 'magiclink' // or email
       });
 
       if (error) throw error;
       
       // onAuthStateChange presmeruje na /app/today
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Nesprávny alebo expirovaný kód.' });
+      setMessage({ type: 'error', text: error.message || 'Incorrect or expired code.' });
       setLoading(false);
     }
   };
@@ -98,7 +98,7 @@ export default function LoginPage() {
             Mindbanger Daily
           </Link>
           <p className="text-slate-400 text-sm">
-            {step === 'email' ? 'Prihlásenie pomocou emailu' : 'Zadaj bezpečnostný kód'}
+            {step === 'email' ? 'Email login' : 'Enter security code'}
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <button type="submit" disabled={loading} className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed">
-                {loading ? <Loader2 size={20} className="animate-spin" /> : <><Sparkles size={18} /> Získať prístupový kód</>}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : <><Sparkles size={18} /> Get access code</>}
               </button>
             </form>
           ) : (
@@ -131,20 +131,20 @@ export default function LoginPage() {
               )}
               <div className="space-y-4">
                 <p className="text-sm text-slate-400 text-center mb-4">
-                  Kód sme odoslali na <strong className="text-white">{email}</strong>
+                  We sent the code to <strong className="text-white">{email}</strong>
                 </p>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-amber-400 transition-colors">
                     <KeyRound size={18} />
                   </div>
-                  <input type="text" placeholder="Zadaj 6-miestny kód" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} required maxLength={6} className="w-full pl-10 pr-4 py-3 bg-slate-950/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all text-center tracking-widest text-lg font-mono" />
+                  <input type="text" placeholder="Enter 6-digit code" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} required maxLength={6} className="w-full pl-10 pr-4 py-3 bg-slate-950/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all text-center tracking-widest text-lg font-mono" />
                 </div>
               </div>
               <button type="submit" disabled={loading} className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed">
-                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Overiť kód a vstúpiť'}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Verify code and enter'}
               </button>
               <div className="pt-2 text-center">
-                 <button type="button" onClick={() => setStep('email')} className="text-xs text-slate-500 hover:text-white transition-colors">Zadať iný email</button>
+                 <button type="button" onClick={() => setStep('email')} className="text-xs text-slate-500 hover:text-white transition-colors">Enter a different email</button>
               </div>
             </form>
           )}

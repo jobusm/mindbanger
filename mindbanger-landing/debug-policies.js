@@ -1,0 +1,1 @@
+require('dotenv').config({path:'.env.local'}); const {Client}=require('pg'); const c=new Client({connectionString: process.env.DATABASE_URL}); c.connect().then(()=>c.query('SELECT tablename, policyname, cmd FROM pg_policies WHERE schemaname = \'public\'')).then(r=>{console.log(r.rows); c.end()});

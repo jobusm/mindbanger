@@ -158,9 +158,9 @@ export default async function AffiliateDashboardPage() {
       {/* Promo Library */}
       <div className="pt-8 space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-white">Promo knižnica</h2>
+          <h2 className="text-2xl font-bold text-white">Promo Library</h2>
           <p className="text-slate-400">
-            Stiahnite si pripravené materiály pre vaše kampane.
+            Download prepared materials for your campaigns.
           </p>
         </div>
 
@@ -178,7 +178,7 @@ export default async function AffiliateDashboardPage() {
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 bg-slate-800/50">
                       <Play className="mb-2 w-12 h-12 text-white/20 group-hover:text-amber-500/50 transition-colors" />
-                      <span className="text-xs font-medium uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full border border-white/5">Video Vizuál</span>
+                      <span className="text-xs font-medium uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full border border-white/5">Video Visual</span>
                     </div>
                   )}
                   <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-white/80 border border-white/10">
@@ -203,7 +203,7 @@ export default async function AffiliateDashboardPage() {
                     className="flex items-center justify-center space-x-2 w-full bg-white text-black hover:bg-slate-200 py-2 rounded-lg font-medium text-sm transition-colors"
                   >
                     <Download size={16} />
-                    <span>Stiahnuť</span>
+                    <span>Download</span>
                   </a>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default async function AffiliateDashboardPage() {
           </div>
         ) : (
           <div className="text-center py-12 bg-slate-900/40 border border-white/5 rounded-xl text-slate-500">
-            Zatiaľ nie sú k dispozícii žiadne promo materiály.
+            No promo materials are available yet.
           </div>
         )}
       </div>

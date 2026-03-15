@@ -65,7 +65,7 @@ export default function HealthCheckWidget() {
     return (
       <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex items-center mb-6">
         <Loader2 className="w-5 h-5 text-slate-400 mr-3 animate-spin" />
-        <span className="text-slate-400">Beží kontrola systémov...</span>
+        <span className="text-slate-400">Checking systems...</span>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function HealthCheckWidget() {
     return (
       <div className="bg-red-900/20 border border-red-500/20 rounded-2xl p-4 flex items-center mb-6 text-red-400">
         <AlertCircle className="w-5 h-5 mr-3 shrink-0" />
-        <span>Chyba kontroly: {error}</span>
+        <span>Check error: {error}</span>
       </div>
     );
   }
@@ -93,12 +93,12 @@ export default function HealthCheckWidget() {
       
       <div>
         <h3 className={"font-medium " + (isHealthy ? "text-emerald-400" : "text-red-400")}>
-          {isHealthy ? 'Status Služby: Všetko OK' : 'Kritické Varovanie: Chýbajúci Obsah'}
+          {isHealthy ? 'Service Status: All OK' : 'Critical Warning: Missing Content'}
         </h3>
         <p className="text-sm text-slate-400 mt-1">
           {isHealthy 
-            ? 'Obsah na nasledujúcich 7 dní je kompletne pripravený v databáze. Emaily odídu podľa plánu.'
-            : ("Chýba denný obsah pre nasledujúce dni (počet dní od dnes): " + missingDays.join(", ") + ". Okamžite doplňte signály, inak platiaci užívatelia nedostanú svoj denný email!")}
+            ? 'Content for the next 7 days is fully prepared in the database. Emails will go out as scheduled.'
+            : ("Missing daily content for the following days (number of days from today): " + missingDays.join(", ") + ". Please add signals immediately, otherwise paying users will not receive their daily email!")}
         </p>
       </div>
       

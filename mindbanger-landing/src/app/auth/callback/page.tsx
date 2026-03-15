@@ -17,7 +17,7 @@ export default function AuthCallbackPage() {
 
     // Detencia chyboveho stavu v URL (napr. error=Invalid_Token)
     if (window.location.search.includes('error=')) {
-      setErrorMsg('Tento prihlasovací odkaz je už neplatný alebo expiroval. Prosím, vyžiadajte si nový.')
+      setErrorMsg('This login link is no longer valid or has expired. Please request a new one.')
       return
     }
 
@@ -45,7 +45,7 @@ export default function AuthCallbackPage() {
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
              </svg>
           </div>
-          <h2 className="text-xl text-slate-100 font-serif mb-2">Chyba prihlásenia</h2>
+          <h2 className="text-xl text-slate-100 font-serif mb-2">Login Error</h2>
           <p className="text-slate-400 mb-6 max-w-sm mx-auto">{errorMsg}</p>
           <button 
             onClick={() => router.replace('/login')}

@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
     });
 
     if (signInError) {
-      setError("Neplatné prihlasovacie údaje.");
+      setError("Invalid credentials.");
       setLoading(false);
       return;
     }
@@ -43,13 +43,13 @@ export default function AdminLoginPage() {
             <h1 className="text-3xl font-serif font-bold text-white mb-2">
               <span className="text-amber-500">Mindbanger</span> Admin
             </h1>
-            <p className="text-slate-400">Vstup len pre autorizovaný personál</p>
+            <p className="text-slate-400">Authorized personnel only</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Administrátorský Email
+                Admin Email
               </label>
               <input
                 type="email"
@@ -92,14 +92,14 @@ export default function AdminLoginPage() {
                   Overovanie...
                 </>
               ) : (
-                "Vstúpiť do systému"
+                "Enter System"
               )}
             </button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-white/10 text-center">
             <p className="text-xs text-slate-500">
-              Tento portál je prísne monitorovaný.
+              This portal is strictly monitored.
             </p>
           </div>
         </div>

@@ -4,7 +4,14 @@ import Link from 'next/link';
 
 export const revalidate = 0; // Vždy dynamické kvôli prepočtu dní a časového zámku
 
-export default async function ArchivePage() {
+type PageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function ArchivePage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const currentTab = params.tab === 'products' ? 'products' : 'daily';
+
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
 
@@ -25,15 +32,27 @@ export default async function ArchivePage() {
   // Dnešný dátum pre obmedzenie do kedy zobrazovať (nepredbiehať)
   const today = new Date().toISOString().split('T')[0];
 
-  // Načítať archív s obmedzeniami
-  const { data: signals, error } = await supabase
-    .from('daily_signals')
-    .select('id, date, theme, title, signal_text')
-    .eq('language', userLang)
-    .eq('is_published', true)
-    .gte('date', formattedLockDate) // Zamknutie: len od momentu začiatku subscribu (registrácie)
-    .lte('date', today) // Neukazovať záznamy v budúcnosti
-    .order('date', { ascending: false });
+  // Načítať archív s obmedzeniami len ak sme v 'daily' tabe
+  let signals: any[] = [];
+  if (currentTab === 'daily') {
+    const { data } = await supabase
+      .from('daily_signals')
+      .select('id, date, theme, title, signal_text')
+      .eq('language', userLang)
+      .eq('is_published', true)
+      .gte('date', formattedLockDate) // Zamknutie: len od momentu začiatku subscribu (registrácie)
+      .lte('date', today) // Neukazovať záznamy v budúcnosti
+      .order('date', { ascending: false });
+    signals = data || [];
+  }
+
+  // Hardcoded produkty pre Fázu 8 / 9
+  const resetProducts = [
+    { id: '1', title: 'Calm Reset', description: 'Rýchle upokojenie nervového systému pomocou riadenej frekvencie.', type: 'Audio úprava', duration: '5 minút', icon: '🌊', color: 'from-blue-500/20 to-cyan-500/5' },
+    { id: '2', title: 'Focus Reset', description: 'Zvýšenie koncentrácie pred dôležitou prácou. Gamma vlny s podmazom.', type: 'Neuro-akustika', duration: '12 minút', icon: '⚡', color: 'from-amber-500/20 to-orange-500/5' },
+    { id: '3', title: 'Sleep Reset', description: 'Príprava mysle na hlboký spánok. Delta vlny pre regeneráciu.', type: 'Spánkový program', duration: '20 minút', icon: '🌙', color: 'from-indigo-500/20 to-purple-500/5' },
+    { id: '4', title: 'Overthinking Reset', description: 'Prerušenie nekonečného kruhu myšlienok. Praktické uzemnenie.', type: 'Vedený rituál', duration: '8 minút', icon: '🧠', color: 'from-emerald-500/20 to-teal-500/5' },
+  ];
 
   // Naformátovať dátum pre zobrazenie UI hlavičky
   const formatter = new Intl.DateTimeFormat(userLang, {
@@ -46,19 +65,30 @@ export default async function ArchivePage() {
     <div className="py-2 md:py-6 space-y-8">
       
       {/* Header */}
-      <header className="space-y-4 mb-10">
+      <header className="space-y-6 mb-10">
          <h1 className="text-3xl md:text-4xl font-serif text-white">
            The Vault
          </h1>
          <p className="text-slate-400 max-w-lg leading-relaxed">
            Vývoj mentálnej jasnosti nie je lineárny. Prístup máte zabezpečený ku všetkým resetom od prvého dňa vášho predplatného.
          </p>
+         
+         {/* Custom Tabs */}
+         <div className="flex bg-slate-900/40 p-1.5 rounded-full w-fit border border-white/5 shadow-xl backdrop-blur-md">
+           <Link href="?tab=daily" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'daily' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+             Denný Archív
+           </Link>
+           <Link href="?tab=products" className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${currentTab === 'products' ? 'bg-amber-500/10 text-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+             Samostatné Produkty
+           </Link>
+         </div>
       </header>
 
-      {/* Grid of Past Signals */}
-      {signals && signals.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {signals.map((signal) => (
+      {currentTab === 'daily' ? (
+        /* Grid of Past Signals */
+        signals && signals.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {signals.map((signal) => (
             <Link href={`/app/archive/${signal.id}`} key={signal.id} className="group block">
               <div className="bg-slate-900/60 border border-white/5 rounded-3xl p-6 h-full hover:bg-slate-800/80 transition-all duration-300 hover:border-amber-500/30 hover:shadow-[0_0_20px_rgba(234,179,8,0.05)] relative overflow-hidden flex flex-col">
                 
@@ -98,6 +128,45 @@ export default async function ArchivePage() {
           <p className="text-slate-400 max-w-sm text-sm">
             Temporal Content Lock aktívny. Vaša cesta a archív začínajú plynúť dnešným dňom. Každý ďalší deň tu nájdete predošlé rituály, ktoré môžete kedykoľvek zopakovať.
           </p>
+        </div>
+      )) : (
+        /* Products / Quick Resets Tab */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10">
+          {resetProducts.map((product) => (
+            <div key={product.id} className="group relative block rounded-[32px] overflow-hidden bg-slate-900 border border-white/5 hover:border-amber-500/20 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(234,179,8,0.06)] cursor-pointer">
+              {/* Animated Gradient Background */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${product.color} opacity-30 group-hover:opacity-100 transition-opacity duration-700`} />
+              
+              {/* Noise overlay */}
+              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
+
+              <div className="relative p-8 md:p-10 h-full flex flex-col z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                    {product.icon}
+                  </div>
+                  <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">{product.duration}</span>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-serif text-white mb-3 group-hover:text-amber-50 transition-colors">
+                  {product.title}
+                </h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow">
+                  {product.description}
+                </p>
+
+                <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium tracking-wide uppercase">{product.type}</span>
+                  <div className="flex items-center text-amber-500 text-sm font-semibold opacity-80 group-hover:opacity-100 transition-opacity">
+                    Začať reset <span className="ml-2 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -21,6 +21,7 @@ export default function SignalsManager() {
   const [loading, setLoading] = useState(true);
   const [editingSignal, setEditingSignal] = useState<DailySignal | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchSignals();
@@ -98,6 +99,60 @@ export default function SignalsManager() {
     }
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !editingSignal) return;
+
+    if (!file.name.toLowerCase().endsWith('.mp3')) {
+      alert('Prosím, nahrajte iba .mp3 súbory.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // 1. Get presigned URL
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Nepodarilo sa získať link pre nahratie súboru');
+      }
+
+      const { uploadUrl, publicUrl } = await res.json();
+
+      // 2. Upload file to R2
+      const uploadRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type,
+        },
+        body: file,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error('Nepodarilo sa nahrať súbor na server');
+      }
+
+      // 3. Update state with public URL
+      setEditingSignal({ ...editingSignal, audio_url: publicUrl });
+      alert('Súbor bol úspešne nahratý!');
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || 'Nastala chyba pri nahrávaní súboru.');
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
   if (loading && signals.length === 0) return <div className="p-10 text-slate-400">Načítavam admin panel...</div>;
 
   return (
@@ -168,8 +223,18 @@ export default function SignalsManager() {
             
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Audio Súbor (R2 kľúč - voliteľné)</label>
-                <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="napr. 28-09-24.mp3" />
+                <label className="block text-sm text-slate-400 mb-2">Audio Súbor (.mp3 - voliteľné)</label>
+                <div className="flex flex-col space-y-2">
+                  <input 
+                    type="file" 
+                    accept=".mp3" 
+                    onChange={handleFileUpload} 
+                    disabled={isUploading}
+                    className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
+                  />
+                  {isUploading && <span className="text-amber-500 text-sm">Nahrávam...</span>}
+                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm mt-2" placeholder="URL kľúč / adresa z poľa vyššie" />
+                </div>
               </div>
               <div className="flex items-end pb-3">
                 <label className="flex items-center space-x-3 cursor-pointer">

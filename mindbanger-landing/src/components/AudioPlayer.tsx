@@ -6,9 +6,11 @@ import { Play, Pause } from 'lucide-react';
 interface AudioPlayerProps {
   src: string;
   title: string;
+  coverArt?: string;
+  author?: string;
 }
 
-export default function AudioPlayer({ src, title }: AudioPlayerProps) {
+export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger" }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -70,37 +72,74 @@ export default function AudioPlayer({ src, title }: AudioPlayerProps) {
   };
 
   return (
-    <div className="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.3)] backdrop-blur-md">
+    <div className="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden relative group">
+      {/* Decorative ambient gradient behind the player (simulating glow based on cover art vibes) */}
+      <div className="absolute top-0 right-0 -m-20 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl opacity-50 pointer-events-none group-hover:opacity-70 transition-opacity duration-700"></div>
+
       <audio ref={audioRef} src={src} preload="metadata" />
       
-      <div className="flex items-center gap-4">
-        {/* Play Button */}
-        <button 
-          onClick={togglePlay}
-          className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-slate-900 shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform"
-        >
-          {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-        </button>
+      <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 relative z-10 w-full">
+        {/* Cover Art Visual */}
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl shadow-lg flex-shrink-0 overflow-hidden group-hover:shadow-[0_0_25px_rgba(251,191,36,0.15)] transition-all duration-500">
+          {coverArt ? (
+            <img 
+              src={coverArt} 
+              alt={title || "Audio Cover"} 
+              className={`w-full h-full object-cover transition-transform duration-1000 ${isPlaying ? 'scale-105' : 'scale-100'}`} 
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br from-amber-600 via-purple-700 to-slate-900 relative ${isPlaying ? 'bg-[length:200%_200%] animate-gradient-xy' : ''}`}>
+              {/* Abstract visualizer fallback */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                <div className={`w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2)_0%,transparent_60%)] ${isPlaying ? 'animate-pulse' : ''}`}></div>
+              </div>
+            </div>
+          )}
+          {/* Subtle overlay on cover art */}
+          <div className="absolute inset-0 bg-black/10 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] pointer-events-none"></div>
+        </div>
 
-        {/* Info & Progress */}
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-medium truncate mb-2">{title}</p>
+        <div className="flex-1 min-w-0 flex flex-col justify-between w-full">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-white font-bold text-lg truncate drop-shadow-md">{title}</p>
+              <p className="text-slate-400 text-sm font-medium">{author}</p>
+            </div>
+            {/* Play Button */}
+            <button 
+              onClick={togglePlay}
+              className="flex-shrink-0 w-12 h-12 bg-white/10 hover:bg-amber-500 hover:text-slate-900 text-amber-500 border border-white/5 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)]"
+            >
+              {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+            </button>
+          </div>
           
           <div className="flex items-center gap-3">
-            <span className="text-[10px] text-slate-400 font-medium w-8 text-right">
+            <span className="text-xs text-slate-400 font-medium w-8 text-right font-mono tracking-tighter">
               {formatTime(audioRef.current?.currentTime || 0)}
             </span>
             
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={progress}
-              onChange={handleSeek}
-              className="flex-1 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-amber-500 [&::-webkit-slider-thumb]:rounded-full"
-            />
+            <div className="relative flex-1 h-2 group/slider cursor-pointer">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={progress}
+                onChange={handleSeek}
+                className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+              />
+              <div className="absolute inset-0 bg-slate-800 rounded-full overflow-hidden border border-white/5">
+                <div 
+                  className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full transition-all duration-150 relative"
+                  style={{ width: `${progress}%` }}
+                >
+                  {/* Glossy highlight on progress bar */}
+                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/20 rounded-t-full"></div>
+                </div>
+              </div>
+            </div>
             
-            <span className="text-[10px] text-slate-400 font-medium w-8">
+            <span className="text-xs text-slate-400 font-medium w-8 font-mono tracking-tighter">
               {formatTime(duration)}
             </span>
           </div>

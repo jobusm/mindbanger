@@ -38,8 +38,6 @@ export default async function TodayPage() {
     .from('daily_signals')
     .select('*')
     .eq('date', today)
-    .eq('language', userLang)
-    .eq('is_published', true)
     .single();
 
   let audioSignatureUrl = '';
@@ -81,11 +79,11 @@ export default async function TodayPage() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-serif text-white mb-6 leading-tight">
-            {signal.title}
+            Today's Signal
           </h2>
           
           <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg">
-            <p>{signal.signal_text}</p>
+            <p>{signal.focus}</p>
           </div>
 
           {/* Audio Player Injection */}
@@ -93,17 +91,17 @@ export default async function TodayPage() {
             <div className="mb-10">
               <AudioPlayer 
                 src={audioSignatureUrl} 
-                title={`Daily Reset • ${signal.title}`} 
+                title={`Daily Reset • ${signal.theme}`} 
               />
             </div>
           )}
 
           {/* Focus & Affirmation Block */}
           <div className="grid md:grid-cols-2 gap-4">
-            {signal.focus_text && (
+            {signal.focus && (
               <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
                 <h3 className="text-xs text-slate-500 uppercase tracking-widest mb-2">Today's Focus</h3>
-                <p className="text-slate-200 font-medium">{signal.focus_text}</p>
+                <p className="text-slate-200 font-medium">{signal.focus}</p>
               </div>
             )}
             

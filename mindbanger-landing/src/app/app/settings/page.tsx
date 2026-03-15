@@ -66,6 +66,21 @@ export default function SettingsPage() {
     router.push('/login');
   };
 
+  const handleManageSubscription = async () => {
+    try {
+      const res = await fetch('/api/billing', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Failed to open billing portal');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error opening billing portal');
+    }
+  };
+
   if (loading) return <div className="text-white p-6">Načítavam nastavenia...</div>;
 
   return (
@@ -133,7 +148,10 @@ export default function SettingsPage() {
         <p className="text-sm text-slate-400">Tu si môžete spravovať svoju kartu, faktúry cez Stripe alebo sa odhlásiť z aplikácie.</p>
         
         <div className="flex flex-col sm:flex-row gap-4 pt-2">
-          <button className="px-6 py-2.5 rounded-lg bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition-colors border border-slate-700">
+          <button 
+            onClick={handleManageSubscription}
+            className="px-6 py-2.5 rounded-lg bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition-colors border border-slate-700"
+          >
             Spravovať Predplatné v Stripe
           </button>
           

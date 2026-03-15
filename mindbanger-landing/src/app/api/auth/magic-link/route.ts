@@ -10,32 +10,23 @@ export async function POST(req: Request) {
 
     const supabase = await createAdminClient();
 
-    
-    const prodUrl = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
-    const anyUrl = process.env.VERCEL_URL;
-    const baseDomain = prodUrl ? prodUrl : anyUrl;
-    
-    const siteUrl = baseDomain ? `https://${baseDomain}` : 'https://www.mindbanger.com';
-    const redirectUrl = `${siteUrl}/app/today`;
-
-    // 1. Vygeneruje prihlasovací token ale NEPOŠLE HO! (chceme plnú kontrolu my)
+    // Vygeneruje prihlasovaci token (OTP) ale NEPOSLE HO (posielame my cez Brevo)
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
-      options: {
-        redirectTo: `${siteUrl}/auth/callback?next=/app/today`,
-      }
     });
 
     if (linkError) {
-      console.error("Supabase Link Error:", linkError);
+      console.error('Supabase Link Error:', linkError);
       throw new Error(linkError.message);
     }
 
-    // Toto je náš vygenerovaný url odkaz s tokenom, ktorý prihlási používateľa
-    const magicLink = linkData.properties.action_link;
+    // Tu vytahujeme len 6-miestny OTP kod namiesto klasickeho generovaneho url
+    const otpCode = linkData.properties?.email_otp;
+    if (!otpCode) {
+      throw new Error('Nepodarilo sa vygenerovat OTP kod zo Supabase.');
+    }
 
-    // 2. Náš vlastný krásny HTML email
     const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -45,53 +36,41 @@ export async function POST(req: Request) {
         .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
         .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 40px; text-align: center; }
         .title { font-family: Georgia, serif; font-size: 24px; margin-bottom: 16px; color: #f8fafc; }
-        .text { color: #94a3b8; line-height: 1.6; margin-bottom: 32px; }
-        .button { display: inline-block; background: linear-gradient(to right, #fde68a, #f59e0b, #d97706); color: #0f172a; font-weight: bold; text-decoration: none; padding: 16px 32px; border-radius: 9999px; }
+        .text { color: #94a3b8; line-height: 1.6; margin-bottom: 32px; font-size: 16px; }
+        .otp-box { background: #0f172a; border: 1px solid #475569; padding: 24px; border-radius: 12px; margin-bottom: 32px; }
+        .otp-code { color: #fde68a; font-family: monospace; font-size: 40px; font-weight: bold; letter-spacing: 8px; justify-content: center; display: flex;}
         .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 12px; }
       </style>
     </head>
-    <body>
+    <body style="background-color:#0f172a;">
       <div class="container">
         <div style="text-align: center; margin-bottom: 40px;">
           <span style="font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc;">Mindbanger Daily</span>
         </div>
-        
-        <div class="card">
-          <h1 class="title">Secure Magic Link</h1>
-          <p class="text">
-            Click the button below to securely sign in to your Mindbanger Daily account. <br/><br/>
-            Wait for the page to load, no password is required.
-          </p>
-          
-          <a href="${magicLink}" clicktracking="off" class="button">
-            Sign in to The Vault
-          </a>
 
-          <p style="margin-top: 32px; color: #64748b; font-size: 11px;">
-            If the button doesn't work, copy and paste this link into your browser:<br/><br/>
-            <span style="color: #475569; word-break: break-all;">${magicLink}</span>
+        <div class="card">
+          <h1 class="title">Tvoj pristupovy kod</h1>
+          <p class="text">
+            Zadaj tento bezpecnostny 6-miestny kod pre vstup do aplikacie.
           </p>
-          
-          <p style="margin-top: 32px; color: #64748b; font-size: 11px;">
-            This link expires soon. If you didn't request this, you can safely ignore this email.
+
+          <div class="otp-box">
+            <span class="otp-code">${otpCode}</span>
+          </div>
+
+          <p style="color: #64748b; font-size: 12px;">
+            Tento kod vyprsi o par minut. Ak si o prihlasenie neziadal, mozes tento email ignorovat.
           </p>
-        </div>
-        
-        <div class="footer">
-          Mindbanger Daily <br/>
-          The way your mind is set begins to shape your reality.
         </div>
       </div>
     </body>
     </html>
     `;
 
-    // 3. Pošleme priamo cez BREVO API pod našou 100% kontrolou
     const brevoApiKey = process.env.BREVO_API_KEY;
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hello@mindbanger.com'; // Nastav si defaultny odosielaci mail
-
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hello@mindbanger.com'; 
     if (!brevoApiKey) {
-        throw new Error('BREVO_API_KEY is not configured in .env.local');
+        throw new Error('BREVO_API_KEY is not configured');
     }
 
     const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -104,18 +83,16 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         sender: { name: 'Mindbanger Daily', email: senderEmail },
         to: [{ email: email }],
-        subject: 'Vstup do Mindbanger Vault ✨',
+        subject: 'Vstupny kod - Mindbanger Vault',
         htmlContent: htmlContent
       })
     });
 
     if (!brevoResponse.ok) {
-      const respText = await brevoResponse.text();
-      console.error("Brevo API Error:", respText);
-      throw new Error('Nepodarilo sa odoslať email cez Brevo.');
+      throw new Error('Nepodarilo sa odoslat email cez Brevo.');
     }
 
-    return NextResponse.json({ success: true, message: 'Magic link sent via Brevo!' });
+    return NextResponse.json({ success: true, message: 'OTP token sent via Brevo!' });
   } catch (err: any) {
     console.error('Magic Link Route Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

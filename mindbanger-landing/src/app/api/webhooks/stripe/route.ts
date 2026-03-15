@@ -90,6 +90,11 @@ export async function POST(req: Request) {
             customer_email: session.customer_details?.email || ''
           });
 
+          // PREPOJENIE STRIPE CUSTOMERA S PROFILOM (Customer Portal Fix)
+          if (customerId) {
+            await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', userId);
+          }
+
           // Send welcome email via Brevo
           const email = session.customer_details?.email;
           if (email && process.env.BREVO_API_KEY) {

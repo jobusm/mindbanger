@@ -24,18 +24,37 @@ function CheckoutContent() {
   const refCode = searchParams.get('refCode');
   const inviteCode = searchParams.get('invite');
 
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
   useEffect(() => {
-    // SECURITY: Lock checkout behind a beta invite token while waitlist is running
-    if (inviteCode !== 'beta2026') {
-      router.push('/');
+    async function checkAccess() {
+      // 1. Beta tester with invite code
+      if (inviteCode === 'beta2026') {
+        setIsAuthorized(true);
+        setCheckingAuth(false);
+        return;
+      }
+      
+      // 2. Returning users (already have session but needs renew)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsAuthorized(true);
+        if (session.user.email) setEmail(session.user.email);
+      } else {
+        router.push('/'); // Dead-end protection
+      }
+      setCheckingAuth(false);
     }
+    
+    checkAccess();
   }, [inviteCode, router]);
 
-  if (inviteCode !== 'beta2026') {
+  if (checkingAuth || !isAuthorized) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
         <Loader2 className="w-8 h-8 animate-spin text-amber-500 mb-4" />
-        <p>Redirecting to waitlist...</p>
+        <p>Checking access or Redirecting to waitlist...</p>
       </div>
     );
   }

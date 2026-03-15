@@ -12,11 +12,8 @@ async function run() {
   const { data, error } = await supabase.auth.admin.generateLink({
     type: 'magiclink',
     email: 'test@example.com',
-    options: {
-      redirectTo: 'http://localhost:3000/auth/callback',
-    }
   });
-  console.log('Action Link:', data.properties.action_link);
+  console.log('Action Link Info:', data);
 }
 run();
 

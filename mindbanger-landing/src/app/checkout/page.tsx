@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight, Loader2, Check } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const features = [
   'Daily mind signal',
@@ -14,12 +15,16 @@ const features = [
   'Bonus resets',
 ];
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  
+  const searchParams = useSearchParams();
+  const refMode = searchParams.get('refMode');
+  const refCode = searchParams.get('refCode');
 
   const handleCheckoutFlow = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +86,7 @@ export default function CheckoutPage() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, userId }),
+        body: JSON.stringify({ email, userId, refMode, refCode }),
       });
 
       const { url, error: stripeError } = await res.json();
@@ -121,7 +126,7 @@ export default function CheckoutPage() {
           <div className="bg-slate-900/80 border border-amber-500/30 rounded-3xl p-8 shadow-[0_0_30px_rgba(234,179,8,0.05)] relative overflow-hidden">
             <h3 className="text-lg font-medium text-amber-500 uppercase tracking-widest mb-2">Mindbanger Daily</h3>
             <div className="text-5xl font-bold text-white mb-6">
-              €7.90<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">/ month</span>
+              €7.99<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">/ month</span>
             </div>
             <div className="space-y-4 text-left">
               {features.map((feat, idx) => (
@@ -217,5 +222,15 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+import { Suspense } from 'react';
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader2 className="animate-spin text-amber-500" /></div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

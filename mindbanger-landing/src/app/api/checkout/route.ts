@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, userId } = body;
+    const { email, userId, refMode, refCode } = body;
 
     // Optional: Check if Stripe customer already exists by email 
     // Here we just let Stripe create a new customer and link to userId via metadata
@@ -32,10 +32,14 @@ export async function POST(req: Request) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
       metadata: {
         userId: userId, // Viazanie platby s účtom používateľa
+        ...(refMode && { refMode }),
+        ...(refCode && { refCode }),
       },
       subscription_data: {
         metadata: {
           userId: userId,
+          ...(refMode && { refMode }),
+          ...(refCode && { refCode }),
         }
       }
     });

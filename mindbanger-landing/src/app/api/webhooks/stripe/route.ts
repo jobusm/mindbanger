@@ -107,8 +107,22 @@ export async function POST(req: Request) {
                 userLang = profile.preferred_language;
               }
               const template = welcomeEmailTemplates[userLang as keyof typeof welcomeEmailTemplates] || welcomeEmailTemplates.en;
-              const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, template.url);
+                
+                // Vygenerujeme Magic Link tak, ze obideme klasicke posielanie
+                let magicUrl = template.url;
+                try {
+                  const { data: linkData } = await supabase.auth.admin.generateLink({
+                    type: 'magiclink',
+                    email: email
+                  });
+                  if (linkData?.properties?.action_link) {
+                    magicUrl = linkData.properties.action_link + "&redirect_to=https://www.mindbanger.com/auth/callback";
+                  }
+                } catch (e) {
+                  console.error('Failed to generate magic link, falling back to login url', e);
+                }
 
+                const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, magicUrl);
               const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {

@@ -12,15 +12,19 @@ import FAQSection from '@/components/FAQSection';
 import FinalCTASection from '@/components/FinalCTASection';
 import Footer from '@/components/Footer';
 import { LanguageProvider } from '@/components/LanguageProvider';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import fs from 'fs';
 import path from 'path';
 
-export default async function Home() {
+export default async function Home(props: any) {
+  const searchParams = await (props?.searchParams || Promise.resolve({}));
+  const headersList = await headers();
+  const country = typeof searchParams.country === "string" ? searchParams.country : (headersList.get("x-vercel-ip-country") || "SK");
+
   const cookieStore = await cookies();
   const lang = cookieStore.get('user-lang')?.value || 'en';
   
-  let dict = {};
+  let dict: any = {};
   try {
     const dictPath = path.join(process.cwd(), 'src/dictionaries', lang + '.json');
     dict = JSON.parse(fs.readFileSync(dictPath, 'utf8'));
@@ -29,6 +33,20 @@ export default async function Home() {
       const fallbackPath = path.join(process.cwd(), 'src/dictionaries', 'en.json');
       dict = JSON.parse(fs.readFileSync(fallbackPath, 'utf8'));
     } catch(err) {}
+  }
+
+  // Dynamic Pricing Logic based on Geo-Location
+  let dynamicPrice = '7,99€'; // Default to EUR
+  
+  if (country === 'GB' || country === 'UK') {
+    dynamicPrice = '£7.99';
+  } else if (!['AT', 'BE', 'HR', 'BG', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'].includes(country)) {
+    // If not in UK and not in EU... make it USD
+    dynamicPrice = '$8.99';
+  }
+
+  if (dict?.landing?.pricing) {
+    dict.landing.pricing.price = dynamicPrice;
   }
 
   return (

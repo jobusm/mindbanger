@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             user_id: userId,
             status: subscription.status,
             price_id: subscription.items.data[0].price.id,
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            current_period_end: new Date(((subscription as any).current_period_end || (subscription.items.data[0] as any).current_period_end) * 1000).toISOString(),
             country: session.customer_details?.address?.country || 'Unknown',
             amount_total: session.amount_total ? session.amount_total / 100 : 0,
             currency: session.currency || 'eur',
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
             user_id: userId,
             status: subscription.status,
             price_id: subscription.items.data[0].price.id,
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            current_period_end: new Date(((subscription as any).current_period_end || (subscription.items.data[0] as any).current_period_end) * 1000).toISOString(),
           });
 
           if (subscription.status === 'canceled' || subscription.status === 'unpaid') {

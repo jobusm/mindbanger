@@ -9,7 +9,7 @@ type PromoMaterial = {
   title: string;
   type: 'Banner' | 'Video';
   url: string;
-  language: 'EN' | 'SK';
+  language: 'EN' | 'SK' | 'CS';
   resolution: string | null;
   created_at: string;
 };
@@ -149,8 +149,9 @@ export default function AffiliateManager() {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm text-slate-400 mb-2">Jazyk</label>
-                  <select value={editingMaterial.language} onChange={e => setEditingMaterial({...editingMaterial, language: e.target.value as 'EN'|'SK'})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
+                  <select value={editingMaterial.language} onChange={e => setEditingMaterial({...editingMaterial, language: e.target.value as 'EN'|'SK'|'CS'})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
                     <option value="SK">Slovak (SK)</option>
+                    <option value="CS">Czech (CS)</option>
                     <option value="EN">English (EN)</option>
                   </select>
                 </div>

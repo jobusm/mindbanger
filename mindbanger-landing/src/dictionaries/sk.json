@@ -108,15 +108,15 @@
       "titlePart1": "Nastavte svoju myseľ na ",
       "titleHighlight": "úspech",
       "titlePart2": " každý deň",
-      "subtitle": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.<br className=\"hidden md:block\" />Vytvorené životným koučom a hypnoterapeutom.",
+      "subtitle": "Denné nastavenie mysle pre intuíciu, pokoj a sústredenie.<br className=\"hidden md:block\" />Vytvorené životným koučom a hypnoterapeutom.",
       "quote": "Spôsob, akým je vaša myseľ nastavená, začína formovať vašu realitu.",
       "widgetTitle": "Dnešný Signál",
-      "widgetBadge": "Jasnosť",
+      "widgetBadge": "Intuícia",
       "widgetHeadline": "Zjednodušte si dnes jednu vec",
-      "widgetQuote": "„Návratom k sebe sa vraciam k jasnosti.“",
+      "widgetQuote": "„Návratom k sebe sa vraciam k intuícii.“",
       "widgetBtn": "Prehrať dnešné audio",
       "widgetFooter": "Nový signál každý deň. <br/> Silnejšie vnútorné smerovanie postupom času.",
-      "subtitleDesc": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.",
+      "subtitleDesc": "Denné nastavenie mysle pre intuíciu, pokoj a sústredenie.",
       "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom."
     },
     "dailyRitual": {
@@ -157,7 +157,7 @@
         },
         {
           "title": "Zlepšujte svoju myseľ denne",
-          "desc": "Postupom času si vytvoríte viac jasnosti, emocionálnej stability a smerovania."
+          "desc": "Postupom času si vytvoríte viac intuície, emocionálnej stability a smerovania."
         }
       ]
     },
@@ -165,7 +165,7 @@
       "title": "Vyberte si slovo, ktoré vás ako prvé pritiahne",
       "options": [
         {
-          "keyword": "Jasnosť",
+          "keyword": "Intuícia",
           "desc": "Potrebujete menej hluku a jeden skutočný smer."
         },
         {
@@ -183,7 +183,7 @@
     "benefits": {
       "title": "Mindbanger Daily je pre vás, ak chcete…",
       "items": [
-        "Začať svoje rána s väčšou jasnosťou",
+        "Začať svoje rána s väčšou intuíciou",
         "Znížiť vnútorný hluk a nadmerné premýšľanie",
         "Cítiť sa pokojnejšie a sústredenejšie",
         "Denne posilňovať svoje nastavenie mysle",
@@ -216,7 +216,7 @@
       "badge": "O Tvorcovi",
       "role": "Životný kouč, hypnoterapeut a sprievodca mentálnym výkonom.",
       "quote1": "Mindbanger Daily bol vytvorený aby pomáhal ľuďom formovať každý svoj deň pre životnú pohodu, úspech a radosť zo života prostredníctvom ",
-      "span1": "jasnosti",
+      "span1": "intuície",
       "quote2": ", ",
       "span2": "pokoja",
       "quote3": ", ",
@@ -251,7 +251,7 @@
         },
         {
           "q": "Je toto meditačná aplikácia?",
-          "a": "Nie, ide o denný rituál mysle, ktorý je určený pre získanie jasnosti, pokoja a pozitívneho denného smerovania. Súčasťou tohoto rituálu ale je tiež aj krátka denná meditácia."
+          "a": "Nie, ide o denný rituál mysle, ktorý je určený pre získanie intuície, pokoja a pozitívneho denného smerovania. Súčasťou tohoto rituálu ale je tiež aj krátka denná meditácia."
         },
         {
           "q": "Môžem to kedykoľvek zrušiť?",
@@ -275,7 +275,7 @@
       "footer": "Pridajte sa na čakaciu listinu Mindbanger Daily"
     },
     "footer": {
-      "tagline": "Denné nastavenie mysle pre jasnosť, pokoj a sústredenie.",
+      "tagline": "Denné nastavenie mysle pre intuíciu, pokoj a sústredenie.",
       "login": "Prihlásiť",
       "join": "Pridať sa",
       "privacy": "Súkromie",

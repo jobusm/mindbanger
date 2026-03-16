@@ -1,6 +1,6 @@
 {
   "checkout": {
-    "title": "Předplať si denní mentální jasnost",
+    "title": "Předplať si denní mentální intuici",
     "subtitle": "Okamžitě si odemkni prémiové členství.",
     "productInfo": "Mindbanger Denník",
     "price": "7,99€",
@@ -108,15 +108,15 @@
       "titlePart1": "Nastavte svou mysl na ",
       "titleHighlight": "úspěch",
       "titlePart2": " každý den",
-      "subtitle": "Denní nastavení mysli pro jasnost, klid a soustředění.<br className=\"hidden md:block\" />Vytvořeno životním koučem a hypnoterapeutem.",
+      "subtitle": "Denní nastavení mysli pro intuici, klid a soustředění.<br className=\"hidden md:block\" />Vytvořeno životním koučem a hypnoterapeutem.",
       "quote": "Způsob, jakým je vaše mysl nastavena, začíná formovat vaši realitu.",
       "widgetTitle": "Dnešní Signál",
-      "widgetBadge": "Jasnost",
+      "widgetBadge": "Intuice",
       "widgetHeadline": "Zjednodušte si dnes jednu věc",
-      "widgetQuote": "„Návratem k sobě se vracím k jasnosti.“",
+      "widgetQuote": "„Návratem k sobě se vracím k intuici.“",
       "widgetBtn": "Přehrát dnešní audio",
       "widgetFooter": "Nový signál každý den. <br/> Silnější vnitřní směřování postupem času.",
-      "subtitleDesc": "Denní nastavení mysli pro jasnost, klid a soustředění.",
+      "subtitleDesc": "Denní nastavení mysli pro intuici, klid a soustředění.",
       "subtitleAuthor": "Vytvořeno životním koučem a hypnoterapeutem."
     },
     "dailyRitual": {
@@ -157,7 +157,7 @@
         },
         {
           "title": "Zlepšujte svou mysl denně",
-          "desc": "Postupem času si vytvoříte více jasnosti, emocionální stability a směřování."
+          "desc": "Postupem času si vytvoříte více intuice, emocionální stability a směřování."
         }
       ]
     },
@@ -165,7 +165,7 @@
       "title": "Vyberte si slovo, které vás jako první přitáhne",
       "options": [
         {
-          "keyword": "Jasnost",
+          "keyword": "Intuice",
           "desc": "Potřebujete méně hluku a jeden skutečný směr."
         },
         {
@@ -183,7 +183,7 @@
     "benefits": {
       "title": "Mindbanger Daily je pro vás, pokud chcete…",
       "items": [
-        "Začít svá rána s větší jasností",
+        "Začít svá rána s větší intuicí",
         "Snížit vnitřní hluk a nadměrné přemýšlení",
         "Cítit se klidněji a soustředěněji",
         "Denně posilovat své nastavení mysli",
@@ -216,7 +216,7 @@
       "badge": "O tvůrci",
       "role": "Životní kouč, hypnoterapeut a průvodce mentálním výkonem.",
       "quote1": "Mindbanger Daily byl vytvořen, aby pomáhal lidem formovat každý svůj den pro životní pohodu, úspěch a radost ze života prostřednictvím ",
-      "span1": "jasnosti",
+      "span1": "intuice",
       "quote2": ", ",
       "span2": "klidu",
       "quote3": ", ",
@@ -251,7 +251,7 @@
         },
         {
           "q": "Je toto meditační aplikace?",
-          "a": "Ne, jde o denní rituál mysli, který je určený pro získání jasnosti, klidu a pozitivního denního směřování. Součástí tohoto rituálu je ale také i krátká denní meditace."
+          "a": "Ne, jde o denní rituál mysli, který je určený pro získání intuice, klidu a pozitivního denního směřování. Součástí tohoto rituálu je ale také i krátká denní meditace."
         },
         {
           "q": "Mohu to kdykoliv zrušit?",
@@ -275,7 +275,7 @@
       "footer": "Přidejte se na čekací listinu Mindbanger Daily"
     },
     "footer": {
-      "tagline": "Denní nastavení mysli pro jasnost, klid a soustředění.",
+      "tagline": "Denní nastavení mysli pro intuici, klid a soustředění.",
       "login": "Přihlásit",
       "join": "Přidat se",
       "privacy": "Soukromí",

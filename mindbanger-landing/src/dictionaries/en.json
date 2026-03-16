@@ -119,7 +119,8 @@
       "widgetBtn": "Play Today�s Audio",
       "widgetFooter": "A new signal every day. <br/> A stronger inner direction over time.",
       "subtitleDesc": "Daily mind signals for clarity, calm & focus.",
-      "subtitleAuthor": "Created by a Life Coach & Hypnotherapist."
+      "subtitleAuthor": "Created by a Life Coach & Hypnotherapist.",
+      "cta": "Start Mindbanger Daily"
     },
     "dailyRitual": {
       "title": "Every day inside Mindbanger Daily:",
@@ -242,7 +243,8 @@
         "Archive access",
         "Bonus resets"
       ],
-      "cancelText": "Cancel anytime. No questions asked."
+      "cancelText": "Cancel anytime. No questions asked.",
+      "cta": "Start Mindbanger Daily"
     },
     "faq": {
       "title": "Questions",

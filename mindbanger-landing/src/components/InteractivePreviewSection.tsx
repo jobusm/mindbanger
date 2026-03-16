@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { useDictionary } from './LanguageProvider';
 import { Focus, Zap, RefreshCw } from 'lucide-react';
+import WaitlistForm from './WaitlistForm';
 
 const options = [
   {
@@ -70,12 +71,14 @@ export default function InteractivePreviewSection() {
           })}
         </div>
 
-        <div className={`pt-8 transition-all duration-500 transform ${active ? 'opacity-100 translate-y-0' : 'opacity-80 translate-y-2'}`}>
-          <button className="px-10 py-4 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] transition-all transform hover:scale-105">
-            {active !== null 
-              ? (dict?.landing?.interactivePreview?.buttonActive?.replace('{active}', dict?.landing?.interactivePreview?.options?.[active]?.keyword || options[active].keyword) || `Unlock the full daily signal for ${options[active].keyword}`) 
-              : (dict?.landing?.interactivePreview?.buttonInactive || 'Unlock the full daily signal')}
-          </button>
+<div className={`pt-8 max-w-lg mx-auto transition-all duration-500 transform ${active ? 'opacity-100 translate-y-0' : 'opacity-80 translate-y-2'}`}>
+          <WaitlistForm 
+            alignCenter={true}
+            buttonText={active !== null
+              ? (dict?.landing?.interactivePreview?.buttonActive?.replace('{active}', dict?.landing?.interactivePreview?.options?.[active]?.keyword || options[active].keyword) || `Unlock the full daily signal for ${options[active].keyword}`)
+              : (dict?.landing?.interactivePreview?.buttonInactive || 'Unlock the full daily signal')
+            }
+          />
         </div>
       </div>
     </section>

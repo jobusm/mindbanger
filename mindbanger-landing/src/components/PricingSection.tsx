@@ -3,8 +3,8 @@
 import { useDictionary } from './LanguageProvider';
 
 import React from 'react';
-import { Check } from 'lucide-react';
-import WaitlistForm from './WaitlistForm';
+import { Check, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const features = [
   'Daily mind signal',
@@ -53,7 +53,13 @@ export default function PricingSection() {
           </div>
 
           <div className="pt-4 px-0 md:px-8">
-            <WaitlistForm />
+            <Link 
+              href="/checkout" 
+              className="w-full py-4 px-8 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+            >
+              {dict?.landing?.pricing?.cta || 'Start Mindbanger Daily'}
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
           </div>
 
           <p className="mt-6 text-xs text-slate-500 font-medium">{dict?.landing?.pricing?.cancelText || 'Cancel anytime. No questions asked.'}</p>

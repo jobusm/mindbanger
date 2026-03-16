@@ -4,7 +4,7 @@ import { useDictionary } from './LanguageProvider';
 
 import React from 'react';
 import { ArrowRight, Play, Sun, Sparkles } from 'lucide-react';
-import WaitlistForm from './WaitlistForm';
+import Link from 'next/link';
 
 export default function HeroSection() {
   const { dict } = useDictionary();
@@ -40,7 +40,13 @@ export default function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4 w-full">
-            <WaitlistForm />
+            <Link 
+              href="/checkout" 
+              className="w-full sm:w-auto py-4 px-8 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+            >
+              {dict?.landing?.hero?.cta || 'Start Mindbanger Daily'}
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
           </div>
         </div>
 

@@ -5,7 +5,15 @@ import { ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 
 import { useDictionary } from './LanguageProvider';
 
-export default function WaitlistForm() {
+export default function WaitlistForm({ 
+  buttonText, 
+  hideLimitedText = false,
+  alignCenter = false
+}: { 
+  buttonText?: string;
+  hideLimitedText?: boolean;
+  alignCenter?: boolean;
+}) {
   const { dict: globalDict } = useDictionary();
   const dict = globalDict?.landing?.waitlist;
   const [email, setEmail] = useState('');
@@ -55,7 +63,7 @@ export default function WaitlistForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full flex flex-col space-y-3">
-      <div className="flex flex-col sm:relative sm:flex-row items-center w-full max-w-md mx-auto md:mx-0">
+      <div className={`flex flex-col sm:relative sm:flex-row items-center w-full max-w-md ${alignCenter ? 'mx-auto' : 'mx-auto md:mx-0'}`}>
         <input
           type="email"
           required
@@ -73,15 +81,17 @@ export default function WaitlistForm() {
           {status === 'loading' ? (
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            <> {dict?.button || 'Join'} <ArrowRight className="w-4 h-4 ml-1" />
+            <> {buttonText || dict?.button || 'Join'} <ArrowRight className="w-4 h-4 ml-1" /> 
             </>
           )}
         </button>
       </div>
       {status === 'error' && (
-        <p className="text-red-400 text-sm text-center md:text-left pl-4">{errorMsg}</p>
+        <p className={`text-red-400 text-sm ${alignCenter ? 'text-center' : 'text-center md:text-left pl-4'}`}>{errorMsg}</p>
       )}
-      <p className="text-xs text-slate-500 text-center md:text-left pl-4">{dict?.limited || 'We are currently accepting a limited number of members.'}</p>
+      {!hideLimitedText && (
+        <p className={`text-xs text-slate-500 ${alignCenter ? 'text-center' : 'text-center md:text-left pl-4'}`}>{dict?.limited || 'We are currently accepting a limited number of members.'}</p>
+      )}
     </form>
   );
 }

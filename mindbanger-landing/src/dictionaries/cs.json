@@ -119,7 +119,8 @@
       "widgetBtn": "Přehrát dnešní audio",
       "widgetFooter": "Nový signál každý den. <br/> Silnější vnitřní směřování postupem času.",
       "subtitleDesc": "Denní nastavení mysli pro intuici, klid a soustředění.",
-      "subtitleAuthor": "Vytvořeno životním koučem a hypnoterapeutem."
+      "subtitleAuthor": "Vytvořeno životním koučem a hypnoterapeutem.",
+      "cta": "Začít Mindbanger Daily"
     },
     "dailyRitual": {
       "title": "Každý den v Mindbanger Daily:",
@@ -243,7 +244,8 @@
         "Bonusové resety"
       ],
       "cancelText": "Zrušení kdykoliv. Žádné otázky.",
-      "priceNote": "cca 199 CZK"
+      "priceNote": "cca 199 CZK",
+      "cta": "Začít Mindbanger Daily"
     },
     "faq": {
       "title": "Dotazy",

@@ -119,7 +119,8 @@
       "widgetBtn": "Prehrať dnešné audio",
       "widgetFooter": "Nový signál každý deň. <br/> Silnejšie vnútorné smerovanie postupom času.",
       "subtitleDesc": "Denné nastavenie mysle pre intuíciu, pokoj a sústredenie.",
-      "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom."
+      "subtitleAuthor": "Vytvorené životným koučom a hypnoterapeutom.",
+      "cta": "Začať Mindbanger Daily"
     },
     "dailyRitual": {
       "title": "Každý deň v Mindbanger Daily:",
@@ -242,7 +243,8 @@
         "Prístup do archívu",
         "Bonusové resety"
       ],
-      "cancelText": "Zrušenie kedykoľvek. Žiadne otázky."
+      "cancelText": "Zrušenie kedykoľvek. Žiadne otázky.",
+      "cta": "Začať Mindbanger Daily"
     },
     "faq": {
       "title": "Otázky",

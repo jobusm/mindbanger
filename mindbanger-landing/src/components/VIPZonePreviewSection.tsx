@@ -36,7 +36,7 @@ export default function VIPZonePreviewSection() {
       
       <div className="max-w-6xl mx-auto text-center space-y-12 relative z-10">
         <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight">
-          Inside the VIP Zone
+          {dict?.landing?.vipZone?.title || 'Inside the VIP Zone'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
@@ -48,9 +48,9 @@ export default function VIPZonePreviewSection() {
               <div className="w-12 h-12 mb-6 mx-auto rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-500/20 group-hover:text-indigo-300 transition-all duration-300">
                 {card.icon}
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">{card.title}</h3>
+              <h3 className="text-xl font-bold text-white mb-2">{dict?.landing?.vipZone?.cards?.[idx]?.title || card.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">
-                {card.desc}
+                {dict?.landing?.vipZone?.cards?.[idx]?.desc || card.desc}
               </p>
             </div>
           ))}

@@ -23,7 +23,7 @@ export default function BenefitsSection() {
 
       <div className="max-w-4xl mx-auto space-y-12 relative z-10">
         <h2 className="text-3xl md:text-5xl font-serif text-white text-center leading-tight">
-          Mindbanger Daily is for you if you want to…
+          {dict?.landing?.benefits?.title || 'Mindbanger Daily is for you if you want to...'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -36,7 +36,7 @@ export default function BenefitsSection() {
                 <Check size={14} strokeWidth={3} />
               </div>
               <p className="text-lg text-slate-200 font-light group-hover:text-white transition-colors leading-relaxed">
-                {benefit}
+                {dict?.landing?.benefits?.items?.[idx] || benefit}
               </p>
             </div>
           ))}

@@ -88,9 +88,10 @@ export default function HeroSection() {
               {/* Small detail below */}
               <div className="text-center space-y-2 pt-2">
                 <div className="h-0.5 w-12 bg-white/10 mx-auto rounded-full" />
-                <p className="text-xs text-slate-400/80 font-medium">
-                  {dict?.landing?.hero?.widgetFooter || 'A new signal every day. <br/> A stronger inner direction over time.'}
-                </p>
+                <p 
+                  className="text-xs text-slate-400/80 font-medium"
+                  dangerouslySetInnerHTML={{ __html: dict?.landing?.hero?.widgetFooter || 'A new signal every day. <br/> A stronger inner direction over time.' }}
+                />
               </div>
 
               {/* Fake list items below to simulate feed */}

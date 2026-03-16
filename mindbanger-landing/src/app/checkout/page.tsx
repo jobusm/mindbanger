@@ -87,7 +87,7 @@ function CheckoutContent() {
              email,
              password
            });
-           if (signInError) throw new Error('Account exists with a different password. Please log in first.');
+           if (signInError) throw new Error('wrongPassword');
            userId = signInData.user?.id;
         } else {
            throw signUpError;
@@ -97,7 +97,7 @@ function CheckoutContent() {
       }
 
       if (!userId) {
-        throw new Error("Could not create or identify user.");
+        throw new Error("missingData");
       }
 
       // 2. Start Stripe Checkout
@@ -108,16 +108,31 @@ function CheckoutContent() {
       });
 
       const { url, error: stripeError } = await res.json();
-      
+
       if (stripeError) throw new Error(stripeError);
-      if (!url) throw new Error("Could not redirect to payment gateway.");
+      if (!url) throw new Error("default");
 
       // 3. Redirect to Stripe
       window.location.href = url;
 
     } catch (error: any) {
       console.error(error);
-      setMessage({ type: 'error', text: error.message || 'Something went wrong.' });
+      
+      // Error code mapping
+      let errorMsg = t?.errors?.default || 'Something went wrong.';
+      
+      if (error.message === 'wrongPassword') {
+        errorMsg = t?.errors?.wrongPassword || 'Wrong password for existing account. Please log in first.';
+      } else if (error.message === 'missingData') {
+        errorMsg = t?.errors?.missingData || 'Missing data. Please try again.';
+      } else if (error.message?.includes('rate limit')) {
+        errorMsg = t?.errors?.rateLimit || 'Rate limit exceeded. Please wait.';
+      } else if (error.message) {
+        // Keep original if it's a specific message we didn't catch, or use default if it's an unhelpful developer error
+        errorMsg = error.message.includes('fetch') || error.message.includes('JSON') ? (t?.errors?.default || 'Something went wrong') : error.message;
+      }
+
+      setMessage({ type: 'error', text: errorMsg });
       setLoading(false);
     }
   };

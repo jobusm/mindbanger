@@ -25,7 +25,13 @@
     "cancelAnytime": "Cancel anytime. Managed securely by Stripe.",
     "alreadyHaveAccount": "Already have an account? Log in first",
     "digitalConsent": "I explicitly consent to the immediate delivery of digital content and acknowledge that I thereby lose my right of withdrawal within 14 days.",
-    "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service."
+    "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service.",
+    "errors": {
+      "default": "An unknown error occurred. Please check your details and try again.",
+      "rateLimit": "You have exceeded the request limit. Please wait a moment and try again.",
+      "wrongPassword": "An account with this email exists but with a different password. Please log in first.",
+      "missingData": "Missing email or user ID. Please try again."
+    }
   },
   "nav": {
     "today": "Today",

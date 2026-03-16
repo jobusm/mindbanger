@@ -25,7 +25,13 @@
     "cancelAnytime": "Zrušiť kedykoľvek. Bezpečne spravované cez Stripe.",
     "alreadyHaveAccount": "Už máš účet? Prihlás sa najprv",
     "digitalConsent": "Výslovne súhlasím s okamžitým dodaním digitálneho obsahu a beriem na vedomie, že tým strácam právo na odstúpenie od zmluvy do 14 dní.",
-    "ageConsent": "Potvrdzujem, že mám viac ako 18 rokov pre možnosť platby, resp. 16+ rokov pre používanie služby."
+    "ageConsent": "Potvrdzujem, že mám viac ako 18 rokov pre možnosť platby, resp. 16+ rokov pre používanie služby.",
+    "errors": {
+      "default": "Došlo k neznámej chybe. Skontrolujte svoje údaje a skúste to prosím znova.",
+      "rateLimit": "Prekročili ste limit žiadostí. Počkajte, prosím, chvíľu a skúste to znova.",
+      "wrongPassword": "Účet s týmto e-mailom už existuje, ale zadali ste nesprávne heslo. Prihláste sa najprv.",
+      "missingData": "Chýba e-mail alebo ID. Skúste to prosím znova."
+    }
   },
   "nav": {
     "today": "Dnes",

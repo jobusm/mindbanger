@@ -1,4 +1,4 @@
-import { headers } from 'next/headers';
+﻿import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/lib/supabase-server';
@@ -8,19 +8,28 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-02-25.clover',
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
+// Zmena na citanie secretov tak aby bral aj fallback
 export async function POST(req: Request) {
   const body = await req.text();
   const headersList = await headers();
   const signature = headersList.get('stripe-signature');
+  
+  if (!signature) {
+    return new NextResponse('Missing stripe-signature header', { status: 400 });
+  }
+
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  
+  if (!webhookSecret) {
+    return new NextResponse('Webhook secret is missing in env', { status: 500 });
+  }
 
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature!, webhookSecret);
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`);
+    console.error(`Webhook Signature Error: ${err.message}`);
     return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
@@ -33,50 +42,9 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId;
         const subscriptionId = session.subscription as string;
         const customerId = session.customer as string;
-        const refCode = session.metadata?.refCode;
-        const refMode = session.metadata?.refMode;
 
         if (userId && subscriptionId) {
-          // Zapíšeme odber do DB
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-          
-          
-          // Affiliate DB Insert
-          if (refCode && refMode && refCode !== userId) {
-            try {
-              // Find affiliate mapped to refCode
-              const { data: affiliate } = await supabase
-                .from('affiliates')
-                .select('id')
-                .eq('user_id', refCode)
-                .single();
-
-              if (affiliate) {
-                let commissionAmount = 0;
-                let commissionModel = 'second_month';
-                
-                // For simplified POC, assume 100 EUR plan
-                if (refMode === 'A') {
-                  commissionModel = 'second_month';
-                  commissionAmount = 100; // 100% of second month
-                } else if (refMode === 'B') {
-                  commissionModel = 'lifetime_20';
-                  commissionAmount = 20; // 20% recurring
-                }
-
-                await supabase.from('referrals').insert({
-                  affiliate_id: affiliate.id,
-                  referred_user_id: userId,
-                  status: 'pending', // paid out after delay
-                  commission_amount: commissionAmount,
-                  commission_model: commissionModel
-                });
-                console.log(`[Stripe Webhook] Referral logged for affiliate ${affiliate.id}`);
-              }
-            } catch (err) {
-              console.error('Failed to register referral:', err);
-            }
-          }
 
           await supabase.from('subscriptions').upsert({
             id: subscriptionId,
@@ -90,7 +58,6 @@ export async function POST(req: Request) {
             customer_email: session.customer_details?.email || ''
           });
 
-          // PREPOJENIE STRIPE CUSTOMERA S PROFILOM (Customer Portal Fix) A OKAMZITA AKTIVACIA
           if (customerId) {
             await supabase.from('profiles').update({ stripe_customer_id: customerId, subscription_status: 'premium' }).eq('id', userId);
           } else {
@@ -100,58 +67,49 @@ export async function POST(req: Request) {
           // Send welcome email via Brevo
           const email = session.customer_details?.email;
           if (email && process.env.BREVO_API_KEY) {
+            let userLang = 'en';
             try {
-              let userLang = 'en';
               const { data: profile } = await supabase.from('profiles').select('preferred_language').eq('id', userId).single();
-              if (profile?.preferred_language) {
-                userLang = profile.preferred_language;
-              }
-              const template = welcomeEmailTemplates[userLang as keyof typeof welcomeEmailTemplates] || welcomeEmailTemplates.en;
-                
-                // Vygenerujeme Magic Link tak, ze obideme klasicke posielanie
-                let magicUrl = template.url;
-                try {
-                  const { data: linkData } = await supabase.auth.admin.generateLink({
-                    type: 'magiclink',
-                    email: email
-                  });
-                  if (linkData?.properties?.action_link) {
-                    magicUrl = linkData.properties.action_link + "&redirect_to=https://www.mindbanger.com/auth/callback";
-                  }
-                } catch (e) {
-                  console.error('Failed to generate magic link, falling back to login url', e);
-                }
+              if (profile?.preferred_language) userLang = profile.preferred_language;
+            } catch (e) {
+               console.error('Error fetching profile lang:', e);
+            }
+            
+            const template = welcomeEmailTemplates[userLang as keyof typeof welcomeEmailTemplates] || welcomeEmailTemplates.en;
 
-                const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, magicUrl);
-              const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
-                method: 'POST',
-                headers: {
-                  'accept': 'application/json',
-                  'api-key': process.env.BREVO_API_KEY,
-                  'content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                  sender: {
-                    name: 'Mindbanger',
-                    email: 'hello@mindbanger.com'
-                  },
-                  to: [
-                    {
-                      email: email,
-                      name: session.customer_details?.name || 'Vzácny Člen'
-                    }
-                  ],
-                  subject: template.subject,
-                  htmlContent: htmlContent
-                })
+            // Vygenerujeme Magic Link
+            let magicUrl = template.url;
+            try {
+              const { data: linkData } = await supabase.auth.admin.generateLink({
+                type: 'magiclink',
+                email: email
               });
-              if (!brevoRes.ok) {
-                console.error('Brevo API error:', await brevoRes.text());
-              } else {
-                console.log('Welcome email sent via Brevo to', email);
+              if (linkData?.properties?.action_link) {
+                magicUrl = linkData.properties.action_link + "&redirect_to=https://www.mindbanger.com/auth/callback";
               }
-            } catch (err) {
-              console.error('Failed to send Brevo welcome email:', err);
+            } catch (e) {
+              console.error('Failed to generate magic link:', e);
+            }
+
+            const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, magicUrl);
+
+            const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json',
+                'api-key': process.env.BREVO_API_KEY,
+                'content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                sender: { name: 'Mindbanger Daily', email: 'hello@mindbanger.com' },
+                to: [{ email: email, name: session.customer_details?.name || 'Člen' }],
+                subject: template.subject,
+                htmlContent: htmlContent
+              })
+            });
+            
+            if (!brevoRes.ok) {
+                console.error('Brevo error:', await brevoRes.text());
             }
           }
         }
@@ -172,7 +130,6 @@ export async function POST(req: Request) {
             current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
           });
 
-          // Ak ho vymazali / alebo vypršalo
           if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
              await supabase.from('profiles').update({ subscription_status: 'canceled' }).eq('id', userId);
           } else if (['active', 'trialing', 'past_due'].includes(subscription.status)) {
@@ -181,13 +138,10 @@ export async function POST(req: Request) {
         }
         break;
       }
-
-      default:
-        console.log(`Unhandled event type ${event.type}`);
     }
   } catch (err: any) {
-    console.error(`Webhook handler failed: ${err.message}`);
-    return new NextResponse('Internal Webhook Error', { status: 500 });
+    console.error(`Webhook Action Error: ${err.message}`, err);
+    return new NextResponse('Internal Webhook Logic Error', { status: 500 });
   }
 
   return new NextResponse('Success', { status: 200 });

@@ -20,10 +20,12 @@
     "emailPlaceholder": "ty@priklad.sk",
     "password": "Vytvoriť heslo",
     "passwordPlaceholder": "••••••••",
-    "submit": "Pokračovať k platbe",
+    "submit": "Objednávka s povinnosťou platby",
     "processing": "Spracúva sa...",
     "cancelAnytime": "Zrušiť kedykoľvek. Bezpečne spravované cez Stripe.",
-    "alreadyHaveAccount": "Už máš účet? Prihlás sa najprv"
+    "alreadyHaveAccount": "Už máš účet? Prihlás sa najprv",
+    "digitalConsent": "Výslovne súhlasím s okamžitým dodaním digitálneho obsahu a beriem na vedomie, že tým strácam právo na odstúpenie od zmluvy do 14 dní.",
+    "ageConsent": "Potvrdzujem, že mám viac ako 18 rokov pre možnosť platby, resp. 16+ rokov pre používanie služby."
   },
   "nav": {
     "today": "Dnes",
@@ -279,7 +281,12 @@
       "login": "Prihlásiť",
       "join": "Pridať sa",
       "privacy": "Súkromie",
-      "terms": "Podmienky"
+      "terms": "Podmienky",
+      "affiliateTerms": "Affiliate podmienky"
     }
+  },
+  "cookieBanner": {
+    "text": "Tento web používa súbory cookie pre zlepšenie používateľskej skúsenosti a správne fungovanie služby. Pokračovaním vyjadrujete súhlas s ich používaním.",
+    "accept": "Rozumiem a súhlasím"
   }
 }

@@ -24,11 +24,12 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="flex items-center space-x-6 text-sm text-slate-400">
+        <div className="flex flex-wrap justify-center md:items-center space-x-6 text-sm text-slate-400 gap-y-2">
           <Link href="/login" className="hover:text-white transition-colors">{dict?.landing?.footer?.login || 'Login'}</Link>
           <Link href="/join" className="hover:text-white transition-colors">{dict?.landing?.footer?.join || 'Join'}</Link>
           <Link href="/privacy" className="hover:text-white transition-colors">{dict?.landing?.footer?.privacy || 'Privacy'}</Link>
           <Link href="/terms" className="hover:text-white transition-colors">{dict?.landing?.footer?.terms || 'Terms'}</Link>
+          <Link href="/affiliate-terms" className="hover:text-white transition-colors">{dict?.landing?.footer?.affiliateTerms || 'Affiliate Terms'}</Link>
         </div>
 
         {/* Copyright */}

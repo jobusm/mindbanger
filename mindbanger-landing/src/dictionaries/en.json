@@ -20,10 +20,12 @@
     "emailPlaceholder": "you@example.com",
     "password": "Create Password",
     "passwordPlaceholder": "••••••••",
-    "submit": "Continue to Payment",
+    "submit": "Order with obligation to pay",
     "processing": "Processing...",
     "cancelAnytime": "Cancel anytime. Managed securely by Stripe.",
-    "alreadyHaveAccount": "Already have an account? Log in first"
+    "alreadyHaveAccount": "Already have an account? Log in first",
+    "digitalConsent": "I explicitly consent to the immediate delivery of digital content and acknowledge that I thereby lose my right of withdrawal within 14 days.",
+    "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service."
   },
   "nav": {
     "today": "Today",
@@ -279,7 +281,12 @@
       "login": "Login",
       "join": "Join",
       "privacy": "Privacy",
-      "terms": "Terms"
+      "terms": "Terms",
+      "affiliateTerms": "Affiliate Terms"
     }
+  },
+  "cookieBanner": {
+    "text": "This website uses cookies to enhance user experience and ensure the proper functioning of the service. By continuing, you agree to their use.",
+    "accept": "I understand and agree"
   }
 }

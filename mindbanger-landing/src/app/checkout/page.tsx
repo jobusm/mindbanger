@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useDictionary } from '@/lib/i18n-client';
 import { useEffect } from 'react';
+import { CookieBanner } from '@/components/CookieBanner';
 
 function CheckoutContent() {
   const { dict, lang, mounted } = useDictionary();
@@ -219,6 +220,34 @@ function CheckoutContent() {
               </div>
             </div>
 
+            <div className="space-y-3 pt-2 pb-4">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    type="checkbox"
+                    required
+                    className="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900 focus:ring-2 cursor-pointer transition-colors"
+                  />
+                </div>
+                <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
+                  {t.digitalConsent}
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    type="checkbox"
+                    required
+                    className="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900 focus:ring-2 cursor-pointer transition-colors"
+                  />
+                </div>
+                <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
+                  {t.ageConsent}
+                </span>
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -248,6 +277,7 @@ function CheckoutContent() {
           </div>
         </div>
       </div>
+      {dict?.cookieBanner && <CookieBanner dict={dict.cookieBanner} />}
     </div>
   );
 }

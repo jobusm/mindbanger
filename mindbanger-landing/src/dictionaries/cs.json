@@ -20,10 +20,12 @@
     "emailPlaceholder": "ty@priklad.cz",
     "password": "Vytvořit heslo",
     "passwordPlaceholder": "••••••••",
-    "submit": "Pokračovat k platbě",
+    "submit": "Objednávka s povinností platby",
     "processing": "Zpracovává se...",
     "cancelAnytime": "Zrušit kdykoliv. Bezpečně spravováno přes Stripe.",
-    "alreadyHaveAccount": "Už máš účet? Přihlas se nejdřív"
+    "alreadyHaveAccount": "Už máš účet? Přihlas se nejdřív",
+    "digitalConsent": "Výslovně souhlasím s okamžitým dodáním digitálního obsahu a beru na vědomí, že tím ztrácím právo na odstoupení od smlouvy do 14 dnů.",
+    "ageConsent": "Potvrzuji, že je mi více než 18 let pro možnost platby, resp. 16+ let pro používání služby."
   },
   "nav": {
     "today": "Dnes",
@@ -280,7 +282,12 @@
       "login": "Přihlásit",
       "join": "Přidat se",
       "privacy": "Soukromí",
-      "terms": "Podmínky"
+      "terms": "Podmínky",
+      "affiliateTerms": "Affiliate podmínky"
     }
+  },
+  "cookieBanner": {
+    "text": "Tento web používá soubory cookie pro zlepšení uživatelské zkušenosti a správné fungování služby. Pokračováním vyjadřujete souhlas s jejich používáním.",
+    "accept": "Rozumím a souhlasím"
   }
 }

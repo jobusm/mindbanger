@@ -11,6 +11,7 @@ import PricingSection from '@/components/PricingSection';
 import FAQSection from '@/components/FAQSection';
 import FinalCTASection from '@/components/FinalCTASection';
 import Footer from '@/components/Footer';
+import { CookieBanner } from '@/components/CookieBanner';
 import { LanguageProvider } from '@/components/LanguageProvider';
 import { cookies, headers } from 'next/headers';
 import fs from 'fs';
@@ -64,6 +65,7 @@ export default async function Home(props: any) {
         <FAQSection />
         <FinalCTASection />
         <Footer />
+        {dict.cookieBanner && <CookieBanner dict={dict.cookieBanner} />}
       </main>
     </LanguageProvider>
   );

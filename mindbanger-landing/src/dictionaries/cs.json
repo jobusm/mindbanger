@@ -297,5 +297,26 @@
   "cookieBanner": {
     "text": "Tento web používá soubory cookie pro zlepšení uživatelské zkušenosti a správné fungování služby. Pokračováním vyjadřujete souhlas s jejich používáním.",
     "accept": "Rozumím a souhlasím"
+  },
+  "affiliate": {
+    "title": "Partnerský program",
+    "subtitle": "Sdílejte Mindbanger se svým publikem a vydělávejte. Vyberte si model, který vám nejvíce vyhovuje. Vaše unikátní odkazy jsou připraveny k okamžitému použití.",
+    "modelA_badge": "Box 1: Rychlých 100%",
+    "modelA_title": "100% z 2. měsíce",
+    "modelA_desc": "Získáte 100% provizi za druhý měsíc uživatele. Nejlepší pro rychlé konverze s vysokou odměnou.",
+    "refA_label": "Váš referenční odkaz (Ref A)",
+    "modelB_badge": "Box 2: Doživotních 20%",
+    "modelB_title": "20% opakující se platba",
+    "modelB_desc": "Získejte 20% provizi z každé platby po celou dobu životnosti zákazníka. Vybudujte si skutečný pasivní příjem.",
+    "refB_label": "Váš referenční odkaz (Ref B)",
+    "stat_pendingA": "Čekající platby Model A",
+    "stat_activeB": "Aktivní programy Model B",
+    "stat_unpaid": "Nevyplacený zůstatek",
+    "stat_total": "Celkem vyděláno",
+    "promo_title": "Knihovna promo materiálů",
+    "promo_desc": "Stáhněte si připravené materiály pro vaše kampaně.",
+    "promo_videoVisual": "Video vizuál",
+    "promo_download": "Stáhnout",
+    "promo_empty": "Zatím nejsou dostupné žádné promo materiály."
   }
 }

@@ -296,5 +296,26 @@
   "cookieBanner": {
     "text": "This website uses cookies to enhance user experience and ensure the proper functioning of the service. By continuing, you agree to their use.",
     "accept": "I understand and agree"
+  },
+  "affiliate": {
+    "title": "Partner Program",
+    "subtitle": "Share Mindbanger with your audience and earn. Choose the model that works best for you. Your unique links are ready to use instantly.",
+    "modelA_badge": "Box 1: The Fast 100%",
+    "modelA_title": "100% of 2nd Month",
+    "modelA_desc": "You get 100% commission for the user's second month. Best for quick, high-ticket conversions upfront.",
+    "refA_label": "Your Referral Link (Ref A)",
+    "modelB_badge": "Box 2: Lifetime 20%",
+    "modelB_title": "20% Recurring",
+    "modelB_desc": "Earn 20% commission on every payment for the life of the customer. Build true passive income.",
+    "refB_label": "Your Referral Link (Ref B)",
+    "stat_pendingA": "Pending Model A",
+    "stat_activeB": "Active Model B",
+    "stat_unpaid": "Unpaid Balance",
+    "stat_total": "Total Earned",
+    "promo_title": "Promo Library",
+    "promo_desc": "Download prepared materials for your campaigns.",
+    "promo_videoVisual": "Video Visual",
+    "promo_download": "Download",
+    "promo_empty": "No promo materials are available yet."
   }
 }

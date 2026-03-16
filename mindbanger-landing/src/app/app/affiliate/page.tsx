@@ -5,6 +5,7 @@ import AffiliateTracker from '@/components/AffiliateTracker';
 import { ArrowUpRight, Users, Wallet, Check, Play, Download, Image as ImageIcon } from 'lucide-react';
 import CopyLink from '@/components/CopyLink';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getDictionary } from '@/lib/i18n';
 
 // We just make everyone an affiliate directly.
 async function ensureAffiliate(supabase: SupabaseClient, userId: string) {
@@ -34,6 +35,14 @@ export default async function AffiliateDashboardPage() {
   if (!user) {
     redirect('/login');
   }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('preferred_language')
+    .eq('id', user.id)
+    .single();
+    
+  const dict = getDictionary(profile?.preferred_language || 'en');
 
   const affiliate = await ensureAffiliate(supabase, user.id);
 
@@ -74,10 +83,9 @@ export default async function AffiliateDashboardPage() {
   return (
     <div className="p-6 md:p-12 max-w-5xl mx-auto space-y-12 animate-in fade-in duration-500">
       <div className="space-y-4">
-        <h1 className="text-3xl md:text-4xl font-serif text-white">Partner Program</h1>
+        <h1 className="text-3xl md:text-4xl font-serif text-white">{dict.affiliate.title}</h1>
         <p className="text-slate-400 max-w-2xl text-lg">
-          Share Mindbanger with your audience and earn. Choose the model that works best for you. 
-          Your unique links are ready to use instantly.
+          {dict.affiliate.subtitle}
         </p>
       </div>
 
@@ -89,14 +97,14 @@ export default async function AffiliateDashboardPage() {
           </div>
           <div className="relative z-10 space-y-4">
             <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-500 text-xs font-bold tracking-wider uppercase rounded-full border border-amber-500/20">
-              Box 1: The Fast 100%
+              {dict.affiliate.modelA_badge}
             </span>
-            <h2 className="text-2xl font-bold text-white">100% of 2nd Month</h2>
+            <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelA_title}</h2>
             <p className="text-slate-400 text-sm h-12">
-              You get 100% commission for the user's second month. Best for quick, high-ticket conversions upfront.
+              {dict.affiliate.modelA_desc}
             </p>
             <div className="pt-4">
-              <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Your Referral Link (Ref A)</label>
+              <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refA_label}</label>
               <CopyLink link={`https://mindbanger.com/checkout?refMode=A&refCode=${user.id}`} />
             </div>
           </div>
@@ -109,14 +117,14 @@ export default async function AffiliateDashboardPage() {
           </div>
           <div className="relative z-10 space-y-4">
             <span className="inline-block px-3 py-1 bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-wider uppercase rounded-full border border-indigo-500/20">
-              Box 2: Lifetime 20%
+              {dict.affiliate.modelB_badge}
             </span>
-            <h2 className="text-2xl font-bold text-white">20% Recurring</h2>
+            <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelB_title}</h2>
             <p className="text-slate-400 text-sm h-12">
-              Earn 20% commission on every payment for the life of the customer. Build true passive income.
+              {dict.affiliate.modelB_desc}
             </p>
             <div className="pt-4">
-              <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Your Referral Link (Ref B)</label>
+              <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refB_label}</label>
               <CopyLink link={`https://mindbanger.com/checkout?refMode=B&refCode=${user.id}`} />
             </div>
           </div>
@@ -128,28 +136,28 @@ export default async function AffiliateDashboardPage() {
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
             <Users size={16} />
-            <span className="text-sm">Pending Model A</span>
+            <span className="text-sm">{dict.affiliate.stat_pendingA}</span>
           </div>
           <div className="text-2xl font-bold text-white">{pendingRefA}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
             <Users size={16} />
-            <span className="text-sm">Active Model B</span>
+            <span className="text-sm">{dict.affiliate.stat_activeB}</span>
           </div>
           <div className="text-2xl font-bold text-white">{activeRefB}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
             <Wallet size={16} />
-            <span className="text-sm">Unpaid Balance</span>
+            <span className="text-sm">{dict.affiliate.stat_unpaid}</span>
           </div>
           <div className="text-2xl font-bold text-amber-500">€{unpaidBalance.toFixed(2)}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
             <Check size={16} />
-            <span className="text-sm">Total Earned</span>
+            <span className="text-sm">{dict.affiliate.stat_total}</span>
           </div>
           <div className="text-2xl font-bold text-emerald-500">€{totalEarned.toFixed(2)}</div>
         </div>
@@ -158,9 +166,9 @@ export default async function AffiliateDashboardPage() {
       {/* Promo Library */}
       <div className="pt-8 space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-white">Promo Library</h2>
+          <h2 className="text-2xl font-bold text-white">{dict.affiliate.promo_title}</h2>
           <p className="text-slate-400">
-            Download prepared materials for your campaigns.
+            {dict.affiliate.promo_desc}
           </p>
         </div>
 
@@ -178,7 +186,9 @@ export default async function AffiliateDashboardPage() {
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 bg-slate-800/50">
                       <Play className="mb-2 w-12 h-12 text-white/20 group-hover:text-amber-500/50 transition-colors" />
-                      <span className="text-xs font-medium uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full border border-white/5">Video Visual</span>
+                      <span className="text-xs font-medium uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full border border-white/5">
+                        {dict.affiliate.promo_videoVisual}
+                      </span>
                     </div>
                   )}
                   <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-white/80 border border-white/10">
@@ -203,7 +213,7 @@ export default async function AffiliateDashboardPage() {
                     className="flex items-center justify-center space-x-2 w-full bg-white text-black hover:bg-slate-200 py-2 rounded-lg font-medium text-sm transition-colors"
                   >
                     <Download size={16} />
-                    <span>Download</span>
+                    <span>{dict.affiliate.promo_download}</span>
                   </a>
                 </div>
               </div>
@@ -211,7 +221,7 @@ export default async function AffiliateDashboardPage() {
           </div>
         ) : (
           <div className="text-center py-12 bg-slate-900/40 border border-white/5 rounded-xl text-slate-500">
-            No promo materials are available yet.
+            {dict.affiliate.promo_empty}
           </div>
         )}
       </div>

@@ -240,7 +240,8 @@
         "Přístup do archivu",
         "Bonusové resety"
       ],
-      "cancelText": "Zrušení kdykoliv. Žádné otázky."
+      "cancelText": "Zrušení kdykoliv. Žádné otázky.",
+      "priceNote": "cca 199 CZK"
     },
     "faq": {
       "title": "Dotazy",

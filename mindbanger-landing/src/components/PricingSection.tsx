@@ -36,6 +36,10 @@ export default function PricingSection() {
             {dict?.landing?.pricing?.price || '€7.90'}
             <span className="text-xl md:text-2xl text-slate-400 font-medium font-serif normal-case ml-2">{dict?.landing?.pricing?.period || '/ month'}</span>
           </div>
+          
+          {dict?.landing?.pricing?.priceNote && (
+            <p className="text-slate-300 text-sm font-medium mb-2">{dict.landing.pricing.priceNote}</p>
+          )}
 
           <p className="text-slate-400 text-sm mb-8">{dict?.landing?.pricing?.subtitle || 'Less than a cup of coffee per week.'}</p>
 

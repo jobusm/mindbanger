@@ -316,6 +316,12 @@
     "promo_desc": "Stiahnite si pripravené materiály pre vaše kampane.",
     "promo_videoVisual": "Video vizuál",
     "promo_download": "Stiahnuť",
-    "promo_empty": "Zatiaľ nie sú dostupné žiadne promo materiály."
+    "promo_empty": "Zatiaľ nie sú dostupné žiadne promo materiály.",
+    "history_title": "História výplat a pohyby",
+    "history_desc": "Sledujte svoje žiadosti o výplatu a ich stav.",
+    "history_empty": "Zatiaľ žiadne pohyby na účte.",
+    "history_date": "Dátum",
+    "history_amount": "Suma",
+    "history_status": "Stav"
   }
 }

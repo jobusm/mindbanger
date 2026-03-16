@@ -317,6 +317,12 @@
     "promo_desc": "Stáhněte si připravené materiály pro vaše kampaně.",
     "promo_videoVisual": "Video vizuál",
     "promo_download": "Stáhnout",
-    "promo_empty": "Zatím nejsou dostupné žádné promo materiály."
+    "promo_empty": "Zatím nejsou dostupné žádné promo materiály.",
+    "history_title": "Historie výplat a pohyby",
+    "history_desc": "Sledujte své žádosti o výplatu a jejich stav.",
+    "history_empty": "Zatím žádné pohyby na účtu.",
+    "history_date": "Datum",
+    "history_amount": "Částka",
+    "history_status": "Stav"
   }
 }

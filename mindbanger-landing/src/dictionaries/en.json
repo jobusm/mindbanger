@@ -316,6 +316,12 @@
     "promo_desc": "Download prepared materials for your campaigns.",
     "promo_videoVisual": "Video Visual",
     "promo_download": "Download",
-    "promo_empty": "No promo materials are available yet."
+    "promo_empty": "No promo materials are available yet.",
+    "history_title": "Payout History & Movements",
+    "history_desc": "Track your payout requests and their statuses.",
+    "history_empty": "No payout movements yet.",
+    "history_date": "Date",
+    "history_amount": "Amount",
+    "history_status": "Status"
   }
 }

@@ -6,6 +6,7 @@ import { ArrowUpRight, Users, Wallet, Check, Play, Download, Image as ImageIcon 
 import CopyLink from '@/components/CopyLink';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getDictionary } from '@/lib/i18n';
+import PayoutButton from '@/components/PayoutButton';
 
 // We just make everyone an affiliate directly.
 async function ensureAffiliate(supabase: SupabaseClient, userId: string) {
@@ -80,6 +81,12 @@ export default async function AffiliateDashboardPage() {
     .select('*')
     .order('created_at', { ascending: false });
 
+  const { data: payoutRequests } = await supabase
+    .from('payout_requests')
+    .select('*')
+    .eq('affiliate_id', affiliate.id)
+    .order('created_at', { ascending: false });
+
   return (
     <div className="p-6 md:p-12 max-w-5xl mx-auto space-y-12 animate-in fade-in duration-500">
       <div className="space-y-4">
@@ -147,12 +154,19 @@ export default async function AffiliateDashboardPage() {
           </div>
           <div className="text-2xl font-bold text-white">{activeRefB}</div>
         </div>
-        <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
-          <div className="flex items-center space-x-2 text-slate-500 mb-2">
-            <Wallet size={16} />
-            <span className="text-sm">{dict.affiliate.stat_unpaid}</span>
+        <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl flex flex-col justify-between">
+          <div>
+            <div className="flex items-center space-x-2 text-slate-500 mb-2">
+              <Wallet size={16} />
+              <span className="text-sm">{dict.affiliate.stat_unpaid}</span>
+            </div>
+            <div className="text-2xl font-bold text-amber-500 mb-3">€{unpaidBalance.toFixed(2)}</div>
           </div>
-          <div className="text-2xl font-bold text-amber-500">€{unpaidBalance.toFixed(2)}</div>
+          {unpaidBalance > 0 && (
+            <div className="mt-2 text-xs">
+               <PayoutButton unpaidBalance={unpaidBalance} affiliateId={affiliate.id} />
+            </div>
+          )}
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-4 rounded-xl">
           <div className="flex items-center space-x-2 text-slate-500 mb-2">
@@ -160,6 +174,47 @@ export default async function AffiliateDashboardPage() {
             <span className="text-sm">{dict.affiliate.stat_total}</span>
           </div>
           <div className="text-2xl font-bold text-emerald-500">€{totalEarned.toFixed(2)}</div>
+        </div>
+      </div>
+
+      {/* Details / History */}
+      <div className="pt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-white">{dict.affiliate.history_title}</h2>
+          <p className="text-slate-400">
+            {dict.affiliate.history_desc}
+          </p>
+        </div>
+
+        <div className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden">
+          {payoutRequests && payoutRequests.length > 0 ? (
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-slate-900 text-slate-400 border-b border-white/5">
+                <tr>
+                  <th className="p-4 font-medium">{dict.affiliate.history_date}</th>
+                  <th className="p-4 font-medium">{dict.affiliate.history_amount}</th>
+                  <th className="p-4 font-medium text-right">{dict.affiliate.history_status}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {payoutRequests.map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4">{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 font-bold text-white">€{Number(req.amount).toFixed(2)}</td>
+                    <td className="p-4 text-right">
+                      {req.status === 'pending' && <span className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs">Pending</span>}
+                      {req.status === 'paid' && <span className="px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-xs">Paid</span>}
+                      {req.status === 'rejected' && <span className="px-2 py-1 bg-red-500/10 text-red-500 rounded-full text-xs">Rejected</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+             <div className="text-center py-8 text-slate-500 text-sm">
+                {dict.affiliate.history_empty}
+             </div>
+          )}
         </div>
       </div>
 

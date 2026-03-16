@@ -28,7 +28,7 @@ const options = [
 
 export default function InteractivePreviewSection() {
   const { dict } = useDictionary();
-  const [active, setActive] = useState<string | null>(null);
+  const [active, setActive] = useState<number | null>(null);
 
   return (
     <section className="py-24 bg-slate-900 px-6 overflow-hidden relative">
@@ -36,16 +36,16 @@ export default function InteractivePreviewSection() {
       
       <div className="max-w-5xl mx-auto text-center relative z-10 space-y-12">
         <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight">
-          Choose the word that pulls you in first
+          {dict?.landing?.interactivePreview?.title || 'Choose the word that pulls you in first'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-8 px-4">
-          {options.map((opt) => {
-            const isActive = active === opt.keyword;
+          {options.map((opt, idx) => {
+            const isActive = active === idx;
             return (
               <div
-                key={opt.keyword}
-                onClick={() => setActive(opt.keyword)}
+                key={idx}
+                onClick={() => setActive(idx)}
                 className={`cursor-pointer rounded-2xl p-8 relative overflow-hidden transition-all duration-500 border group ${
                   isActive 
                     ? 'border-white/40 bg-white/10 scale-105 shadow-[0_0_30px_rgba(255,255,255,0.1)]' 
@@ -60,9 +60,9 @@ export default function InteractivePreviewSection() {
                   <div className={`p-4 rounded-full bg-slate-950/50 border border-white/10 ${isActive ? 'text-white' : 'text-slate-400'} group-hover:scale-110 transition-transform duration-300`}>
                     {opt.icon}
                   </div>
-                  <h3 className="text-2xl font-bold text-white">{opt.keyword}</h3>
+                  <h3 className="text-2xl font-bold text-white">{dict?.landing?.interactivePreview?.options?.[idx]?.keyword || opt.keyword}</h3>
                   <p className={`text-sm leading-relaxed ${isActive ? 'text-slate-200' : 'text-slate-400'}`}>
-                    {opt.desc}
+                    {dict?.landing?.interactivePreview?.options?.[idx]?.desc || opt.desc}
                   </p>
                 </div>
               </div>

@@ -26,32 +26,22 @@ function CheckoutContent() {
   const inviteCode = searchParams.get('invite');
 
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(true); // Default to true now that public
 
   useEffect(() => {
     async function checkAccess() {
-      // 1. Beta tester with invite code
-      if (inviteCode === 'beta2026') {
-        setIsAuthorized(true);
-        setCheckingAuth(false);
-        return;
-      }
-      
-      // 2. Returning users (already have session but needs renew)
+      // Check if returning user to pre-fill email
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsAuthorized(true);
-        if (session.user.email) setEmail(session.user.email);
-      } else {
-        router.push('/'); // Dead-end protection
+      if (session && session.user.email) {
+        setEmail(session.user.email);
       }
       setCheckingAuth(false);
     }
-    
+
     checkAccess();
   }, [inviteCode, router]);
 
-  if (checkingAuth || !isAuthorized) {
+  if (checkingAuth) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
         <Loader2 className="w-8 h-8 animate-spin text-amber-500 mb-4" />

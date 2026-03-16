@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useDictionary } from './LanguageProvider';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
   const { dict } = useDictionary();
@@ -40,6 +41,7 @@ export default function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-6">
+          <LanguageSwitcher />
           <Link href="/login" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
             {dict?.landing?.navbar?.login || 'Login'}
           </Link>
@@ -60,6 +62,9 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-b border-white/10 p-4 flex flex-col space-y-4 animate-in slide-in-from-top-2">
+          <div className="flex justify-center border-b border-white/10 pb-4">
+            <LanguageSwitcher />
+          </div>
           <Link
             href="/login"
             className="text-gray-300 hover:text-white py-2 text-center"

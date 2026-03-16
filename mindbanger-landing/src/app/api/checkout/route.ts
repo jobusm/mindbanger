@@ -17,19 +17,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing email or user ID' }, { status: 400 });
     }
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL 
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       customer_email: email,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID, // ID produktu v Stripe, napr. "price_1XYZ..." 
+          price: process.env.STRIPE_PRICE_ID, // ID produktu v Stripe, napr. "price_1XYZ..."
           quantity: 1,
         },
       ],
       // Success will handle supabase db logic via webhooks, but UI redirects here
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
+      success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/cancel`,
       metadata: {
         userId: userId, // Viazanie platby s účtom používateľa
         ...(refMode && { refMode }),

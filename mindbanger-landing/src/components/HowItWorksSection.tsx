@@ -28,7 +28,7 @@ export default function HowItWorksSection() {
   return (
     <section className="py-24 px-6 bg-slate-950 relative">
       <div className="max-w-6xl mx-auto space-y-16">
-        <h2 className="text-3xl md:text-5xl font-serif text-white text-center leading-tight">How it works</h2>
+        <h2 className="text-3xl md:text-5xl font-serif text-white text-center leading-tight">{dict?.landing?.howItWorks?.title || 'How it works'}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
           {/* Connector Line (Desktop) */}
@@ -43,9 +43,9 @@ export default function HowItWorksSection() {
               </div>
               
               <div className="space-y-2 max-w-xs">
-                <h3 className="text-xl font-bold text-white">{dict?.landing?.howItWorksSteps?.[idx]?.title || step.title}</h3>
+                <h3 className="text-xl font-bold text-white">{dict?.landing?.howItWorks?.steps?.[idx]?.title || step.title}</h3>
                 <p className="text-slate-400 leading-relaxed text-sm">
-                  {step.desc}
+                  {dict?.landing?.howItWorks?.steps?.[idx]?.desc || step.desc}
                 </p>
               </div>
             </div>

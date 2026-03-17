@@ -9,9 +9,10 @@ interface AudioPlayerProps {
   title: string;
   coverArt?: string;
   author?: string;
+  compact?: boolean;
 }
 
-export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger" }: AudioPlayerProps) {
+export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger", compact = false }: AudioPlayerProps) {
   const { dict } = useDictionary();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -74,7 +75,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
   };
 
   return (
-    <div className="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden relative group">
+    <div className={`w-full bg-slate-900/80 border border-white/10 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden relative group ${compact ? 'p-3' : 'p-4'}`}>
       {/* Decorative ambient gradient behind the player (simulating glow based on cover art vibes) */}
       <div className="absolute top-0 right-0 -m-20 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl opacity-50 pointer-events-none group-hover:opacity-70 transition-opacity duration-700"></div>
 
@@ -82,7 +83,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
       
       <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 relative z-10 w-full">
         {/* Cover Art Visual */}
-        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl shadow-lg flex-shrink-0 overflow-hidden group-hover:shadow-[0_0_25px_rgba(251,191,36,0.15)] transition-all duration-500">
+        {!compact && (<div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl shadow-lg flex-shrink-0 overflow-hidden group-hover:shadow-[0_0_25px_rgba(251,191,36,0.15)] transition-all duration-500">
           {coverArt ? (
             <img 
               src={coverArt} 
@@ -99,10 +100,10 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
           )}
           {/* Subtle overlay on cover art */}
           <div className="absolute inset-0 bg-black/10 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] pointer-events-none"></div>
-        </div>
+        </div>)}
 
         <div className="flex-1 min-w-0 flex flex-col justify-between w-full">
-          <div className="flex justify-between items-start mb-4">
+          <div className={`flex justify-between items-start ${compact ? "mb-2" : "mb-4"}`}>
             <div>
               <p className="text-white font-bold text-lg truncate drop-shadow-md">{title}</p>
               <p className="text-slate-400 text-sm font-medium">{author}</p>

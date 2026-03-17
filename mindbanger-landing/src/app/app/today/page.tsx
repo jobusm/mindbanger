@@ -52,6 +52,11 @@ export default async function TodayPage() {
     audioSignatureUrl = await getSecureAudioUrl(signal.audio_url);
   }
 
+  let spokenAudioUrl = '';
+  if (signal?.spoken_audio_url) {
+    spokenAudioUrl = await getSecureAudioUrl(signal.spoken_audio_url);
+  }
+
   // Format date for display
   const displayDate = new Intl.DateTimeFormat(userLang, {
     timeZone: userTimezone,
@@ -87,7 +92,19 @@ export default async function TodayPage() {
           <h2 className="text-3xl md:text-5xl font-serif text-white mb-6 leading-tight">
             {t.todaysSignal}
           </h2>
-          
+
+          {/* Spoken Audio Player */}
+          {spokenAudioUrl && (
+            <div className="mb-8">
+              <AudioPlayer
+                src={spokenAudioUrl}
+                title={t.listenToText || "Vypočuť si text"}
+                author="Mindbanger"
+                compact={true}
+              />
+            </div>
+          )}
+
           <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg">
             <p>{signal.signal_text}</p>
           </div>

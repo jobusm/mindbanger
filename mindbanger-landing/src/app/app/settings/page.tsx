@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Save, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDictionary } from '@/lib/i18n-client';
+import PushNotificationToggle from '@/components/push/PushNotificationToggle';
 
 export default function SettingsPage() {
   const { dict } = useDictionary();
@@ -15,6 +16,7 @@ export default function SettingsPage() {
     full_name: string;
     preferred_language: string;
     timezone: string;
+    notification_time?: string;
   } | null>(null);
 
   // Známe časové pásma pre zjednodušenie (dali by sa natiahnuť z Intl.supportedValuesOf('timeZone'))
@@ -35,7 +37,8 @@ export default function SettingsPage() {
         setProfile({
           full_name: data.full_name || '',
           preferred_language: data.preferred_language || 'en',
-          timezone: data.timezone || 'UTC'
+          timezone: data.timezone || 'UTC',
+          notification_time: data.notification_time || '06:00:00'
         });
       }
       setLoading(false);
@@ -55,7 +58,8 @@ export default function SettingsPage() {
         .update({
           full_name: profile.full_name,
           preferred_language: profile.preferred_language,
-          timezone: profile.timezone
+          timezone: profile.timezone,
+          notification_time: profile.notification_time || '06:00:00'
         })
         .eq('id', user.id);
     }
@@ -133,6 +137,18 @@ export default function SettingsPage() {
             ))}
           </select>
           <p className="text-xs text-slate-500">{dict.settings?.timezoneDesc}</p>
+        </div>
+
+        {/* Notification Time */}
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-slate-300">{(dict.settings as any)?.timeLabel || 'Čas dennej notifikácie (tvoj lokálny čas)'}</label>
+          <input
+            type="time"
+            value={(profile?.notification_time || '06:00:00').substring(0,5)}
+            onChange={e => setProfile({...profile!, notification_time: e.target.value + ':00'})}
+            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50"
+          />
+          <p className="text-xs text-slate-500">{(dict.settings as any)?.timeDesc || 'Kedy chceš dostávať denný signál?'}</p>
         </div>
 
         <button

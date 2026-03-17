@@ -13,6 +13,8 @@ type DailySignal = {
   focus_text: string | null;
   affirmation: string | null;
   audio_url: string | null;
+  spoken_audio_url?: string | null;
+  push_text?: string | null;
   language: string;
   is_published: boolean;
 };
@@ -100,7 +102,7 @@ export default function SignalsManager() {
     }
   }
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>, field: 'audio_url' | 'spoken_audio_url' = 'audio_url') {
     const file = e.target.files?.[0];
     if (!file || !editingSignal) return;
 
@@ -144,7 +146,7 @@ export default function SignalsManager() {
       }
 
       // 3. Update state with public URL
-      setEditingSignal({ ...editingSignal, audio_url: publicUrl });
+      setEditingSignal({ ...editingSignal, [field]: publicUrl });
       toast.success('Súbor bol úspešne nahratý!');
     } catch (error: any) {
       console.error(error);
@@ -211,6 +213,32 @@ export default function SignalsManager() {
               />
             </div>
 
+            
+            <div>
+              <label className="block text-sm text-slate-400 mb-2">Text Push Notifikácie (Voliteľné)</label>
+              <p className="text-xs text-slate-500 mb-2">Tento text sa odošle registrovaným používateľom na mobil/počítač, ak sú notifikácie zapnuté.</p>
+              <textarea
+                value={editingSignal.push_text || ''}
+                onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500"
+                rows={2}
+                placeholder="Napr: Dnešný signál je pripravený! Téma: ..."
+              />
+            </div>
+
+            
+            <div>
+              <label className="block text-sm text-slate-400 mb-2">Text Push Notifikácie (Voliteľné)</label>
+              <p className="text-xs text-slate-500 mb-2">Tento text sa odošle registrovaným používateľom na mobil/počítač, ak sú notifikácie zapnuté.</p>
+              <textarea
+                value={editingSignal.push_text || ''}
+                onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500"
+                rows={2}
+                placeholder="Napr: Dnešný signál je pripravený! Téma: ..."
+              />
+            </div>
+
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm text-slate-400 mb-2">Fokus dňa (Voliteľné)</label>
@@ -237,7 +265,19 @@ export default function SignalsManager() {
                   <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm mt-2" placeholder="URL kľúč / adresa z poľa vyššie" />
                 </div>
               </div>
-              <div className="flex items-end pb-3">
+              <div className="flex flex-col space-y-2 pb-3 justify-end mt-2">
+                <label className="block text-sm text-slate-400 mb-2">Hlasové zvuky (.mp3 - voliteľné)</label>
+                <input 
+                  type="file" 
+                  accept=".mp3"
+                  onChange={e => handleFileUpload(e, 'spoken_audio_url')}
+                  disabled={isUploading}
+                  className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
+                />
+                <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm mt-2" placeholder="URL kľúč / adresa pre hovorené slovo" />
+              </div>
+
+              <div className="flex items-end pb-3 mt-4 md:col-span-2">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input type="checkbox" checked={editingSignal.is_published} onChange={e => setEditingSignal({...editingSignal, is_published: e.target.checked})} className="w-5 h-5 accent-amber-500 rounded bg-slate-900 border-slate-700" />
                   <span className="text-white font-medium">Publikovať viditeľné pre používateľov</span>

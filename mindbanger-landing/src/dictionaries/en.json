@@ -43,8 +43,7 @@
   "today": {
     "goodMorning": "Good morning",
     "todaysSignal": "Todays Signal",
-    "dailyReset": "Daily Reset",
-    "todaysFocus": "Todays Focus",
+    "dailyReset": "Daily Reset",    "listenToText": "Listen to the text",    "todaysFocus": "Todays Focus",
     "affirmation": "Affirmation",
     "tuning": "Tuning the frequency...",
     "notBroadcasted": "Todays signal hasn\t been broadcasted yet. Check back a little later for your daily reset.",

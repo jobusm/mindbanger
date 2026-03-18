@@ -28,9 +28,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!R2_BUCKET_NAME || !R2_PUBLIC_URL) {
+    if (!R2_BUCKET_NAME) {
       return NextResponse.json(
-        { error: 'Server configuration error.' },
+        { error: 'Server configuration error: Config R2 bucket.' },
         { status: 500 }
       );
     }
@@ -45,7 +45,9 @@ export async function POST(request: Request) {
     });
 
     const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-    const publicUrl = `${R2_PUBLIC_URL}/${uniqueFilename}`;
+    // We return the unique filename (Key) as 'publicUrl' because our app uses the Key 
+    // to generate secure signed URLs on demand.
+    const publicUrl = uniqueFilename; 
 
     return NextResponse.json({ uploadUrl, publicUrl });
   } catch (error) {

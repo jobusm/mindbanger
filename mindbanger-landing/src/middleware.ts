@@ -1,3 +1,4 @@
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -11,20 +12,52 @@ const COUNTRY_TO_LANG: Record<string, string> = {
   CZ: 'cs',
 }
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next()
+export async function middleware(request: NextRequest) {
+  // 1. Initialize response
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
 
-  // 1. Check if the user already has a preferred language saved in cookies
+  // 2. Refresh Supabase Session (Critical for persistent login)
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // This refreshes the session if expired
+  await supabase.auth.getUser()
+
+  // 3. Language Detection Logic
   let language = request.cookies.get('user-lang')?.value
 
   if (!language || !SUPPORTED_LANGUAGES.includes(language)) {
-    // 2. If no cookie, detect IP country from Vercel's headers
+    // If no cookie, detect IP country from Vercel's headers
     const country = request.headers.get('x-vercel-ip-country') || ''
     
-    // 3. Default to 'en' if the country is not mapped
+    // Default to 'en' if the country is not mapped
     language = COUNTRY_TO_LANG[country.toUpperCase()] || DEFAULT_LANGUAGE
     
-    // 4. Save the detected language into cookies for subsequent requests
+    // Save the detected language into cookies for subsequent requests
     response.cookies.set('user-lang', language, {
       path: '/',
       maxAge: 60 * 60 * 24 * 365, // 1 year
@@ -32,7 +65,7 @@ export function middleware(request: NextRequest) {
     })
   }
 
-  // 5. Inject the language directly into headers so server components can access it easily
+  // Inject the language directly into headers so server components can access it easily
   response.headers.set('x-user-lang', language)
 
   return response

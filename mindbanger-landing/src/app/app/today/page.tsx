@@ -76,6 +76,26 @@ export default async function TodayPage() {
          <p className="text-slate-400 capitalize">{displayDate}</p>
       </header>
 
+      {/* Focus & Affirmation Block - Moved Up */}
+      {signal && ( 
+        <div className="grid md:grid-cols-2 gap-4">
+            {signal.focus_text && (
+              <div className="bg-slate-900 border border-white/10 rounded-2xl p-5 shadow-lg">
+                <h3 className="text-xs text-slate-500 uppercase tracking-widest mb-2">{t.todaysFocus}</h3>
+                <p className="text-slate-200 font-medium text-lg">{signal.focus_text}</p>
+              </div>
+            )}
+            
+            {signal.affirmation && (
+              <div className="bg-amber-950/20 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+                <div className="absolute -right-4 -bottom-4 text-amber-500/10 text-8xl font-serif leading-none">"</div>
+                <h3 className="text-xs text-amber-500 uppercase tracking-widest mb-2">{t.affirmation}</h3>
+                <p className="text-amber-100/90 italic text-lg">"{signal.affirmation}"</p>
+              </div>
+            )}
+        </div>
+      )}
+
       {/* Main Signal Card */}
       {signal ? (
         <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-6 md:p-10 relative overflow-hidden shadow-2xl">
@@ -118,24 +138,6 @@ export default async function TodayPage() {
               />
             </div>
           )}
-
-          {/* Focus & Affirmation Block */}
-          <div className="grid md:grid-cols-2 gap-4">
-            {signal.focus_text && (
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
-                <h3 className="text-xs text-slate-500 uppercase tracking-widest mb-2">{t.todaysFocus}</h3>
-                <p className="text-slate-200 font-medium">{signal.focus_text}</p>
-              </div>
-            )}
-            
-            {signal.affirmation && (
-              <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 relative overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 text-amber-500/10 text-8xl font-serif leading-none">"</div>
-                <h3 className="text-xs text-amber-500 uppercase tracking-widest mb-2">{t.affirmation}</h3>
-                <p className="text-amber-100/90 italic">"{signal.affirmation}"</p>
-              </div>
-            )}
-          </div>
 
         </div>
       ) : (

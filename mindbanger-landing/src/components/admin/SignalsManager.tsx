@@ -213,20 +213,6 @@ export default function SignalsManager() {
               />
             </div>
 
-            
-            <div>
-              <label className="block text-sm text-slate-400 mb-2">Text Push Notifikácie (Voliteľné)</label>
-              <p className="text-xs text-slate-500 mb-2">Tento text sa odošle registrovaným používateľom na mobil/počítač, ak sú notifikácie zapnuté.</p>
-              <textarea
-                value={editingSignal.push_text || ''}
-                onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500"
-                rows={2}
-                placeholder="Napr: Dnešný signál je pripravený! Téma: ..."
-              />
-            </div>
-
-            
             <div>
               <label className="block text-sm text-slate-400 mb-2">Text Push Notifikácie (Voliteľné)</label>
               <p className="text-xs text-slate-500 mb-2">Tento text sa odošle registrovaným používateľom na mobil/počítač, ak sú notifikácie zapnuté.</p>
@@ -252,7 +238,7 @@ export default function SignalsManager() {
             
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Audio Súbor (.mp3 - voliteľné)</label>
+                <label className="block text-sm text-slate-400 mb-2 font-bold">Meditácia / Hudba (Daily Reset)</label>
                 <div className="flex flex-col space-y-2">
                   <input 
                     type="file" 
@@ -262,11 +248,21 @@ export default function SignalsManager() {
                     className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
                   />
                   {isUploading && <span className="text-amber-500 text-sm">Nahrávam...</span>}
-                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm mt-2" placeholder="URL kľúč / adresa z poľa vyššie" />
+                  
+                  {/* Visual indicator of existing file */}
+                  {editingSignal.audio_url && (
+                    <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-3 py-2 rounded text-xs flex items-center">
+                      <CheckCircle2 size={12} className="mr-2" /> Súbor uložený: ...{editingSignal.audio_url.slice(-20)}
+                    </div>
+                  )}
+
+                  <label className="text-xs text-slate-600 uppercase mt-2">Alebo vložte URL manuálne:</label>
+                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="URL kľúč / adresa z poľa vyššie" />
                 </div>
               </div>
+
               <div className="flex flex-col space-y-2 pb-3 justify-end mt-2">
-                <label className="block text-sm text-slate-400 mb-2">Hlasové zvuky (.mp3 - voliteľné)</label>
+                <label className="block text-sm text-slate-400 mb-2 font-bold">Prečítaný text signálu (Hovorené slovo)</label>
                 <input 
                   type="file" 
                   accept=".mp3"
@@ -274,7 +270,15 @@ export default function SignalsManager() {
                   disabled={isUploading}
                   className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
                 />
-                <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm mt-2" placeholder="URL kľúč / adresa pre hovorené slovo" />
+                 {/* Visual indicator of existing file */}
+                 {editingSignal.spoken_audio_url && (
+                    <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-3 py-2 rounded text-xs flex items-center">
+                      <CheckCircle2 size={12} className="mr-2" /> Súbor uložený: ...{editingSignal.spoken_audio_url.slice(-20)}
+                    </div>
+                  )}
+
+                  <label className="text-xs text-slate-600 uppercase mt-2">Alebo vložte URL manuálne:</label>
+                <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="URL kľúč / adresa pre hovorené slovo" />
               </div>
 
               <div className="flex items-end pb-3 mt-4 md:col-span-2">

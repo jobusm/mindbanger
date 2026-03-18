@@ -107,13 +107,14 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
         </div>)}
 
         <div className="flex-1 min-w-0 flex flex-col justify-between w-full">
-          <div className={`flex justify-between items-start ${compact ? "mb-2" : "mb-4"}`}>
-            <div>
-              <p className="text-white font-bold text-lg truncate drop-shadow-md">{title}</p>
-              <p className="text-slate-400 text-sm font-medium">{author}</p>
+          <div className={`flex justify-between items-center gap-4 ${compact ? "mb-2" : "mb-4"}`}>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-bold text-lg truncate drop-shadow-md" title={title}>{title}</p>
+              <p className="text-slate-400 text-sm font-medium truncate">{author}</p>
             </div>
             {/* Play Button */}
             <button
+              type="button"
               onClick={togglePlay}
               aria-label={isPlaying ? (dict.audio?.pause || 'Pause') : (dict.audio?.play || 'Play')}
               title={isPlaying ? (dict.audio?.pause || 'Pause') : (dict.audio?.play || 'Play')}

@@ -204,7 +204,6 @@ export default function AffiliateManager() {
           <div key={m.id} className="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all flex flex-col">
             <div className="h-48 bg-slate-950 relative flex items-center justify-center border-b border-white/10">
               {m.type === 'Banner' ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={m.url} alt={m.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="text-slate-500 flex flex-col items-center">

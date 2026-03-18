@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Bell, BellOff, Loader2 } from 'lucide-react';
+import { Bell, BellOff, Loader2, Info } from 'lucide-react';
 import { useDictionary } from '@/lib/i18n-client';
 
 const urlBase64ToUint8Array = (base64String: string) => {
@@ -21,6 +21,7 @@ export default function PushNotificationToggle() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -77,11 +78,12 @@ export default function PushNotificationToggle() {
       alert((dict.settings as any)?.pushTemp || 'Push notifikácie boli úspešne zapnuté!');
     } catch (error) {
       console.error('Error subscribing to push:', error);
-      alert((dict.settings as any)?.pushTemp || 'Nastala chyba pri zapínaní notifikácií. Skontrolujte povolenia prehliadača.');
-      // Fallback update permission state
+      alert((dict.settings as any)?.enablePushError || 'Zaseknuté? Kliknite na "Návod na zapnutie" nižšie.');
+      // Update permission state just in case
       if ('Notification' in window) {
          setPermission(Notification.permission);
       }
+      setShowHelp(true);
     } finally {
       setIsLoading(false);
     }
@@ -89,43 +91,100 @@ export default function PushNotificationToggle() {
 
   if (!isSupported) {
     return (
-      <div className="text-sm text-slate-500 italic p-4 bg-slate-900/50 rounded-xl border border-white/5">
-        {(dict.settings as any)?.pushTemp || 'Váš prehliadač alebo zariadenie momentálne nepodporuje Push Notifikácie.'}
+      <div className="text-sm text-slate-500 italic p-4 bg-slate-900/50 rounded-xl border border-white/5 space-y-2">
+        <p>{(dict.settings as any)?.pushUnsupported || 'Prehliadač nepodporuje Push Notifikácie.'}</p>
+        <p className="text-xs text-amber-500 font-medium">
+             💡 Pre iPhone (iOS): <br/>
+             1. Kliknite na {` `}<strong>Zdieľať</strong> (štvorec so šípkou)<br/>
+             2. Vyberte {` `}<strong>Pridať na plochu</strong> (Add to Home Screen)<br/>
+             3. Otvorte aplikáciu z plochy.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 bg-slate-800/30 rounded-xl border border-white/10 flex items-center justify-between">
-      <div>
-        <h3 className="text-slate-300 font-medium flex items-center gap-2">
-          {isSubscribed ? <Bell className="text-amber-500" size={18} /> : <BellOff className="text-slate-500" size={18} />}
-          {(dict.settings as any)?.pushTemp || 'Notifikácie do zariadenia'}
-        </h3>
-        <p className="text-xs text-slate-500 mt-1 max-w-xs">
-          {(dict.settings as any)?.pushTemp || 'Dostávaj denné ranné reštarty priamo na uzamknutú obrazovku mobilu alebo do počítača.'}
-        </p>
+    <div className="p-4 bg-slate-800/30 rounded-xl border border-white/10 space-y-4">
+      
+      {/* Hlavný riadok s prepínačom */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-slate-300 font-medium flex items-center gap-2">
+            {isSubscribed ? <Bell className="text-amber-500" size={18} /> : <BellOff className="text-slate-500" size={18} />}
+            {(dict.settings as any)?.pushTitle || 'Notifikácie do zariadenia'}
+          </h3>
+          <p className="text-xs text-slate-500 mt-1 max-w-xs">
+            {(dict.settings as any)?.pushDesc || 'Dostávaj denné ranné reštarty priamo na uzamknutú obrazovku mobilu.'}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={subscribeToPush}
+          disabled={isSubscribed || isLoading || permission === 'denied'}
+          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+            isSubscribed 
+              ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+              : permission === 'denied'
+              ? 'bg-red-500/10 text-red-500 border border-red-500/20 cursor-not-allowed'
+              : 'bg-amber-500 text-slate-900 hover:bg-amber-400'
+          }`}
+        >
+            {isLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+            {isSubscribed 
+              ? ((dict.settings as any)?.pushBtnOn || 'Zapnuté')
+              : permission === 'denied'
+              ? ((dict.settings as any)?.pushBtnBlocked || 'Zablokované')
+              : ((dict.settings as any)?.pushBtnOff || 'Zapnúť')}
+        </button>
       </div>
 
-      <button
-        type="button"
-        onClick={subscribeToPush}
-        disabled={isSubscribed || isLoading || permission === 'denied'}
-        className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
-          isSubscribed 
-            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-            : permission === 'denied'
-            ? 'bg-red-500/10 text-red-500 border border-red-500/20 cursor-not-allowed'
-            : 'bg-amber-500 text-slate-900 hover:bg-amber-400'
-        }`}
-      >
-        {isLoading ? <Loader2 className="animate-spin" size={16} /> : null}
-        {isSubscribed 
-          ? ((dict.settings as any)?.pushTemp || 'Zapnuté')
-          : permission === 'denied'
-          ? ((dict.settings as any)?.pushTemp || 'Zablokované v prehliadači')
-          : ((dict.settings as any)?.pushTemp || 'Zapnúť')}
-      </button>
+      {/* Stav zablokovania / Pomoc */}
+      {(!isSubscribed) && (
+        <div className="bg-slate-900/50 p-3 rounded-lg text-xs space-y-2">
+            {permission === 'denied' ? (
+                <div className="flex items-start gap-2 text-red-400">
+                    <Info size={14} className="mt-0.5 shrink-0" />
+                    <p>Notifikácie sú v prehliadači zablokované. Musíte ich povoliť ručne.</p>
+                </div>
+            ) : null}
+
+            <button 
+              type="button"
+              onClick={() => setShowHelp(!showHelp)}
+              className="text-amber-500 hover:text-amber-400 font-medium underline decoration-dashed underline-offset-4 flex items-center gap-1"
+            >
+              <Info size={12}/>
+              {(dict.settings as any)?.showHelp || 'Návod: Ako zapnúť notifikácie? ▼'}
+            </button>
+            
+            {showHelp && (
+            <div className="pt-2 text-slate-300 space-y-3 pl-2 border-l-2 border-amber-500/20 ml-1 mt-2">
+                <div className="space-y-1">
+                    <strong className="block text-white text-xs uppercase tracking-wider">🤖 Android / Chrome (Mobil & PC)</strong>
+                    <p>
+                        Kliknite na ikonu zámku 🔒 alebo nastavení v adresnom riadku (hore pri mindbanger.com) → Povolenia → Oznámenia → <strong>Povoliť</strong>.
+                    </p>
+                </div>
+                <div className="space-y-1">
+                     <strong className="block text-white text-xs uppercase tracking-wider">🍎 iPhone (iOS)</strong>
+                     <p>
+                        1. Kliknite na <strong>Zdieľať</strong> (štvorec so šípkou)<br/>
+                        2. Vyberte <strong>Pridať na plochu</strong> (Add to Home Screen)<br/>
+                        3. Otvorte aplikáciu z plochy a vráťte sa sem.
+                     </p>
+                </div>
+                <div className="space-y-1">
+                     <strong className="block text-white text-xs uppercase tracking-wider">⚠️ Problémy?</strong>
+                     <p>
+                        Skontrolujte, či nemáte zapnutý režim "Nerušiť" alebo "Sústredenie".
+                     </p>
+                 </div>
+            </div>
+            )}
+        </div>
+      )}
+
     </div>
   );
 }

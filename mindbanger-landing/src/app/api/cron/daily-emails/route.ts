@@ -19,6 +19,12 @@ export async function GET(request: Request) {
       return new Response('Server Error', { status: 500 });
     }
 
+    const brevoApiKey = process.env.BREVO_API_KEY;
+    if (!brevoApiKey) {
+      console.error('Missing BREVO_API_KEY');
+      return new Response('Server Error', { status: 500 });
+    }
+
     // Bypass RLS
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -43,12 +49,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'No active subscriptions found.' });
     }
 
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    if (!brevoApiKey) {
-      console.error('Missing BREVO_API_KEY');
-      return new Response('Server Error', { status: 500 });
-    }
-
     // Fetch today's signals to get themes
     const today = new Date().toISOString().split('T')[0];
     const { data: dailySignals } = await supabase
@@ -70,20 +70,34 @@ export async function GET(request: Request) {
     const processedEmails = new Set<string>();
 
     for (const sub of subscriptions) {
-      if (!sub.customer_email || processedEmails.has(sub.customer_email)) continue;
+      if (!sub.customer_email) continue;
+      
+      const emailLower = sub.customer_email.toLowerCase();
+      if (processedEmails.has(emailLower)) continue;
       
       const lang = (sub.profiles as any)?.preferred_language || 'en';
       const safeLang = langGroups[lang] ? lang : 'en'; // default to en if missing
 
-      langGroups[safeLang].push(sub.customer_email);
-      processedEmails.add(sub.customer_email);
+      langGroups[safeLang].push(emailLower);
+      processedEmails.add(emailLower);
     }
 
     let sentBatches = 0;
+    let totalSent = 0;
+    const BATCH_SIZE = 99; // Split recipients to avoid API limits and spam filters (Brevo limit ~2000, safe limit ~100)
+
+    // Helper to chunk array
+    const chunkArray = (arr: string[], size: number) => {
+        const chunks = [];
+        for (let i = 0; i < arr.length; i += size) {
+            chunks.push(arr.slice(i, i + size));
+        }
+        return chunks;
+    };
 
     // Send emails grouped by language via Brevo
-    for (const [lang, emails] of Object.entries(langGroups)) {
-      if (emails.length === 0) continue;
+    for (const [lang, allEmails] of Object.entries(langGroups)) {
+      if (allEmails.length === 0) continue;
 
       const template = dailyEmailTemplates[lang as keyof typeof dailyEmailTemplates];
       
@@ -102,35 +116,46 @@ export async function GET(request: Request) {
         template.url
       );
 
-      const emailData = {
-        sender: { name: "Mindbanger", email: "hello@mindbanger.com" },
-        to: [{ email: "hello@mindbanger.com", name: "Mindbanger Subscribers" }], // dummy TO
-        bcc: emails.map(email => ({ email })), // BCC to actual recipients
-        subject: template.subject,
-        htmlContent: htmlContent
-      };
+      // Process in batches
+      const batches = chunkArray(allEmails, BATCH_SIZE);
 
-      const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'api-key': brevoApiKey
-        },
-        body: JSON.stringify(emailData)
-      });
+      for (const batch of batches) {
+        const emailData = {
+            sender: { name: "Mindbanger", email: "hello@mindbanger.com" },
+            to: [{ email: "hello@mindbanger.com", name: "Mindbanger Subscribers" }], // dummy TO
+            bcc: batch.map(email => ({ email })), // BCC to actual recipients in this batch
+            subject: template.subject,
+            htmlContent: htmlContent
+        };
 
-      if (!brevoResponse.ok) {
-        const errorData = await brevoResponse.text();
-        console.error(`Brevo API error for lang ${lang}:`, errorData);
-      } else {
-        sentBatches++;
+        try {
+            const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'api-key': brevoApiKey
+                },
+                body: JSON.stringify(emailData)
+            });
+
+            if (!brevoResponse.ok) {
+                const errorData = await brevoResponse.text();
+                console.error(`Brevo API error for lang ${lang} batch:`, errorData);
+            } else {
+                sentBatches++;
+                totalSent += batch.length;
+            }
+        } catch (e: any) {
+            console.error(`Network error sending batch for ${lang}:`, e.message);
+        }
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      sentEmailsCount: processedEmails.size,
+      processedSubscribers: processedEmails.size,
+      emailsSent: totalSent,
       batches: sentBatches
     });
   } catch (err: any) {

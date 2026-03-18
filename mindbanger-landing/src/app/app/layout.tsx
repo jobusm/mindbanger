@@ -2,6 +2,9 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import MobileNavBar from '@/components/MobileNavBar';
 import PushNotificationBanner from '@/components/push/PushNotificationBanner';
+
+// This is a minimal protected layout wrapper
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;

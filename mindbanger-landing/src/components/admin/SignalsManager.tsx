@@ -145,8 +145,14 @@ export default function SignalsManager() {
         throw new Error('Nepodarilo sa nahrať súbor na server');
       }
 
-      // 3. Update state with public URL
-      setEditingSignal({ ...editingSignal, [field]: publicUrl });
+      // 3. Update state with public URL using functional update to preserve latest state
+      setEditingSignal(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          [field]: publicUrl
+        };
+      });
       toast.success('Súbor bol úspešne nahratý!');
     } catch (error: any) {
       console.error(error);
@@ -293,8 +299,8 @@ export default function SignalsManager() {
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2 rounded-lg text-slate-400 hover:text-white transition-colors">
                 Cancel
               </button>
-              <button type="submit" className="px-8 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition-colors">
-                Save Signál
+              <button type="submit" disabled={isUploading} className={`px-8 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg transition-colors ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-400'}`}>
+                {isUploading ? 'Nahrávam...' : 'Save Signál'}
               </button>
             </div>
           </form>

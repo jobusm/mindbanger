@@ -4,17 +4,18 @@ self.addEventListener('push', function(event) {
     
     const options = {
       body: data.body,
-      // Here you could add icon, badge etc.
-      // icon: '/icon.png',
-      // badge: '/badge.png',
+      icon: '/icon?size=192', // Use app icon
+      badge: '/icon?size=96',  // Use app icon for badge
       vibrate: [100, 50, 100],
       data: {
-        url: data.url || '/'
+        dateOfArrival: Date.now(),
+        primaryKey: '2',
+        url: data.url || '/' // Default to root
       }
     };
 
     event.waitUntil(
-      self.registration.showNotification(data.title, options)
+      self.registration.showNotification(data.title || 'Mindbanger', options)
     );
   }
 });

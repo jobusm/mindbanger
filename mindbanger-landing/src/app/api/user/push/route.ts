@@ -12,11 +12,11 @@ export async function POST(request: Request) {
 
     const subscription = await request.json();
 
-    if (!subscription || !subscription.endpoint) {
-      return NextResponse.json({ error: 'Invalid subscription data' }, { status: 400 });
+    if (!subscription || !subscription.endpoint || !subscription.keys || !subscription.keys.p256dh || !subscription.keys.auth) {
+      return NextResponse.json({ error: 'Invalid subscription data: Missing endpoint or keys' }, { status: 400 });
     }
 
-    // Save to the databse
+    // Save to the database
     const { error } = await supabase
       .from('push_subscriptions')
       .upsert(

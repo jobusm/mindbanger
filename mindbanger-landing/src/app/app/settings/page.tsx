@@ -139,6 +139,11 @@ export default function SettingsPage() {
           <p className="text-xs text-slate-500">{dict.settings?.timezoneDesc}</p>
         </div>
 
+        {/* Push Notification Toggle */}
+        <div className="space-y-2 pt-2">
+           <PushNotificationToggle />
+        </div>
+
         {/* Notification Time */}
         <div className="space-y-4">
           <label className="block text-sm font-medium text-slate-300">{(dict.settings as any)?.timeLabel || 'Čas dennej notifikácie (tvoj lokálny čas)'}</label>

@@ -1,9 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import MobileNavBar from '@/components/MobileNavBar';
-
-// This is a minimal protected layout wrapper
-export default async function AppLayout({
+import PushNotificationBanner from '@/components/push/PushNotificationBanner';
   children,
 }: {
   children: React.ReactNode;
@@ -36,6 +34,9 @@ export default async function AppLayout({
       
       {/* Vlozime PWA Navigaciu */}
       <MobileNavBar />
+
+      {/* Push Notification Banner */}
+      <PushNotificationBanner />
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-lg mx-auto p-4 md:px-8 md:py-10 animate-in fade-in duration-500">

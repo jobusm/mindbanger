@@ -28,8 +28,9 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   const t = dict.archive;
   
   // Get date from which user has access (Temporal Content Lock)
-  // Ak existuje predplatné s earlier date, dalo by sa zobrať to, ale pre jednoduchosť berieme vytvorenie profilu.
-  const accessStartDate = new Date(profile?.created_at || Date.now());
+  // Ak existuje predplatne s earlier date, dalo by sa zobrazit to, ale pre jednoduchost berieme vytvorenie profilu.
+  const tempNow = new Date();
+  const accessStartDate = new Date(profile?.created_at || tempNow.toISOString());
   const formattedLockDate = accessStartDate.toISOString().split('T')[0];
 
   // Dnešný dátum pre obmedzenie do kedy zobrazovať (nepredbiehať)

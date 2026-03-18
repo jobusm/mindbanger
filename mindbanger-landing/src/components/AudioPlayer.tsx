@@ -17,6 +17,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
 
     const updateProgress = () => {
       setProgress((audio.currentTime / audio.duration) * 100 || 0);
+      setCurrentTime(audio.currentTime);
     };
 
     const updateDuration = () => {
@@ -34,6 +36,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
     const onEnded = () => {
       setIsPlaying(false);
       setProgress(0);
+      setCurrentTime(0);
       if (audio) audio.currentTime = 0;
     };
 
@@ -64,6 +67,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
       const newTime = (Number(e.target.value) / 100) * duration;
       audioRef.current.currentTime = newTime;
       setProgress(Number(e.target.value));
+      setCurrentTime(newTime);
     }
   };
 
@@ -121,7 +125,7 @@ export default function AudioPlayer({ src, title, coverArt, author = "Mindbanger
           
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-400 font-medium w-8 text-right font-mono tracking-tighter">
-              {formatTime(audioRef.current?.currentTime || 0)}
+              {formatTime(currentTime)}
             </span>
             
             <div className="relative flex-1 h-2 group/slider cursor-pointer">

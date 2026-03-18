@@ -35,13 +35,9 @@ export default function SubscriptionsManager() {
     return acc;
   }, {} as Record<string, number>);
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
-
-  async function fetchSubscriptions() {
+async function fetchSubscriptions() {
     setLoading(true);
-    // Fetch subscriptions. 
+    // Fetch subscriptions.
     // We try to join with profiles to get user info if possible.
     let { data, error } = await supabase
       .from('subscriptions')
@@ -50,7 +46,7 @@ export default function SubscriptionsManager() {
         profiles ( full_name )
       `)
       .order('created_at', { ascending: false });
-    
+
     if (error) {
        // Fallback if foreign key doesn't exist
        const fallback = await supabase
@@ -66,6 +62,10 @@ export default function SubscriptionsManager() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   if (loading && subscriptions.length === 0) return <div className="p-10 text-slate-400">Načítavam odbery...</div>;
 

@@ -21,13 +21,9 @@ export default function PayoutsManager() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchPayouts();
-  }, []);
-
   async function fetchPayouts() {
     setLoading(true);
-    // Skúsime načítať priamo z payout_requests, ak existuje v DB
+    // Skusime nacitat priamo z payout_requests, ak existuje v DB
     const { data, error } = await supabase
       .from('payout_requests')
       .select(`
@@ -41,6 +37,10 @@ export default function PayoutsManager() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchPayouts();
+  }, []);
 
   async function handleMarkAsPaid(payout: PayoutRequest) {
     if (!confirm(`Potvrdzuješ, že si odoslal ${payout.amount}€ na PayPal účet: ${payout.paypal_email}?`)) return;

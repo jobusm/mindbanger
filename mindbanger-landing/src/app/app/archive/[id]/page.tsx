@@ -23,7 +23,8 @@ export default async function ArchiveDetailPage({ params }: { params: Promise<{ 
     .single();
 
   const userLang = profile?.preferred_language || 'en';
-  const accessStartDate = new Date(profile?.created_at || Date.now());
+  const now = new Date();
+  const accessStartDate = new Date(profile?.created_at || now);
   const formattedLockDate = accessStartDate.toISOString().split('T')[0];
 
   // 2. Načítať konkrétny signál (overiť či sa zmestí do temporal locku)

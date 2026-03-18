@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase-server';
 
 export default async function AdminRootLayout({
@@ -29,7 +30,7 @@ export default async function AdminRootLayout({
         <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl max-w-md text-center">
           <h1 className="text-xl text-red-500 font-bold mb-4">Access Denied</h1>
           <p className="text-slate-400 mb-6">You need administrator rights to enter this section.</p>
-          <a href="/" className="px-6 py-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition">Return to home</a>
+          <Link href="/" className="px-6 py-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition">Return to home</Link>
         </div>
       </div>
     );

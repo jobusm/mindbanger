@@ -127,41 +127,62 @@ export default function SignalsManager() {
     e.preventDefault();
     if (!editingSignal) return;
 
-    // Prepare payload for DB
-    // Map 'focus' (frontend) -> 'focus_text' (DB)
-    const payload: any = { 
-        ...editingSignal,
-        focus_text: editingSignal.focus, 
-        // Ensure legacy fields match if needed, though 'theme' and 'script' exist in DB as per logs
-    };
-    
-    // Remove frontend-only properties or mismatched keys
-    delete payload.focus; 
-    delete payload.content_payload; // Legacy field removal to be safe
+    // Robust payload construction to satisfy all legacy DB columns
+    const dbPayload: any = {
+        date: editingSignal.date,
+        language: editingSignal.language,
+        
+        // Theme & Title (Fill both to be safe)
+        theme: editingSignal.theme,
+        title: editingSignal.theme, 
 
-    if (!payload.id) {
-      const { id, ...newRecord } = payload;
-      // Insert
-      const { error } = await supabase.from('daily_signals').insert([newRecord]);
-      if (!error) {
-        setIsFormOpen(false);
-        fetchSignals();
-        toast.success('Vytvorené!');
-      } else {
-        console.error('Insert Error:', error);
-        toast.error('Chyba pri ukladaní: ' + error.message);
-      }
-    } else {
-      // Update
-      const { error } = await supabase.from('daily_signals').update(payload).eq('id', editingSignal.id);
-      if (!error) {
-        setIsFormOpen(false);
-        fetchSignals();
-        toast.success('Uložené!');
-      } else {
-        console.error('Update Error:', error);
-        toast.error('Chyba pri ukladaní: ' + error.message);
-      }
+        // Script & Signal Text (Fill both to be safe)
+        script: editingSignal.script,
+        signal_text: editingSignal.script,
+
+        // Focus Text
+        focus_text: editingSignal.focus, 
+        
+        affirmation: editingSignal.affirmation,
+        push_text: editingSignal.push_text,
+
+        // Audio
+        audio_url: editingSignal.audio_url,
+        spoken_audio_url: editingSignal.spoken_audio_url,
+        meditation_audio_url: editingSignal.meditation_audio_url,
+
+        // Status & Published Flag
+        status: editingSignal.status,
+        is_published: editingSignal.status === 'published',
+
+        // Metadata
+        generation_metadata: editingSignal.generation_metadata
+    };
+
+    try {
+        if (!editingSignal.id) {
+          // INSERT
+          const { error } = await supabase.from('daily_signals').insert([dbPayload]);
+          if (error) throw error;
+          
+          setIsFormOpen(false);
+          fetchSignals();
+          toast.success('Vytvorené!');
+        } else {
+          // UPDATE
+          const { error } = await supabase.from('daily_signals')
+            .update(dbPayload)
+            .eq('id', editingSignal.id);
+          
+          if (error) throw error;
+
+          setIsFormOpen(false);
+          fetchSignals();
+          toast.success('Uložené!');
+        }
+    } catch (error: any) {
+        console.error('Save Error:', error);
+        toast.error('Chyba: ' + (error.message || 'Nepodarilo sa uložiť'));
     }
   }
 

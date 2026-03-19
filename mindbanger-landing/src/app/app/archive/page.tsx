@@ -43,13 +43,20 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   if (currentTab === 'daily') {
     const { data } = await supabase
       .from('daily_signals')
-      .select('id, date, theme, title, signal_text')
+      // Map legacy/wrong fields to schema: title->theme, signal_text->focus
+      .select('id, date, theme, focus, affirmation, status, script') 
       .eq('language', userLang)
-      .eq('is_published', true)
-      .gte('date', formattedLockDate) // Zamknutie: len od momentu začiatku subscribu (registrácie)
-      .lte('date', today) // Neukazovať záznamy v budúcnosti
+      .eq('status', 'published') // Changed from is_published
+      .gte('date', formattedLockDate)
+      .lte('date', today)
       .order('date', { ascending: false });
-    signals = data || [];
+    
+    // Map database fields to UI components expectations
+    signals = data?.map((item: any) => ({
+      ...item,
+      title: item.theme, 
+      signal_text: item.script || item.focus || item.affirmation
+    })) || [];
   } else {
     // Načítať samostatné produkty - Quick Resets
     const { data } = await supabase

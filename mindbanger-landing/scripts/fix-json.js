@@ -1,0 +1,1 @@
+const fs = require('fs'); const content = fs.readFileSync('vercel.json', 'utf8'); fs.writeFileSync('vercel.json', content.replace(/^\uFEFF/, ''), { encoding: 'utf8' });

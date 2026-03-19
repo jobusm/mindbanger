@@ -2,21 +2,22 @@
 import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Edit2, Trash2, Calendar, Radio, CheckCircle2, Circle } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, CheckCircle2, Languages, FileAudio, Sparkles } from "lucide-react";
 
 type DailySignal = {
   id: string;
   date: string;
-  title: string;
-  theme: string;
-  signal_text: string;
-  focus_text: string | null;
+  theme: string;       // Was title
+  script: string | null; // Was signal_text
+  focus: string | null; // Was focus_text
   affirmation: string | null;
-  audio_url: string | null;
-  spoken_audio_url?: string | null;
+  audio_url: string | null; // Background / Meditation
+  spoken_audio_url?: string | null; // Spoken word
   push_text?: string | null;
   language: string;
-  is_published: boolean;
+  status: 'draft' | 'generated' | 'published'; // Was is_published boolean
+  generation_metadata?: any;
+  content_payload?: any;
 };
 
 export default function SignalsManager() {
@@ -25,6 +26,7 @@ export default function SignalsManager() {
   const [editingSignal, setEditingSignal] = useState<DailySignal | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     fetchSignals();
@@ -43,9 +45,48 @@ export default function SignalsManager() {
     setLoading(false);
   }
 
-  function handleEdit(signal: DailySignal) {
-    setEditingSignal(signal);
-    setIsFormOpen(true);
+  async function handleGenerateAI() {
+    if (!editingSignal?.date) return toast.error('Zadajte najprv dátum');
+    if (!confirm(`Vygenerovať obsah pre ${editingSignal.date} (${editingSignal.language})?\nPozor: Toto prepíše polia Téma, Fokus, Skript a Afirmácia.`)) return;
+
+    setIsGenerating(true);
+    const toastId = toast.loading('Generujem obsah s AI... (cca 15s)');
+
+    try {
+        const res = await fetch('/api/admin/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                date: editingSignal.date,
+                language: editingSignal.language,
+                themeHint: editingSignal.theme // Use title as hint if provided
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Chyba generovania');
+        }
+
+        const data = await res.json();
+        
+        setEditingSignal(prev => prev ? ({
+            ...prev,
+            theme: data.theme,
+            focus: data.focus,
+            affirmation: data.affirmation,
+            script: data.script,
+            status: 'generated',
+            content_payload: data.content_payload
+        }) : null);
+
+        toast.success('Obsah úspešne vygenerovaný!', { id: toastId });
+    } catch (err: any) {
+        console.error(err);
+        toast.error(err.message || 'Chyba AI', { id: toastId });
+    } finally {
+        setIsGenerating(false);
+    }
   }
 
   function handleNew() {
@@ -53,22 +94,33 @@ export default function SignalsManager() {
     setEditingSignal({
       id: '',
       date: today,
-      title: '',
       theme: '',
-      signal_text: '',
-      focus_text: '',
+      script: '',
+      focus: '',
       affirmation: '',
       audio_url: '',
+      spoken_audio_url: '',
+      push_text: '',
       language: 'sk',
-      is_published: false
+      status: 'draft'
     });
+    setIsFormOpen(true);
+  }
+
+  function handleEdit(signal: DailySignal) {
+    setEditingSignal(signal);
     setIsFormOpen(true);
   }
 
   async function handleDelete(id: string) {
     if (!confirm('Naozaj vymazať?')) return;
     const { error } = await supabase.from('daily_signals').delete().eq('id', id);
-    if (!error) fetchSignals();
+    if (!error) {
+       toast.success('Zmazané');
+       fetchSignals();
+    } else {
+       toast.error('Chyba pri mazaní');
+    }
   }
 
   async function saveSignal(e: React.FormEvent) {
@@ -77,25 +129,25 @@ export default function SignalsManager() {
 
     // Prevent submitting empty IDs for new records
     const payload = { ...editingSignal };
+    
     if (!payload.id) {
-      delete (payload as any).id;
-    }
-
-    if (editingSignal.id) {
+      const { id, ...newRecord } = payload;
+      // Insert
+      const { error } = await supabase.from('daily_signals').insert([newRecord]);
+      if (!error) {
+        setIsFormOpen(false);
+        fetchSignals();
+        toast.success('Vytvorené!');
+      } else {
+        toast.error(error.message);
+      }
+    } else {
       // Update
       const { error } = await supabase.from('daily_signals').update(payload).eq('id', editingSignal.id);
       if (!error) {
         setIsFormOpen(false);
         fetchSignals();
-      } else {
-        toast.error(error.message);
-      }
-    } else {
-      // Insert
-      const { error } = await supabase.from('daily_signals').insert([payload]);
-      if (!error) {
-        setIsFormOpen(false);
-        fetchSignals();
+        toast.success('Uložené!');
       } else {
         toast.error(error.message);
       }
@@ -117,46 +169,29 @@ export default function SignalsManager() {
       // 1. Get presigned URL
       const res = await fetch('/api/upload', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
       });
 
-      if (!res.ok) {
-        throw new Error('Nepodarilo sa získať link pre nahratie súboru');
-      }
+      if (!res.ok) throw new Error('Chyba pri získavaní linku');
 
       const { uploadUrl, publicUrl } = await res.json();
 
       // 2. Upload file to R2
       const uploadRes = await fetch(uploadUrl, {
         method: 'PUT',
-        headers: {
-          'Content-Type': file.type,
-        },
+        headers: { 'Content-Type': file.type },
         body: file,
       });
 
-      if (!uploadRes.ok) {
-        throw new Error('Nepodarilo sa nahrať súbor na server');
-      }
+      if (!uploadRes.ok) throw new Error('Chyba pri nahrávaní súboru');
 
-      // 3. Update state with public URL using functional update to preserve latest state
-      setEditingSignal(prev => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          [field]: publicUrl
-        };
-      });
-      toast.success('Súbor bol úspešne nahratý!');
+      // 3. Update state
+      setEditingSignal(prev => prev ? ({ ...prev, [field]: publicUrl }) : null);
+      toast.success('Súbor nahratý!');
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || 'Nastala chyba pri nahrávaní súboru.');
+      toast.error(error.message);
     } finally {
       setIsUploading(false);
     }
@@ -169,23 +204,50 @@ export default function SignalsManager() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-2xl font-serif text-white mb-2">Editor obsahu</h2>
-          <p className="text-slate-400">Správa denných signálov a obsahu</p>
+          <p className="text-slate-400">Správa denných signálov a obsahu (Mindbanger Daily)</p>
         </div>
         <button
           onClick={handleNew}
           className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-3 rounded-xl font-bold flex items-center transition-colors"
         >
-          <Plus size={20} className="mr-2" /> Pridať Signal
+          <Plus size={20} className="mr-2" /> Pridať Signál
         </button>
       </div>
 
-      {isFormOpen && editingSignal && (
+      {!isFormOpen ? (
+        <div className="grid gap-4">
+            {signals.map(s => (
+                <div key={s.id} className="bg-slate-900/50 border border-slate-800 p-4 rounded-xl flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                        <div className={`w-3 h-3 rounded-full ${s.status === 'published' ? 'bg-green-500' : s.status === 'generated' ? 'bg-blue-500' : 'bg-slate-500'}`} />
+                        <div>
+                            <div className="font-bold text-white flex items-center gap-2">
+                                <span className="text-amber-500 font-mono">{s.date}</span>
+                                <span>{s.theme}</span>
+                                <span className="text-xs px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase">{s.language}</span>
+                            </div>
+                            <div className="text-sm text-slate-400 truncate max-w-md">{s.script || s.focus || 'Bez textu...'}</div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                         <button onClick={() => handleEdit(s)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"><Edit2 size={18} /></button>
+                         <button onClick={() => handleDelete(s.id)} className="p-2 hover:bg-red-900/20 rounded-lg text-slate-600 hover:text-red-400"><Trash2 size={18} /></button>
+                    </div>
+                </div>
+            ))}
+        </div>
+      ) : editingSignal && (
         <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 md:p-8 mb-10 relative">
-          <h2 className="text-xl text-white font-bold mb-6">
-            {editingSignal.id ? 'Upraviť signál' : 'Nový signál'}
-          </h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl text-white font-bold">
+                {editingSignal.id ? 'Upraviť signál' : 'Nový signál'}
+            </h2>
+            <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-white">Zavrieť</button>
+          </div>
+          
           <form onSubmit={saveSignal} className="space-y-6">
-            <div className="grid md:grid-cols-4 gap-6">
+            {/* Metadata Row */}
+            <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm text-slate-400 mb-2">Jazyk</label>
                 <select value={editingSignal.language} onChange={e => setEditingSignal({...editingSignal, language: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
@@ -199,173 +261,129 @@ export default function SignalsManager() {
                 <input type="date" value={editingSignal.date} onChange={e => setEditingSignal({...editingSignal, date: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Hlavný nadpis (Title)</label>
-                <input type="text" value={editingSignal.title} onChange={e => setEditingSignal({...editingSignal, title: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required placeholder="Napr. The Unseen Hand" />
-              </div>
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">Téma (Theme/Badge)</label>
-                <input type="text" value={editingSignal.theme} onChange={e => setEditingSignal({...editingSignal, theme: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required placeholder="Napr. OCHRANA / STRATÉGIA" />
+                 <label className="block text-sm text-slate-400 mb-2">Status</label>
+                 <select value={editingSignal.status} onChange={e => setEditingSignal({...editingSignal, status: e.target.value as any})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500">
+                    <option value="draft">Draft (Koncept)</option>
+                    <option value="generated">Generated (Vygenerované)</option>
+                    <option value="published">Published (Zverejnené)</option>
+                 </select>
               </div>
             </div>
 
+            {/* Content Row */}
+            <div className="grid md:grid-cols-2 gap-6">
+                 <div>
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm text-slate-400">Téma (Theme)</label>
+                        <button 
+                          type="button" 
+                          onClick={handleGenerateAI} 
+                          disabled={isGenerating || !editingSignal.date} 
+                          className="bg-purple-900/50 hover:bg-purple-800 text-purple-300 text-xs px-3 py-1 rounded-full flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-purple-500/30"
+                        >
+                           {isGenerating ? 'Generujem...' : <><Sparkles size={14} className="mr-1" /> Generovať obsah</>}
+                        </button>
+                    </div>
+                    <input type="text" value={editingSignal.theme} onChange={e => setEditingSignal({...editingSignal, theme: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required placeholder="Napr. OCHRANA / STRATÉGIA" />
+                    <p className="text-xs text-slate-500 mt-1">Zadajte tému ako hint pre AI, alebo nechajte prázdne pre auto-výber.</p>
+                 </div>
+                 <div>
+                    <label className="block text-sm text-slate-400 mb-2">Fokus dňa (Short Focus)</label>
+                    <input type="text" value={editingSignal.focus || ''} onChange={e => setEditingSignal({...editingSignal, focus: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Krátka veta pre UI..." />
+                 </div>
+            </div>
+
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Hlavný text signálu</label>
-              <p className="text-xs text-slate-500 mb-2">Formátovanie riadkov sa zachová po uložení presne tak ako ukazuješ aj s medzerami dňa.</p>
+              <label className="block text-sm text-slate-400 mb-2">Hlavný Skript (Script)</label>
+              <p className="text-xs text-slate-500 mb-2">Toto je text, ktorý bude čítať AI (TTS) a zobrazí sa v detaile.</p>
               <textarea 
-                value={editingSignal.signal_text} 
-                onChange={e => setEditingSignal({...editingSignal, signal_text: e.target.value})} 
+                value={editingSignal.script || ''} 
+                onChange={e => setEditingSignal({...editingSignal, script: e.target.value})} 
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 text-white focus:outline-none focus:border-amber-500 min-h-[200px]" 
-                required 
               />
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Text Push Notifikácie (Voliteľné)</label>
-              <p className="text-xs text-slate-500 mb-2">Tento text sa odošle registrovaným používateľom na mobil/počítač, ak sú notifikácie zapnuté.</p>
-              <textarea
-                value={editingSignal.push_text || ''}
-                onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500"
-                rows={2}
-                placeholder="Napr: Dnešný signál je pripravený! Téma: ..."
-              />
+              <label className="block text-sm text-slate-400 mb-2">Afirmácia</label>
+              <textarea value={editingSignal.affirmation || ''} onChange={e => setEditingSignal({...editingSignal, affirmation: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" rows={2} />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">Fokus dňa (Voliteľné)</label>
-                <textarea value={editingSignal.focus_text || ''} onChange={e => setEditingSignal({...editingSignal, focus_text: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" rows={3} />
-              </div>
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">Afirmácia (Voliteľné)</label>
-                <textarea value={editingSignal.affirmation || ''} onChange={e => setEditingSignal({...editingSignal, affirmation: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" rows={3} />
-              </div>
+             <div>
+                <label className="block text-sm text-slate-400 mb-2">Push Notifikácia</label>
+                <input type="text" value={editingSignal.push_text || ''} onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Text pre notifikáciu..." />
+             </div>
+
+            {/* Audio Files */}
+            <div className="grid md:grid-cols-2 gap-6 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+               <div>
+                  <label className="block text-sm text-slate-400 mb-2 font-bold flex items-center gap-2"><FileAudio size={16}/> Hudba / Pozadie (Audio URL)</label>
+                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'audio_url')} disabled={isUploading} className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:bg-slate-800 file:text-slate-300" />
+               </div>
+               <div>
+                  <label className="block text-sm text-slate-400 mb-2 font-bold flex items-center gap-2"><FileAudio size={16}/> Hovorené Slovo (Spoken Audio)</label>
+                  <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:bg-slate-800 file:text-slate-300" />
+               </div>
             </div>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm text-slate-400 mb-2 font-bold">Meditácia / Hudba (Daily Reset)</label>
-                <div className="flex flex-col space-y-2">
-                  <input 
-                    type="file" 
-                    accept=".mp3" 
-                    onChange={handleFileUpload} 
-                    disabled={isUploading}
-                    className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
-                  />
-                  {isUploading && <span className="text-amber-500 text-sm">Nahrávam...</span>}
-                  
-                  {/* Visual indicator of existing file */}
-                  {editingSignal.audio_url && (
-                    <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-3 py-2 rounded text-xs flex items-center">
-                      <CheckCircle2 size={12} className="mr-2" /> Súbor uložený: ...{editingSignal.audio_url.slice(-20)}
+
+            {/* Master System Payload */}
+            {editingSignal.content_payload && (
+                <div className="bg-gradient-to-r from-slate-900 to-slate-900 border border-indigo-500/30 rounded-xl p-5 shadow-lg shadow-indigo-500/5">
+                    <h3 className="text-indigo-400 font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <Sparkles size={16} /> Master System Content
+                    </h3>
+                    <div className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                                <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Microstep</span>
+                                <p className="text-slate-200 text-sm font-medium">{editingSignal.content_payload.microstep || '-'}</p>
+                            </div>
+                            <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                                <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Journal Question</span>
+                                <p className="text-slate-200 text-sm italic">{editingSignal.content_payload.journal || '-'}</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                            <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Meditation Structure</span>
+                            <div className="prose prose-invert prose-sm max-w-none text-slate-300">
+                                <pre className="whitespace-pre-wrap font-sans text-sm">{editingSignal.content_payload.meditation || '-'}</pre>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                            <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Keywords</span>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {editingSignal.content_payload.keywords?.split(',').map((k: string, i: number) => (
+                                    <span key={i} className="bg-indigo-900/30 text-indigo-300 text-xs px-2 py-1 rounded border border-indigo-500/20">{k.trim()}</span>
+                                )) || '-'}
+                            </div>
+                        </div>
+
+                        <details className="group">
+                            <summary className="cursor-pointer text-xs text-slate-600 hover:text-slate-400 transition-colors list-none flex items-center gap-2">
+                                <span className="group-open:rotate-90 transition-transform">▸</span> Raw JSON Payload
+                            </summary>
+                            <pre className="mt-2 bg-slate-950 p-3 rounded-lg overflow-x-auto text-[10px] text-green-500/80 font-mono border border-slate-800">
+                                {JSON.stringify(editingSignal.content_payload, null, 2)}
+                            </pre>
+                        </details>
                     </div>
-                  )}
-
-                  <label className="text-xs text-slate-600 uppercase mt-2">Alebo vložte URL manuálne:</label>
-                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="URL kľúč / adresa z poľa vyššie" />
                 </div>
-              </div>
-
-              <div className="flex flex-col space-y-2 pb-3 justify-end mt-2">
-                <label className="block text-sm text-slate-400 mb-2 font-bold">Prečítaný text signálu (Hovorené slovo)</label>
-                <input 
-                  type="file" 
-                  accept=".mp3"
-                  onChange={e => handleFileUpload(e, 'spoken_audio_url')}
-                  disabled={isUploading}
-                  className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20"
-                />
-                 {/* Visual indicator of existing file */}
-                 {editingSignal.spoken_audio_url && (
-                    <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-3 py-2 rounded text-xs flex items-center">
-                      <CheckCircle2 size={12} className="mr-2" /> Súbor uložený: ...{editingSignal.spoken_audio_url.slice(-20)}
-                    </div>
-                  )}
-
-                  <label className="text-xs text-slate-600 uppercase mt-2">Alebo vložte URL manuálne:</label>
-                <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="URL kľúč / adresa pre hovorené slovo" />
-              </div>
-
-              <div className="flex items-end pb-3 mt-4 md:col-span-2">
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input type="checkbox" checked={editingSignal.is_published} onChange={e => setEditingSignal({...editingSignal, is_published: e.target.checked})} className="w-5 h-5 accent-amber-500 rounded bg-slate-900 border-slate-700" />
-                  <span className="text-white font-medium">Publikovať viditeľné pre používateľov</span>
-                </label>
-              </div>
-            </div>
+            )}
 
             <div className="flex justify-end space-x-4 pt-4 border-t border-slate-800">
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2 rounded-lg text-slate-400 hover:text-white transition-colors">
-                Cancel
+                Zrušiť
               </button>
-              <button type="submit" disabled={isUploading} className={`px-8 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg transition-colors ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-400'}`}>
-                {isUploading ? 'Nahrávam...' : 'Save Signál'}
+              <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-2 rounded-lg font-bold transition-colors">
+                Uložiť Signál
               </button>
             </div>
           </form>
         </div>
       )}
-
-      {/* List */}
-      <div className="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-900 text-slate-400">
-              <tr>
-                <th className="p-4 font-medium">Stav</th>
-                <th className="p-4 font-medium">Jazyk</th>
-                <th className="p-4 font-medium">Dátum</th>
-                <th className="p-4 font-medium">Téma / Nadpis</th>
-                <th className="p-4 font-medium">Audio</th>
-                <th className="p-4 font-medium text-right">Akcie</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {signals.map(sig => (
-                <tr key={sig.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="p-4">
-                    {sig.is_published 
-                      ? <CheckCircle2 size={18} className="text-emerald-500" /> 
-                      : <Circle size={18} className="text-slate-600" />}
-                  </td>
-                  <td className="p-4 font-bold text-xs uppercase text-slate-500">
-                    {sig.language}
-                  </td>
-                  <td className="p-4 text-white font-medium whitespace-nowrap">
-                    <div className="flex items-center space-x-2">
-                      <Calendar size={14} className="text-slate-500" />
-                      <span>{sig.date}</span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="font-medium text-white mb-0.5">{sig.title}</div>
-                    <div className="text-xs text-amber-500/80 uppercase tracking-wider">{sig.theme}</div>
-                  </td>
-                  <td className="p-4">
-                    {sig.audio_url ? <Radio size={16} className="text-amber-500" /> : <span className="text-slate-600">-</span>}
-                  </td>
-                  <td className="p-4 text-right">
-                    <button onClick={() => handleEdit(sig)} className="p-2 text-slate-400 hover:text-amber-500 transition-colors">
-                      <Edit2 size={16} />
-                    </button>
-                    <button onClick={() => handleDelete(sig.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors ml-2">
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {signals.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500">
-                    Zatiaľ žiadne signály. Vytvorte prvý záznam.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }

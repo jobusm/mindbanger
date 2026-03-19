@@ -1,0 +1,127 @@
+import OpenAI from 'openai';
+import { zodResponseFormat } from 'openai/helpers/zod';
+import { buildDailyContext, formatContextForPrompt } from './context';
+import { generateThemePrompt, translatePrompt } from './prompts';
+import { MASTER_SYSTEM_PROMPT } from './master-prompt';
+import { DailyContentSchema, DailyContent, MasterContentSchema, MasterContent } from './schemas';
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+/**
+ * Generates TRILINGUAL master content (EN, SK, CS) using the Master System Prompt.
+ * @param dateStr Format: YYYY-MM-DD
+ * @returns Promise<MasterContent>
+ */
+export async function generateMasterContent(dateStr: string): Promise<MasterContent> {
+  // 1. Build context
+  const context = buildDailyContext(dateStr);
+  const contextString = formatContextForPrompt(context);
+
+  // 2. Prepare user prompt (System prompt is static)
+  const userPrompt = `Generate content for date: ${dateStr}.\n${contextString}`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: MASTER_SYSTEM_PROMPT },
+        { role: "user", content: userPrompt }
+      ],
+      response_format: zodResponseFormat(MasterContentSchema, "master_content"),
+      temperature: 0.7, // Creativity balance
+    });
+
+    const content = completion.choices[0].message.content;
+    
+    if (!content) {
+      throw new Error("No content generated from OpenAI");
+    }
+
+    return JSON.parse(content) as MasterContent; 
+    
+  } catch (error) {
+    console.error("Error generating master content:", error);
+    throw error;
+  }
+}
+
+/**
+ * Generates daily content using OpenAI GPT-4o (LEGACY / Single Lang)
+ * @param dateStr Format: YYYY-MM-DD
+ * @param language 'en', 'sk', 'cs'
+ * @param themeHint Optional hint to guide theme generation
+ * @returns Promise<DailyContent>
+ */
+export async function generateDailyContent(
+  dateStr: string,
+  language: string = 'en',
+  themeHint?: string
+): Promise<DailyContent> {
+  // 1. Build context
+  const context = buildDailyContext(dateStr);
+  const contextString = formatContextForPrompt(context);
+
+  // 2. Prepare prompt
+  const systemPrompt = generateThemePrompt.system.replace('{language}', language === 'sk' ? 'Slovak' : language === 'cs' ? 'Czech' : 'English');
+  const userPrompt = generateThemePrompt.user(dateStr, contextString, themeHint);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o", // Or "gpt-4-turbo"
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      response_format: zodResponseFormat(DailyContentSchema, "daily_content"),
+      temperature: 0.7, // Creativity balance
+    });
+
+    const content = completion.choices[0].message.content;
+    
+    if (!content) {
+      throw new Error("No content generated from OpenAI");
+    }
+
+    // Parse the JSON result
+    // The structured output guarantees the schema, but we can double check or just parse default.
+    return JSON.parse(content) as DailyContent; 
+    
+  } catch (error) {
+    console.error("Error generating daily content:", error);
+    throw error;
+  }
+}
+
+/**
+ * Translates existing content to another language while preserving the tone.
+ * Optimized to assume the input is valid DailyContent.
+ */
+export async function translateDailyContent(
+  content: DailyContent,
+  targetLang: string
+): Promise<DailyContent> {
+  const prompt = translatePrompt(targetLang) + JSON.stringify(content, null, 2);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are a translator." }, // Simple system prompt, main instruction is in user prompt from `translatePrompt`
+        { role: "user", content: prompt }
+      ],
+      response_format: zodResponseFormat(DailyContentSchema, "daily_content_translated"),
+      temperature: 0.3, // Lower temperature for translation accuracy
+    });
+
+    const translated = completion.choices[0].message.content;
+    if (!translated) throw new Error("No translation generated");
+
+    return JSON.parse(translated) as DailyContent;
+  } catch (error) {
+    console.error(`Error translating content to ${targetLang}:`, error);
+    throw error;
+  }
+}

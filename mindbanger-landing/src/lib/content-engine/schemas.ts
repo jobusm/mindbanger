@@ -35,9 +35,9 @@ export const MasterContentSchema = z.object({
   image_prompt_en: z.string().describe("Midjourney prompt for the daily theme. Abstract, cinematic, high contrast, biohacker aesthetic."),
   
   // Meta
-  season: z.string().optional().describe("Current season or astrological season."),
-  zodiac: z.string().optional().describe("Current sun sign."),
-  moon_phase: z.string().optional().describe("Current moon phase (New, Waxing, Full, Waning)."),
+  season: z.string().describe("Current season or astrological season.").nullable(),
+  zodiac: z.string().describe("Current sun sign.").nullable(),
+  moon_phase: z.string().describe("Current moon phase (New, Waxing, Full, Waning).").nullable(),
 });
 
 export type MasterContent = z.infer<typeof MasterContentSchema>;

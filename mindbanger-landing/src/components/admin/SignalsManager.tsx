@@ -17,7 +17,6 @@ type DailySignal = {
   language: string;
   status: 'draft' | 'generated' | 'published'; // Was is_published boolean
   generation_metadata?: any;
-  content_payload?: any;
   meditation_audio_url?: string | null; // NEW: Guided meditation
 };
 
@@ -78,7 +77,7 @@ export default function SignalsManager() {
             affirmation: data.affirmation,
             script: data.script,
             status: 'generated',
-            content_payload: data.content_payload
+            generation_metadata: data.generation_metadata
         }) : null);
 
         toast.success('Obsah úspešne vygenerovaný!', { id: toastId });
@@ -345,7 +344,7 @@ export default function SignalsManager() {
             </div>
 
             {/* Master System Payload */}
-            {editingSignal.content_payload && (
+            {editingSignal.generation_metadata && (
                 <div className="bg-gradient-to-r from-slate-900 to-slate-900 border border-indigo-500/30 rounded-xl p-5 shadow-lg shadow-indigo-500/5">
                     <h3 className="text-indigo-400 font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <Sparkles size={16} /> Master System Content
@@ -354,25 +353,58 @@ export default function SignalsManager() {
                         <div className="grid md:grid-cols-2 gap-4">
                             <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
                                 <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Microstep</span>
-                                <p className="text-slate-200 text-sm font-medium">{editingSignal.content_payload.microstep || '-'}</p>
+                                <input 
+                                    type="text"
+                                    value={editingSignal.generation_metadata.microstep || ''}
+                                    onChange={e => setEditingSignal({
+                                        ...editingSignal, 
+                                        generation_metadata: { ...editingSignal.generation_metadata, microstep: e.target.value } 
+                                    })}
+                                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                                />
                             </div>
                             <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
                                 <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Journal Question</span>
-                                <p className="text-slate-200 text-sm italic">{editingSignal.content_payload.journal || '-'}</p>
+                                <input 
+                                    type="text"
+                                    value={editingSignal.generation_metadata.journal || ''}
+                                    onChange={e => setEditingSignal({
+                                        ...editingSignal, 
+                                        generation_metadata: { ...editingSignal.generation_metadata, journal: e.target.value } 
+                                    })}
+                                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white italic focus:outline-none focus:border-indigo-500"
+                                />
                             </div>
                         </div>
 
                         <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
-                            <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Meditation Structure</span>
-                            <div className="prose prose-invert prose-sm max-w-none text-slate-300">
-                                <pre className="whitespace-pre-wrap font-sans text-sm">{editingSignal.content_payload.meditation || '-'}</pre>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs text-slate-500 uppercase font-bold block">Meditation Script (For Audio Generator)</span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(editingSignal.generation_metadata.meditation);
+                                        toast.success('Skopírované do schránky');
+                                    }}
+                                    className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                                >
+                                    Copy
+                                </button>
                             </div>
+                            <textarea
+                                value={editingSignal.generation_metadata.meditation || ''}
+                                onChange={e => setEditingSignal({
+                                    ...editingSignal, 
+                                    generation_metadata: { ...editingSignal.generation_metadata, meditation: e.target.value } 
+                                })}
+                                className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-sm text-slate-300 font-sans whitespace-pre-wrap focus:outline-none focus:border-indigo-500 min-h-[150px]"
+                            />
                         </div>
 
                         <div className="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
                             <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Keywords</span>
                             <div className="flex flex-wrap gap-2 mt-1">
-                                {editingSignal.content_payload.keywords?.split(',').map((k: string, i: number) => (
+                                {editingSignal.generation_metadata.keywords?.split(',').map((k: string, i: number) => (
                                     <span key={i} className="bg-indigo-900/30 text-indigo-300 text-xs px-2 py-1 rounded border border-indigo-500/20">{k.trim()}</span>
                                 )) || '-'}
                             </div>
@@ -383,7 +415,7 @@ export default function SignalsManager() {
                                 <span className="group-open:rotate-90 transition-transform">▸</span> Raw JSON Payload
                             </summary>
                             <pre className="mt-2 bg-slate-950 p-3 rounded-lg overflow-x-auto text-[10px] text-green-500/80 font-mono border border-slate-800">
-                                {JSON.stringify(editingSignal.content_payload, null, 2)}
+                                {JSON.stringify(editingSignal.generation_metadata, null, 2)}
                             </pre>
                         </details>
                     </div>

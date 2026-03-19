@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
             affirmation: m[`affirmation_${suffix}`],
             script: m[`text_of_day_${suffix}`],
             status: 'generated',
-            content_payload: {
+            generation_metadata: {
                 microstep: m[`microstep_${suffix}`],
                 meditation: m[`meditation_${suffix}`],
                 journal: m[`journal_question_${suffix}`],

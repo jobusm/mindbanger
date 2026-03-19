@@ -123,8 +123,8 @@ export default async function TodayPage() {
             </div>
           )}
 
-          <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg">
-            <p>{signal.signal_text}</p>
+          <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg whitespace-pre-wrap">
+            {signal.signal_text}
           </div>
 
           {/* Audio Player Injection */}

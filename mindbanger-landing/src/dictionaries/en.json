@@ -50,6 +50,9 @@
     "markCompleted": "Mark as completed"
   },
   "audio": {
+    "voiceVolume": "Voice",
+    "musicVolume": "Music",
+    "mixer": "Mix",
     "playing": "Playing",
     "paused": "Paused",
     "play": "Play",

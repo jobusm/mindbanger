@@ -52,6 +52,9 @@
     "markCompleted": "Označit za hotové"
   },
   "audio": {
+    "voiceVolume": "Hlas",
+    "musicVolume": "Hudba",
+    "mixer": "Mix",
     "playing": "Přehrává se",
     "paused": "Pozastaveno",
     "play": "Přehrát",

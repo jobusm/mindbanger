@@ -46,10 +46,20 @@ export default async function TodayPage() {
     .eq('language', userLang)
     .single();
 
-  let audioSignatureUrl = '';
-  if (signal?.audio_url) {
-    // Generate 1-hour secure presigned URL from Cloudflare R2
-    audioSignatureUrl = await getSecureAudioUrl(signal.audio_url);
+  let mainAudioUrl = '';
+  let backgroundAudioUrl = '';
+  
+  // Logic for audio tracks: 
+  // If meditation_audio_url exists, it is the Voice track, and audio_url is the Background Music.
+  // If only audio_url exists, it is treated as the full track (legacy or pre-mixed).
+  
+  if (signal?.meditation_audio_url) {
+    mainAudioUrl = await getSecureAudioUrl(signal.meditation_audio_url);
+    if (signal.audio_url) {
+      backgroundAudioUrl = await getSecureAudioUrl(signal.audio_url);
+    }
+  } else if (signal?.audio_url) {
+    mainAudioUrl = await getSecureAudioUrl(signal.audio_url);
   }
 
   let spokenAudioUrl = '';
@@ -118,10 +128,11 @@ export default async function TodayPage() {
           </div>
 
           {/* Audio Player Injection */}
-          {audioSignatureUrl && (
+          {mainAudioUrl && (
             <div className="mb-10">
               <AudioPlayer 
-                src={audioSignatureUrl} 
+                src={mainAudioUrl} 
+                backgroundSrc={backgroundAudioUrl}
                 title={`${t.dailyReset} • ${signal.theme}`}
               />
             </div>

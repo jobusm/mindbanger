@@ -42,10 +42,17 @@ export default async function ArchiveDetailPage({ params }: { params: Promise<{ 
     redirect('/app/archive');
   }
 
-  // 3. Audio presigned URL
-  let audioSignatureUrl = '';
-  if (signal?.audio_url) {
-    audioSignatureUrl = await getSecureAudioUrl(signal.audio_url);
+  // 3. Audio logic for dual tracks
+  let mainAudioUrl = '';
+  let backgroundAudioUrl = '';
+  
+  if (signal?.meditation_audio_url) {
+    mainAudioUrl = await getSecureAudioUrl(signal.meditation_audio_url);
+    if (signal.audio_url) {
+      backgroundAudioUrl = await getSecureAudioUrl(signal.audio_url);
+    }
+  } else if (signal?.audio_url) {
+    mainAudioUrl = await getSecureAudioUrl(signal.audio_url);
   }
 
   const displayDate = new Intl.DateTimeFormat(userLang, {
@@ -86,11 +93,12 @@ export default async function ArchiveDetailPage({ params }: { params: Promise<{ 
         </div>
 
         {/* Audio Player Injection */}
-        {audioSignatureUrl && (
+        {mainAudioUrl && (
           <div className="mb-10">
             <AudioPlayer 
-              src={audioSignatureUrl} 
-              title={`Archive • \${signal.title}`} 
+              src={mainAudioUrl}
+              backgroundSrc={backgroundAudioUrl}
+              title={`Archive • ${signal.theme}`}
             />
           </div>
         )}

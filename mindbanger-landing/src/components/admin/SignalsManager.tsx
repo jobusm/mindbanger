@@ -18,6 +18,7 @@ type DailySignal = {
   status: 'draft' | 'generated' | 'published'; // Was is_published boolean
   generation_metadata?: any;
   content_payload?: any;
+  meditation_audio_url?: string | null; // NEW: Guided meditation
 };
 
 export default function SignalsManager() {
@@ -154,7 +155,7 @@ export default function SignalsManager() {
     }
   }
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>, field: 'audio_url' | 'spoken_audio_url' = 'audio_url') {
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>, field: 'audio_url' | 'spoken_audio_url' | 'meditation_audio_url' = 'audio_url') {
     const file = e.target.files?.[0];
     if (!file || !editingSignal) return;
 
@@ -314,16 +315,32 @@ export default function SignalsManager() {
              </div>
 
             {/* Audio Files */}
-            <div className="grid md:grid-cols-2 gap-6 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+            <div className="grid md:grid-cols-3 gap-4 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+               {/* 1. Spoken Word (Daily Text) */}
                <div>
-                  <label className="block text-sm text-slate-400 mb-2 font-bold flex items-center gap-2"><FileAudio size={16}/> Hudba / Pozadie (Audio URL)</label>
-                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" />
-                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'audio_url')} disabled={isUploading} className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:bg-slate-800 file:text-slate-300" />
+                  <label className="block text-xs text-amber-500 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                     <FileAudio size={14}/> Text Dňa (Hovorené)
+                  </label>
+                  <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
                </div>
+
+               {/* 2. Guided Meditation */}
                <div>
-                  <label className="block text-sm text-slate-400 mb-2 font-bold flex items-center gap-2"><FileAudio size={16}/> Hovorené Slovo (Spoken Audio)</label>
-                  <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" />
-                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:bg-slate-800 file:text-slate-300" />
+                  <label className="block text-xs text-indigo-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                     <FileAudio size={14}/> Meditácia (Sprievodca)
+                  </label>
+                  <input type="text" value={editingSignal.meditation_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, meditation_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'meditation_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
+               </div>
+
+               {/* 3. Background Music */}
+               <div>
+                  <label className="block text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                     <FileAudio size={14}/> Hudba (Pozadie/Ambient)
+                  </label>
+                  <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
                </div>
             </div>
 

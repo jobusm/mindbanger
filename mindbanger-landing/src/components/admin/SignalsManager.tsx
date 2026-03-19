@@ -127,9 +127,18 @@ export default function SignalsManager() {
     e.preventDefault();
     if (!editingSignal) return;
 
-    // Prevent submitting empty IDs for new records
-    const payload = { ...editingSignal };
+    // Prepare payload for DB
+    // Map 'focus' (frontend) -> 'focus_text' (DB)
+    const payload: any = { 
+        ...editingSignal,
+        focus_text: editingSignal.focus, 
+        // Ensure legacy fields match if needed, though 'theme' and 'script' exist in DB as per logs
+    };
     
+    // Remove frontend-only properties or mismatched keys
+    delete payload.focus; 
+    delete payload.content_payload; // Legacy field removal to be safe
+
     if (!payload.id) {
       const { id, ...newRecord } = payload;
       // Insert
@@ -139,7 +148,8 @@ export default function SignalsManager() {
         fetchSignals();
         toast.success('Vytvorené!');
       } else {
-        toast.error(error.message);
+        console.error('Insert Error:', error);
+        toast.error('Chyba pri ukladaní: ' + error.message);
       }
     } else {
       // Update
@@ -149,7 +159,8 @@ export default function SignalsManager() {
         fetchSignals();
         toast.success('Uložené!');
       } else {
-        toast.error(error.message);
+        console.error('Update Error:', error);
+        toast.error('Chyba pri ukladaní: ' + error.message);
       }
     }
   }

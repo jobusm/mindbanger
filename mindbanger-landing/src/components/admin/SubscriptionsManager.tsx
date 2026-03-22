@@ -41,7 +41,7 @@ export default function SubscriptionsManager() {
     setLoading(true);
     
     // 1. Fetch raw subscriptions
-    let { data: subs, error } = await supabase
+    const { data: subs, error } = await supabase
       .from('subscriptions')
       .select('*')
       .order('created_at', { ascending: false });

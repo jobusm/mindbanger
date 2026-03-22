@@ -47,7 +47,18 @@ export default function SignalsManager() {
       .order('date', { ascending: false });
     
     if (!error && data) {
-      setSignals(data);
+      // Map DB columns to UI state shape
+      const mapped = data.map(d => ({
+        ...d,
+        theme: d.theme || d.title, // Backend uses 'title' or 'theme'
+        script: d.script || d.signal_text, // Backend uses 'signal_text'
+        focus: d.focus || d.focus_text, // Backend uses 'focus_text'
+        
+        // Ensure new fields exist
+        meditation_text: d.meditation_text,
+        meditation_audio_url: d.meditation_audio_url
+      }));
+      setSignals(mapped);
     }
     setLoading(false);
   }

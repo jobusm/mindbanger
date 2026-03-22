@@ -262,7 +262,20 @@ export default function SignalsManager() {
 
         // Focus Text
         focus_text: editingSignal.focus, 
-        // focus: editingSignal.focus, // REMOVE: Extra key
+        
+        affirmation: editingSignal.affirmation,
+        meditation_text: editingSignal.meditation_text,
+        push_text: editingSignal.push_text,
+        
+        // Audio
+        audio_url: editingSignal.audio_url,
+        spoken_audio_url: editingSignal.spoken_audio_url,
+        meditation_audio_url: editingSignal.meditation_audio_url,
+
+        // Status & Published Flag
+        status: editingSignal.status,
+        is_published: editingSignal.status === 'published',
+        
         // Metadata
         generation_metadata: editingSignal.generation_metadata
     };

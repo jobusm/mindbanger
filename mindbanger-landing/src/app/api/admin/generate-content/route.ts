@@ -80,17 +80,6 @@ export async function POST(request: NextRequest) {
                 moon_phase: master.moon_phase
             }
         };
-            generation_metadata: {
-                microstep: m[`microstep_${suffix}`],
-                meditation: m[`meditation_${suffix}`],
-                journal: m[`journal_question_${suffix}`],
-                keywords: m[`keywords_${suffix}`],
-                visual_prompt: lang === 'en' ? master.image_prompt_en : undefined,
-                season: master.season,
-                zodiac: master.zodiac,
-                moon_phase: master.moon_phase
-            }
-        };
     });
 
     // 3. Save to DB (All 3 languages)

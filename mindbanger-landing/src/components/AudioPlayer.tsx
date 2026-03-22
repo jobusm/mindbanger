@@ -50,7 +50,9 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
     };
 
     const updateDuration = () => {
-      setDuration(audio.duration);
+      if (!isNaN(audio.duration) && audio.duration !== Infinity) {
+        setDuration(audio.duration);
+      }
     };
 
     const onEnded = () => {
@@ -93,14 +95,22 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
 
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('durationchange', updateDuration); // Listen for duration changes too
     audio.addEventListener('ended', onEnded);
+
+    // Initial check in case valid metadata is already loaded
+    if (audio.readyState >= 1) {
+      updateDuration();
+    }
 
     return () => {
       audio.removeEventListener('timeupdate', updateProgress);
       audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('durationchange', updateDuration);
       audio.removeEventListener('ended', onEnded);
     };
-  }, []);
+  }, [src]); // Re-run when src changes
+
 
   // Sync volumes
   useEffect(() => {

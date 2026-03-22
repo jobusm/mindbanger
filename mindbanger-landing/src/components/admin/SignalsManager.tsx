@@ -29,6 +29,11 @@ export default function SignalsManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  
+  // Master Generator State
+  const [generateDate, setGenerateDate] = useState(new Date().toISOString().split('T')[0]);
+  const [generateTheme, setGenerateTheme] = useState('');
+  const [isMasterGenerating, setIsMasterGenerating] = useState(false);
 
   useEffect(() => {
     fetchSignals();
@@ -45,6 +50,40 @@ export default function SignalsManager() {
       setSignals(data);
     }
     setLoading(false);
+  }
+
+  async function handleMasterGenerate() {
+    if (!generateDate) return toast.error("Zadajte dátum.");
+    
+    if (!confirm(`Vygenerovať Master Content pre ${generateDate} (EN, SK, CS)?\n\nToto prepíše existujúci obsah pre tento deň vo všetkých jazykoch.`)) return;
+
+    setIsMasterGenerating(true);
+    const toastId = toast.loading("Generujem Master Content (EN, SK, CS)...");
+    
+    try {
+        const res = await fetch('/api/admin/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                date: generateDate,
+                themeHint: generateTheme || undefined
+            }) 
+        });
+        
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Generovanie zlyhalo');
+        }
+        
+        toast.success("Obsah vygenerovaný pre všetky jazyky!", { id: toastId });
+        setGenerateTheme(''); // Clear theme after success
+        fetchSignals(); // Refresh list to see new items
+    } catch (e: any) {
+        console.error(e);
+        toast.error("Chyba: " + e.message, { id: toastId });
+    } finally {
+        setIsMasterGenerating(false);
+    }
   }
 
   async function handleQuickGenerate(signal: DailySignal) {
@@ -319,6 +358,49 @@ export default function SignalsManager() {
       </div>
 
       {!isFormOpen ? (
+        <>
+        {/* Master Generator UI */}
+        <div className="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-end shadow-xl shadow-indigo-500/10 backdrop-blur-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
+            
+            <div className="flex-1 w-full relative z-10">
+                <label className="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex items-center gap-2">
+                    <Calendar size={14} className="text-indigo-500" /> Dátum (Master Origin)
+                </label>
+                <input 
+                    type="date" 
+                    value={generateDate} 
+                    onChange={e => setGenerateDate(e.target.value)} 
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 shadow-inner"
+                />
+            </div>
+            
+            <div className="flex-[2] w-full relative z-10">
+                 <label className="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex items-center gap-2">
+                    <Sparkles size={14} className="text-amber-500" /> Téma (Hint pre AI - Voliteľné)
+                </label>
+                <input 
+                    type="text" 
+                    value={generateTheme} 
+                    onChange={e => setGenerateTheme(e.target.value)} 
+                    placeholder="Napr. Odpustenie, Stratégia, Nové začiatky..."
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-slate-600 shadow-inner"
+                />
+            </div>
+            
+            <button 
+                onClick={handleMasterGenerate}
+                disabled={isMasterGenerating}
+                className="relative z-10 w-full md:w-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-wait whitespace-nowrap bg-[length:200%_auto] hover:bg-right duration-500"
+            >
+                {isMasterGenerating ? (
+                    <> <span className="animate-spin mr-2">⏳</span> Generujem (3x LANG)... </>
+                ) : (
+                    <> <Sparkles size={18} className="animate-pulse" /> GENERATE ALL (En/Sk/Cs) </>
+                )}
+            </button>
+        </div>
+
         <div className="grid gap-4">
             {signals.map(s => (
                 <div key={s.id} className="bg-slate-900/50 border border-slate-800 p-4 rounded-xl flex justify-between items-center">
@@ -349,6 +431,7 @@ export default function SignalsManager() {
                 </div>
             ))}
         </div>
+        </>
       ) : editingSignal && (
         <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 md:p-8 mb-10 relative">
           <div className="flex justify-between items-center mb-6">

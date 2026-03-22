@@ -13,15 +13,19 @@ const openai = new OpenAI({
 /**
  * Generates TRILINGUAL master content (EN, SK, CS) using the Master System Prompt.
  * @param dateStr Format: YYYY-MM-DD
+ * @param themeHint Optional theme hint (e.g. "Focus on gratitude")
  * @returns Promise<MasterContent>
  */
-export async function generateMasterContent(dateStr: string): Promise<MasterContent> {
+export async function generateMasterContent(dateStr: string, themeHint?: string | null): Promise<MasterContent> {
   // 1. Build context
   const context = buildDailyContext(dateStr);
   const contextString = formatContextForPrompt(context);
 
   // 2. Prepare user prompt (System prompt is static)
-  const userPrompt = `Generate content for date: ${dateStr}.\n${contextString}`;
+  let userPrompt = `Generate content for date: ${dateStr}.\n${contextString}`;
+  if (themeHint) {
+    userPrompt += `\n\nREQUIRED THEME: Focus solely on this topic and ignore other astrological suggestions if they conflict: "${themeHint}"`;
+  }
 
   try {
     const completion = await openai.chat.completions.create({

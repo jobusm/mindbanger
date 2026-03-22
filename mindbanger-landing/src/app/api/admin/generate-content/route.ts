@@ -35,13 +35,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { date, language: requestedLang = 'en' } = body; // requestedLang is what the UI wants back
+    const { date, language: requestedLang = 'en', themeHint } = body; // requestedLang is what the UI wants back
 
     if (!date) return NextResponse.json({ error: 'Date required' }, { status: 400 });
     
     // 1. Generate TRILINGUAL content
-    console.log(`Generating Master Content for ${date}...`);
-    const master = await generateMasterContent(date);
+    console.log(`Generating Master Content for ${date} (Hint: ${themeHint || 'None'})...`);
+    const master = await generateMasterContent(date, themeHint);
 
     // 2. Prepare DB Upserts for EN, SK, CS
     const languages = ['en', 'sk', 'cs'] as const;

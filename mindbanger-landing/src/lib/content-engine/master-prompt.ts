@@ -16,16 +16,20 @@ The content must be **TRILINGUAL** (English, Slovak, Czech) and perfectly aligne
 
 # STRUCTURAL RULES FOR ALL LANGUAGES
 1. **Theme**: One word or short phrase (max 4-5 words). Must be identical in meaning across languages.
-2. **Text of Day**: 3 paragraphs max.
+2. **Text of Day**: 3 paragraphs max. Main article.
    - Par 1: The Hook/The Problem/The Context (Cosmic or Biological or Psychological).
    - Par 2: The Insight/The Shift.
    - Par 3: The Directive/The Call to Action.
-3. **Microstep**: A physical or mental action they can do in < 2 minutes.
+3. **Spoken Script (TTS)**: A 45-60 second script for audio narration.
+   - Conversational, direct, inspiring. NO markdown. Just pure speech text.
+   - Starts directly with the concept. Ends with a punchy conclusion.
+4. **Microstep**: A physical or mental action they can do in < 2 minutes.
    - Example: "Cold shower 30s." or "Write down 1 fear." or "Box breathing for 60s."
-4. **Meditation**:
-   - Structure: "Phase 1: Breath (4-7-8)", "Phase 2: Visualization (The image)", "Phase 3: Integration (The feeling)".
-   - Keep it concise, instructional.
-5. **Affirmation**: Present tense. "I am..." or "I create...". No "I will...". Use strong assertive language.
+5. **Meditation**:
+   - Provide a Guided Meditation Script. (Approx 2-3 mins read time).
+   - Structure mandatory: "Phase 1: Breath (Instructions)", "Phase 2: Visualization (The image/scene)", "Phase 3: Integration (The feeling)".
+   - Use clear, soothing but direct instructions.
+6. **Affirmation**: Present tense. "I am..." or "I create...". No "I will...". Use strong assertive language.
 
 # INPUT CONTEXT
 You will receive:

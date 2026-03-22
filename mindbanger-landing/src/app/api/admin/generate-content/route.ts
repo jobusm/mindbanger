@@ -55,14 +55,31 @@ export async function POST(request: NextRequest) {
             date: date,
             language: lang,
             theme: m[`theme_title_${suffix}`],
-            title: m[`theme_title_${suffix}`], // Add redundant field
-            // focus: m[`daily_vibe_${suffix}`], // REMOVED: Column 'focus' does not exist in DB
-            focus_text: m[`daily_vibe_${suffix}`], // Correct column name
+            title: m[`theme_title_${suffix}`], 
+            focus_text: m[`daily_vibe_${suffix}`], 
             affirmation: m[`affirmation_${suffix}`],
-            script: m[`text_of_day_${suffix}`],
-            signal_text: m[`text_of_day_${suffix}`], // Add redundant field
-            meditation_text: m[`meditation_${suffix}`], // Add new field
+            
+            // Map strictly to Spoken Script for TTS
+            script: m[`script_${suffix}`] || m[`text_of_day_${suffix}`], 
+            signal_text: m[`script_${suffix}`] || m[`text_of_day_${suffix}`], // Keep sync for now as UI conflates them
+            
+            meditation_text: m[`meditation_${suffix}`], 
+            
             status: 'generated',
+            generation_metadata: {
+                // Store the Full Article/Text in metadata so it's not lost
+                text_of_day: m[`text_of_day_${suffix}`],
+                
+                microstep: m[`microstep_${suffix}`],
+                meditation: m[`meditation_${suffix}`],
+                journal: m[`journal_question_${suffix}`],
+                keywords: m[`keywords_${suffix}`],
+                visual_prompt: lang === 'en' ? master.image_prompt_en : undefined,
+                season: master.season,
+                zodiac: master.zodiac,
+                moon_phase: master.moon_phase
+            }
+        };
             generation_metadata: {
                 microstep: m[`microstep_${suffix}`],
                 meditation: m[`meditation_${suffix}`],

@@ -28,23 +28,93 @@ export default async function TodayPage() {
   // Get localized today's date in YYYY-MM-DD format based on user's timezone
   const now = new Date();
   const optionsForDate: Intl.DateTimeFormatOptions = {
-    timeZone: userTimezone, year: 'numeric', month: '2-digit', day: '2-digit' 
+    timeZone: userTimezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', hour12: false
   };
   
-  // Format returns MM/DD/YYYY or DD.MM.YYYY differently. We need to parse parts to build YYYY-MM-DD reliably
+  // Parse current date parts in User TZ
   const parts = new Intl.DateTimeFormat('en-CA', optionsForDate).formatToParts(now);
   const year = parts.find(p => p.type === 'year')?.value;
   const month = parts.find(p => p.type === 'month')?.value;
   const day = parts.find(p => p.type === 'day')?.value;
+  const hour = parseInt(parts.find(p => p.type === 'hour')?.value || '0');
   const today = `${year}-${month}-${day}`;
 
-  // Fetch today's signal matches language
-  const { data: signal } = await supabase
-    .from('daily_signals')
-    .select('*')
-    .eq('date', today)
-    .eq('language', userLang)
+  // --- ONBOARDING LOGIC START ---
+  let finalSignal = null;
+  let isOnboardingWait = false;
+
+  // 1. Get Subscription Created At
+  // Note: We need the subscription creation time to determine Day 1
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('created_at, status')
+    .eq('user_id', session?.user.id)
+    .in('status', ['active', 'trialing'])
+    .order('created_at', { ascending: true }) // Get the FIRST active subscription
+    .limit(1)
     .single();
+
+  const referenceDateString = subscription?.created_at || profile?.created_at; // Fallback to profile creation if no sub found (e.g. admin/free)
+
+  if (referenceDateString) {
+      // 2. Convert Reference Date to User TZ
+      const refDate = new Date(referenceDateString);
+      const refParts = new Intl.DateTimeFormat('en-CA', optionsForDate).formatToParts(refDate);
+      const refYear = refParts.find(p => p.type === 'year')?.value;
+      const refMonth = refParts.find(p => p.type === 'month')?.value;
+      const refDay = refParts.find(p => p.type === 'day')?.value;
+      const refHour = parseInt(refParts.find(p => p.type === 'hour')?.value || '0');
+
+      // 3. Determine Start Day (Day 1)
+      // If purchase was after 14:00 (2 PM), Day 1 starts TOMORROW.
+      // Otherwise Day 1 is TODAY.
+      const startDayDate = new Date(`${refYear}-${refMonth}-${refDay}T00:00:00`);
+      
+      // If purchased after 14:00, add 1 day to start date
+      if (refHour >= 14) {
+          startDayDate.setDate(startDayDate.getDate() + 1);
+      }
+
+      // 4. Calculate Current Day Number
+      const currentDayDate = new Date(`${year}-${month}-${day}T00:00:00`);
+      const diffTime = currentDayDate.getTime() - startDayDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const dayNumber = diffDays + 1; // 1-based index
+
+      console.log(`User Day: ${dayNumber} (RefHour: ${refHour}, StartDate: ${startDayDate.toISOString().split('T')[0]})`);
+
+      if (dayNumber < 1) {
+          // Waiting for start (Day 0)
+          isOnboardingWait = true;
+      } else {
+          // 5. Try Fetch Onboarding Signal
+          const { data: onboardingSignal } = await supabase
+            .from('onboarding_signals')
+            .select('*')
+            .eq('day_number', dayNumber)
+            .eq('language', userLang)
+            .single();
+
+          if (onboardingSignal) {
+              finalSignal = onboardingSignal;
+          }
+      }
+  }
+
+  // Fallback to Calendar Signal if not in onboarding wait list AND no onboarding signal found (or past sequence)
+  if (!finalSignal && !isOnboardingWait) {
+     const { data: dailySignal } = await supabase
+        .from('daily_signals')
+        .select('*')
+        .eq('date', today)
+        .eq('language', userLang)
+        .single();
+     finalSignal = dailySignal;
+  }
+  
+  const signal = finalSignal; // Align variable name
+
+  // --- ONBOARDING LOGIC END ---
 
   let mainAudioUrl = '';
   let backgroundAudioUrl = '';
@@ -103,12 +173,12 @@ export default async function TodayPage() {
           {/* Theme Badge */}
           <div className="mb-6 inline-block">
               <span className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-widest rounded-full">
-                {signal.theme}
+                {signal.day_number ? `Deň ${signal.day_number}` : signal.theme}
               </span>
           </div>
 
           <h2 className="text-3xl md:text-5xl font-serif text-white mb-6 leading-tight">
-            {t.todaysSignal}
+             {signal.day_number ? signal.theme : t.todaysSignal}
           </h2>
 
           {/* Spoken Audio Player */}
@@ -116,7 +186,7 @@ export default async function TodayPage() {
             <div className="mb-8">
               <AudioPlayer
                 src={spokenAudioUrl}
-                title={t.listenToText || "Vypočuť si text"}
+                title={t.listenToText || "Text dňa"}
                 author="Mindbanger"
                 compact={true}
               />
@@ -142,11 +212,17 @@ export default async function TodayPage() {
       ) : (
         <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-10 text-center flex flex-col justify-center items-center min-h-[300px]">
           <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl">?</span>
+            <span className="text-2xl">{isOnboardingWait ? "⏳" : "?"}</span>
           </div>
-          <h2 className="text-2xl font-serif text-white mb-2">{t.tuning}</h2>
+          <h2 className="text-2xl font-serif text-white mb-2">
+            {isOnboardingWait ? (userLang === 'sk' ? "Tvoja cesta začína zajtra" : "Your journey starts tomorrow") : t.tuning}
+          </h2>
           <p className="text-slate-400 max-w-sm">
-            {t.notBroadcasted}
+            {isOnboardingWait 
+               ? (userLang === 'sk' 
+                  ? "Pripravujeme tvoj prvý signál. Skontroluj aplikáciu zajtra ráno, bude to stáť za to." 
+                  : "We are preparing your first signal. Check back tomorrow morning, it will be worth it.")
+               : t.notBroadcasted}
           </p>
         </div>
       )}

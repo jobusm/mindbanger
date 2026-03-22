@@ -1,15 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import SignalsManager from "./SignalsManager";
+import OnboardingManager from "./OnboardingManager";
 import SubscriptionsManager from "./SubscriptionsManager";
 import ResetsManager from "@/components/admin/ResetsManager";
 import AffiliateManager from "./AffiliateManager";
 import PayoutsManager from "./PayoutsManager";
-import { Radio, Users, RefreshCw, Megaphone, DollarSign } from "lucide-react";
+import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket } from "lucide-react";
 import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts'>('signals');
+  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts'>('signals');
 
   return (
     <>
@@ -25,6 +26,17 @@ export default function AdminPanel() {
         >
           <Radio size={20} />
           <span className="font-medium">Denné Signály</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('onboarding')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'onboarding' 
+              ? 'border-amber-500 text-amber-500' 
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Rocket size={20} />
+          <span className="font-medium">Onboarding (Prvých 7 dní)</span>
         </button>
         <button
           onClick={() => setActiveTab('resets')}
@@ -73,6 +85,7 @@ export default function AdminPanel() {
       </div>
 
       {activeTab === 'signals' && <SignalsManager />}
+      {activeTab === 'onboarding' && <OnboardingManager />}
       {activeTab === 'resets' && <ResetsManager />}
       {activeTab === 'subscriptions' && <SubscriptionsManager />}
       {activeTab === 'affiliate' && <AffiliateManager />}

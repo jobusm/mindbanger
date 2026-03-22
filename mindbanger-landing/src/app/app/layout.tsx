@@ -25,9 +25,32 @@ export default async function AppLayout({
     .eq('id', session.user.id)
     .single();
 
-  const isPremium = profile?.subscription_status === 'premium';
+  let hasAccess = profile?.subscription_status === 'premium';
 
-  if (!isPremium) {
+  if (!hasAccess) {
+    // Check for active organization membership
+    const { data: members } = await supabase
+      .from('organization_members')
+      .select(`
+        status,
+        organizations!inner (
+          subscription_status
+        )
+      `)
+      .eq('user_id', session.user.id)
+      .eq('status', 'active')
+      .limit(1);
+
+    if (members && members.length > 0) {
+      // @ts-expect-error - Joined table typing issue
+      const orgStatus = members[0].organizations.subscription_status;
+      if (['active', 'trialing'].includes(orgStatus)) {
+        hasAccess = true;
+      }
+    }
+  }
+
+  if (!hasAccess) {
     // Ak nema zive predplatne, zablokujeme ho a posleme obnovit predplatne
     redirect('/checkout');
   }

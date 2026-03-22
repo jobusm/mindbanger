@@ -18,6 +18,38 @@
     "firstNamePlaceholder": "Tvoje meno",
     "email": "E-mailová adresa",
     "emailPlaceholder": "ty@priklad.sk",
+    "cta": "Prejsť k platbe",
+    "secure": "Bezpečná platba cez Stripe"
+  },
+  "b2b": {
+     "hero": {
+        "title": "Mentálna Výkonnosť pre Váš Tím",
+        "subtitle": "Mindbanger Daily pre Firmy. Denný mentálny reštart, ktorý vaši zamestnanci potrebujú pre sústredenie, odolnosť a kreativitu."
+     },
+     "features": {
+        "title": "Prečo Mindbanger pre Firmy?",
+        "f1": "Denný Mentálny Reštart",
+        "f2": "Zvýšenie Produktivity",
+        "f3": "Redukcia Stresu",
+        "f4": "Tímové Štatistiky"
+     },
+     "pricing": {
+        "title": "Jednoduché ceny",
+        "tier1": "1-4 Licencií",
+        "tier2": "5-25 Licencií (15% ZĽAVA)",
+        "tier3": "25+ Licencií (25% ZĽAVA)",
+        "cta": "Začať"
+     },
+     "form": {
+        "companyName": "Názov firmy",
+        "taxId": "IČO",
+        "vatId": "DIČ / IČ DPH",
+        "seats": "Počet licencií (odberateľov)",
+        "contactName": "Kontaktná osoba",
+        "contactEmail": "Kontaktný email",
+        "submit": "Vytvoriť Firemný Účet"
+     }
+  },
     "password": "Vytvoriť heslo",
     "passwordPlaceholder": "••••••••",
     "submit": "Objednávka s povinnosťou platby",
@@ -31,8 +63,7 @@
       "rateLimit": "Prekročili ste limit žiadostí. Počkajte, prosím, chvíľu a skúste to znova.",
       "wrongPassword": "Účet s týmto e-mailom už existuje, ale zadali ste nesprávne heslo. Prihláste sa najprv.",
       "missingData": "Chýba e-mail alebo ID. Skúste to prosím znova."
-    }
-  },
+    },
   "nav": {
     "today": "Dnes",
     "archive": "Archív",

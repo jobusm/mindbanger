@@ -40,6 +40,54 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
+        
+        // --- B2B HANDLING START ---
+        if (session.metadata?.type === 'b2b_subscription') {
+           const meta = session.metadata;
+           
+           // 1. Create Organization
+           const { data: org, error: orgError } = await supabase.from('organizations').insert({
+              name: meta.company_name,
+              tax_id: meta.tax_id,
+              vat_id: meta.vat_id,
+              billing_email: meta.contact_email,
+              contact_person: meta.contact_name,
+              industry: 'General', // Default, editable later
+              subscription_status: 'active',
+              stripe_customer_id: session.customer as string,
+              stripe_subscription_id: session.subscription as string,
+              seats_limit: parseInt(meta.seats || '5'),
+           }).select().single();
+
+           if (orgError) {
+              console.error('B2B Org Creation Error:', orgError);
+              return new NextResponse('Org Creation Failed', { status: 500 });
+           }
+
+           // 2. Add Representative as Owner (Invite)
+           // Check if user exists
+           const { data: existingUser } = await supabase.from('profiles').select('id').eq('email', meta.contact_email).single();
+           
+           const userId = existingUser?.id;
+
+           // Helper: Create Member
+           await supabase.from('organization_members').insert({
+              organization_id: org.id,
+              user_id: userId || null, // If null, they are just invited by email
+              email: meta.contact_email,
+              role: 'owner',
+              status: existingUser ? 'active' : 'invited'
+           });
+
+           // 3. Send Welcome Email (B2B Specific)
+           // We reuse the email logic but with B2B template
+           const b2bSubject = meta.lang === 'sk' ? 'Vitajte v Mindbanger B2B' : 'Welcome to Mindbanger B2B';
+           // ... (Email sending logic would go here - simplified for now)
+           
+           return new NextResponse('B2B Handled', { status: 200 });
+        }
+        // --- B2B HANDLING END ---
+
         const userId = session.metadata?.userId;
         const subscriptionId = session.subscription as string;
         const customerId = session.customer as string;

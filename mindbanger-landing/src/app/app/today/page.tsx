@@ -1,9 +1,8 @@
 import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import { getSecureAudioUrl } from '@/lib/cloudflare-r2';
-import AudioPlayer from '@/components/AudioPlayer';
 import { getDictionary } from '@/lib/i18n';
-import CompleteButton from '@/components/CompleteButton';
+import TodayClientView from '@/components/app/TodayClientView';
 
 export const revalidate = 0; // Ensure fresh data on every load for 'today'
 
@@ -14,7 +13,7 @@ export default async function TodayPage() {
   // Get user profile for name, language and timezone
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, preferred_language, timezone')
+    .select('full_name, preferred_language, timezone, created_at')
     .eq('id', session?.user.id)
     .single();
 
@@ -40,8 +39,9 @@ export default async function TodayPage() {
   const today = `${year}-${month}-${day}`;
 
   // --- ONBOARDING LOGIC START ---
-  let finalSignal = null;
+  let personalSignal = null;
   let isOnboardingWait = false;
+  let personalSignalType: 'daily' | 'onboarding' = 'daily';
 
   // 1. Get Subscription Created At
   // Note: We need the subscription creation time to determine Day 1
@@ -96,45 +96,124 @@ export default async function TodayPage() {
             .single();
 
           if (onboardingSignal) {
-              finalSignal = onboardingSignal;
+              personalSignal = onboardingSignal;
+              personalSignalType = 'onboarding';
           }
       }
   }
 
   // Fallback to Calendar Signal if not in onboarding wait list AND no onboarding signal found (or past sequence)
-  if (!finalSignal && !isOnboardingWait) {
+  if (!personalSignal && !isOnboardingWait) {
      const { data: dailySignal } = await supabase
         .from('daily_signals')
         .select('*')
         .eq('date', today)
         .eq('language', userLang)
         .single();
-     finalSignal = dailySignal;
+     personalSignal = dailySignal;
+     personalSignalType = 'daily';
   }
-  
-  const signal = finalSignal; // Align variable name
-
   // --- ONBOARDING LOGIC END ---
 
-  let mainAudioUrl = '';
-  let backgroundAudioUrl = '';
-  
-  // Logic for audio tracks: 
-  // If meditation_audio_url exists, it is the Voice track, and audio_url is the Background Music.
-  // If only audio_url exists, it is treated as the full track (legacy or pre-mixed).
-  
-  if (signal?.meditation_audio_url) {
-    mainAudioUrl = await getSecureAudioUrl(signal.meditation_audio_url);
-    if (signal.audio_url) {
-      backgroundAudioUrl = await getSecureAudioUrl(signal.audio_url);
-    }
-  } else if (signal?.audio_url) {
-    mainAudioUrl = await getSecureAudioUrl(signal.audio_url);
-  }
+  // --- CORPORATE LOGIC START ---
+  let corporateSignal = null;
+  let corporateName = '';
 
-  let spokenAudioUrl = '';
-  if (signal?.spoken_audio_url) {
-    spokenAudioUrl = await getSecureAudioUrl(signal.spoken_audio_url);
+  // Check if user is member of an organization
+  const { data: memberData } = await supabase
+    .from('organization_members')
+    .select(`
+      organization_id,
+      organizations (
+        name,
+        industry
+      )
+    `)
+    .eq('user_id', session?.user.id)
+    .eq('status', 'active')
+    .single();
+
+  if (memberData && memberData.organizations) {
+      if (typeof memberData.organizations === 'object' && 'name' in memberData.organizations) {
+        // @ts-expect-error - Type narrowing issue
+         corporateName = memberData.organizations.name; 
+      }
+      
+      // Fetch Corporate Signal
+      // Policies handle filtering by org_id or industry match for the user
+      // We prioritize specific Org signal over Industry signal
+      const { data: corpSignals } = await supabase
+        .from('corporate_signals')
+        .select('*')
+        .eq('date', today)
+        .eq('language', userLang)
+        .eq('is_published', true);
+
+      if (corpSignals && corpSignals.length > 0) {
+          // Find best match: specific org > industry > generic (null org, null industry)
+          // 1. Specific Org Match
+          const orgMatch = corpSignals.find((s: any) => s.organization_id === memberData.organization_id);
+          
+          if (orgMatch) {
+              corporateSignal = orgMatch;
+          } else {
+              // 2. Industry Match
+             // @ts-expect-error - Type narrowing issue
+              const industry = memberData.organizations.industry;
+               const industryMatch = corpSignals.find((s: any) => !s.organization_id && s.industry === industry);
+               if (industryMatch) {
+                   corporateSignal = industryMatch;
+               } else {
+                   // 3. Generic Global Fallback (no org, no industry)
+                   const globalMatch = corpSignals.find((s: any) => !s.organization_id && !s.industry);
+                   if (globalMatch) {
+                       corporateSignal = globalMatch;
+                   }
+               }
+          }
+      }
+  }
+  // --- CORPORATE LOGIC END ---
+
+
+  // --- AUDIO URL RESOLUTION HELPERS ---
+  const resolveAudioUrls = async (signal: any) => {
+      if (!signal) return null;
+      
+      let mainAudioUrl = '';
+      let backgroundAudioUrl = '';
+      
+      if (signal.meditation_audio_url) {
+        mainAudioUrl = await getSecureAudioUrl(signal.meditation_audio_url);
+        if (signal.audio_url) {
+          backgroundAudioUrl = await getSecureAudioUrl(signal.audio_url);
+        }
+      } else if (signal.audio_url) {
+        mainAudioUrl = await getSecureAudioUrl(signal.audio_url);
+      }
+    
+      let spokenAudioUrl = '';
+      if (signal.spoken_audio_url) {
+        spokenAudioUrl = await getSecureAudioUrl(signal.spoken_audio_url);
+      }
+
+      return {
+          ...signal,
+          main_audio_url_signed: mainAudioUrl,
+          background_audio_url_signed: backgroundAudioUrl,
+          spoken_audio_url_signed: spokenAudioUrl
+      };
+  };
+
+  const personalSignalWithUrls = personalSignal ? await resolveAudioUrls(personalSignal) : null;
+  const corporateSignalWithUrls = corporateSignal ? await resolveAudioUrls(corporateSignal) : null;
+
+  // Enhance signals with type for tracking completion
+  if (personalSignalWithUrls) {
+      personalSignalWithUrls.type = personalSignalType;
+  }
+  if (corporateSignalWithUrls) {
+      corporateSignalWithUrls.type = 'corporate';
   }
 
   // Format date for display
@@ -146,103 +225,15 @@ export default async function TodayPage() {
   }).format(now);
 
   return (
-    <div className="py-2 md:py-6 space-y-8">
-      
-      {/* Header */}
-      <header className="space-y-1">
-         <h1 className="text-3xl md:text-4xl font-serif text-white">
-           {t.goodMorning}, {firstName}.
-         </h1>
-         <p className="text-slate-400 capitalize">{displayDate}</p>
-      </header>
-
-      {/* Focus Block - Moved Up below Header */}
-      {signal && signal.focus_text && (
-        <div className="bg-slate-900 border border-white/10 rounded-2xl p-5 shadow-lg">
-          <h3 className="text-xs text-slate-500 uppercase tracking-widest mb-2">{t.todaysFocus}</h3>
-          <p className="text-slate-200 font-medium text-lg">{signal.focus_text}</p>
-        </div>
-      )}
-
-      {/* Main Signal Card */}
-      {signal ? (
-        <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-6 md:p-10 relative overflow-hidden shadow-2xl">
-          {/* Subtle Glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Theme Badge */}
-          <div className="mb-6 inline-block">
-              <span className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-widest rounded-full">
-                {signal.day_number ? `Deň ${signal.day_number}` : signal.theme}
-              </span>
-          </div>
-
-          <h2 className="text-3xl md:text-5xl font-serif text-white mb-6 leading-tight">
-             {signal.day_number ? signal.theme : t.todaysSignal}
-          </h2>
-
-          {/* Spoken Audio Player */}
-          {spokenAudioUrl && (
-            <div className="mb-8">
-              <AudioPlayer
-                src={spokenAudioUrl}
-                title={t.listenToText || "Text dňa"}
-                author="Mindbanger"
-                compact={true}
-              />
-            </div>
-          )}
-
-          <div className="prose prose-invert prose-slate max-w-none mb-10 text-slate-300 leading-relaxed text-lg whitespace-pre-wrap">
-            {signal.signal_text}
-          </div>
-
-          {/* Audio Player Injection */}
-          {mainAudioUrl && (
-            <div className="mb-10">
-              <AudioPlayer 
-                src={mainAudioUrl} 
-                backgroundSrc={backgroundAudioUrl}
-                title={`${t.dailyReset} • ${signal.theme}`}
-              />
-            </div>
-          )}
-
-        </div>
-      ) : (
-        <div className="bg-slate-900 border border-white/5 rounded-[2rem] p-10 text-center flex flex-col justify-center items-center min-h-[300px]">
-          <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl">{isOnboardingWait ? "⏳" : "?"}</span>
-          </div>
-          <h2 className="text-2xl font-serif text-white mb-2">
-            {isOnboardingWait ? (userLang === 'sk' ? "Tvoja cesta začína zajtra" : "Your journey starts tomorrow") : t.tuning}
-          </h2>
-          <p className="text-slate-400 max-w-sm">
-            {isOnboardingWait 
-               ? (userLang === 'sk' 
-                  ? "Pripravujeme tvoj prvý signál. Skontroluj aplikáciu zajtra ráno, bude to stáť za to." 
-                  : "We are preparing your first signal. Check back tomorrow morning, it will be worth it.")
-               : t.notBroadcasted}
-          </p>
-        </div>
-      )}
-      
-      {/* Affirmation Block - Below Signal Card */}
-      {signal && signal.affirmation && (
-        <div className="bg-amber-950/20 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden shadow-lg">
-          <div className="absolute -right-4 -bottom-4 text-amber-500/10 text-8xl font-serif leading-none">"</div>
-          <h3 className="text-xs text-amber-500 uppercase tracking-widest mb-2">{t.affirmation}</h3>
-          <p className="text-amber-100/90 italic text-lg">"{signal.affirmation}"</p>
-        </div>
-      )}
-
-      {/* Done Button */}
-      {signal && (
-        <div className="pt-4 flex justify-center pb-8">
-          <CompleteButton signalId={signal.id} label={t.markCompleted} />
-        </div>
-      )}
-
-    </div>
+    <TodayClientView 
+        userLang={userLang}
+        firstName={firstName}
+        t={t}
+        displayDate={displayDate}
+        personalSignal={personalSignalWithUrls}
+        corporateSignal={corporateSignalWithUrls}
+        isOnboardingWait={isOnboardingWait}
+        corporateName={corporateName}
+    />
   );
 }

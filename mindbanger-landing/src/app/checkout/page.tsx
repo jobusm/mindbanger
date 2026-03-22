@@ -162,7 +162,7 @@ function CheckoutContent() {
               {t.price}<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">{t.perMonth}</span>
             </div>
             <div className="space-y-4 text-left">
-              {t.features.map((feat, idx) => (
+              {t.features.map((feat: string, idx: number) => (
                 <div key={idx} className="flex items-center space-x-3 text-slate-300">
                   <Check size={18} className="text-amber-500 flex-shrink-0" />
                   <span>{feat}</span>

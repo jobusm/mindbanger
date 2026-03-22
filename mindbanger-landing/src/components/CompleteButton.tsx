@@ -3,73 +3,96 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Check } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-export default function CompleteButton({ signalId, label }: { signalId: number; label: string }) {
+type SignalId = number | string;
+type SignalType = 'daily' | 'onboarding' | 'corporate';
+
+export default function CompleteButton({ 
+  signalId, 
+  label, 
+  type = 'daily' 
+}: { 
+  signalId: SignalId; 
+  label: string; 
+  type?: SignalType 
+}) {
   const [loading, setLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Check if already completed on mount
   useEffect(() => {
     async function checkStatus() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       setUserId(user.id);
       
+      let table = 'user_progress';
+      if (type === 'onboarding') table = 'user_progress_onboarding';
+      if (type === 'corporate') table = 'user_progress_corporate';
+
       const { data } = await supabase
-        .from('user_progress')
+        .from(table)
         .select('id')
         .eq('user_id', user.id)
         .eq('signal_id', signalId)
-        .single();
+        .maybeSingle(); // Use maybeSingle to avoid 406 error if not found
         
       if (data) {
         setCompleted(true);
       }
     }
     checkStatus();
-  }, [signalId, supabase]);
+  }, [signalId, type]);
 
-  const handleComplete = async () => {
-    if (!userId || completed || loading) return;
-    
+  async function handleComplete() {
+    if (!userId) return;
     setLoading(true);
+
+    let table = 'user_progress';
+    if (type === 'onboarding') table = 'user_progress_onboarding';
+    if (type === 'corporate') table = 'user_progress_corporate';
+
     const { error } = await supabase
-      .from('user_progress')
+      .from(table)
       .insert({
         user_id: userId,
         signal_id: signalId
       });
-      
+
     if (!error) {
       setCompleted(true);
+      toast.success('Completed!');
+    } else {
+        if (error.code === '23505') { // Unique violation
+            setCompleted(true);
+        } else {
+            console.error(error);
+            toast.error('Error saving progress');
+        }
     }
     setLoading(false);
-  };
+  }
 
   if (completed) {
     return (
       <button 
         disabled
-        className="px-8 py-3 rounded-full bg-emerald-500/10 text-emerald-400 font-medium border border-emerald-500/20 flex items-center space-x-2 transition-all"
+        className="px-8 py-3 rounded-full bg-slate-800 text-slate-500 font-medium flex items-center gap-2 cursor-default border border-white/5"
       >
         <Check size={18} />
-        <span>Completed</span>
+        {label}
       </button>
     );
   }
 
   return (
-    <button 
+    <button
       onClick={handleComplete}
       disabled={loading}
-      className="px-8 py-3 rounded-full bg-white/5 text-slate-300 font-medium hover:bg-white/10 hover:text-white transition-colors border border-white/10 flex items-center justify-center min-w-[160px]"
+      className="px-8 py-3 rounded-full bg-white text-black font-bold hover:bg-slate-200 transition-colors disabled:opacity-50 flex items-center gap-2"
     >
-      {loading ? (
-        <span className="w-5 h-5 border-2 border-white/20 border-t-white/80 rounded-full animate-spin"></span>
-      ) : (
-        label
-      )}
+      {loading ? '...' : label}
     </button>
   );
 }

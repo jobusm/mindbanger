@@ -1,22 +1,56 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Library, Headphones, Settings, Link as LinkIcon } from 'lucide-react';
+import { Home, Library, Headphones, Settings, Link as LinkIcon, Building2 } from 'lucide-react';
 import { useDictionary } from '@/lib/i18n-client';
+import { supabase } from '@/lib/supabase';
 
 export default function MobileNavBar() {
   const pathname = usePathname();
   const { dict } = useDictionary();
   const t = dict.nav || { today: 'Today', archive: 'Archive', resets: 'Resets', account: 'Account', affiliate: 'Affiliate' };
 
+  const [isB2BAdmin, setIsB2BAdmin] = useState(false);
+
+  const checkB2BStatus = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data } = await supabase
+      .from('organization_members')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .in('role', ['owner', 'admin'])
+      .eq('status', 'active')
+      .single();
+
+    if (data) {
+      setIsB2BAdmin(true);
+    }
+  };
+
+  useEffect(() => {
+    checkB2BStatus();
+  }, []);
+
   const navItems = [
     { name: t.today, icon: Home, href: '/app/today' },
     { name: t.archive, icon: Library, href: '/app/archive' },
     { name: t.resets, icon: Headphones, href: '/app/resets' },
-    { name: t.affiliate, icon: LinkIcon, href: '/app/affiliate' },
-    { name: t.account, icon: Settings, href: '/app/settings' },
   ];
+
+  // Insert B2B Dashboard if admin
+  if (isB2BAdmin) {
+    navItems.push({ name: 'Company', icon: Building2, href: '/app/organization' });
+  } else {
+    // Only show Affiliate if NOT B2B admin (optional, or show both)
+    navItems.push({ name: t.affiliate, icon: LinkIcon, href: '/app/affiliate' });
+  }
+
+  // Always show Account last
+  navItems.push({ name: t.account, icon: Settings, href: '/app/settings' });
 
   return (
     <>

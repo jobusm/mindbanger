@@ -3,7 +3,7 @@
     "title": "Subscribe to your daily mental clarity",
     "subtitle": "Unlock the premium membership immediately.",
     "productInfo": "Mindbanger Daily",
-    "price": "€7.99",
+    "price": "7.99€",
     "perMonth": "/ month",
     "features": [
       "Daily mind signal",
@@ -18,6 +18,38 @@
     "firstNamePlaceholder": "Your name",
     "email": "Email Address",
     "emailPlaceholder": "you@example.com",
+    "cta": "Proceed to Payment",
+    "secure": "Secure Payment via Stripe"
+  },
+  "b2b": {
+     "hero": {
+        "title": "Unlock Peak Mental Performance for Your Team",
+        "subtitle": "Mindbanger Daily for Business. The daily mental reset your employees need to stay focused, resilient, and creative."
+     },
+     "features": {
+        "title": "Why Mindbanger for Business?",
+        "f1": "Daily Mental Reset",
+        "f2": "Productivity Boost",
+        "f3": "Stress Reduction",
+        "f4": "Team Analytics"
+     },
+     "pricing": {
+        "title": "Simple Transparent Pricing",
+        "tier1": "1-4 Seats",
+        "tier2": "5-25 Seats (15% OFF)",
+        "tier3": "25+ Seats (25% OFF)",
+        "cta": "Get Started"
+     },
+     "form": {
+        "companyName": "Company Name",
+        "taxId": "Tax ID (ICO)",
+        "vatId": "VAT ID (DIC/VAT)",
+        "seats": "Number of Seats",
+        "contactName": "Contact Person",
+        "contactEmail": "Contact Email",
+        "submit": "Create Company Account"
+     }
+  },
     "password": "Create Password",
     "passwordPlaceholder": "••••••••",
     "submit": "Order with obligation to pay",
@@ -31,8 +63,7 @@
       "rateLimit": "You have exceeded the request limit. Please wait a moment and try again.",
       "wrongPassword": "An account with this email exists but with a different password. Please log in first.",
       "missingData": "Missing email or user ID. Please try again."
-    }
-  },
+    },
   "nav": {
     "today": "Today",
     "archive": "Archive",

@@ -10,7 +10,7 @@ export const dictionaries = {
 
 export type Locale = keyof typeof dictionaries;
 
-export const getDictionary = (locale: string) => {
+export const getDictionary = (locale: string): any => {
   if (locale in dictionaries) {
     return dictionaries[locale as Locale];
   }

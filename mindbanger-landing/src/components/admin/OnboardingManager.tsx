@@ -19,6 +19,7 @@ type OnboardingSignal = {
   meditation_audio_url?: string | null; 
   language: string;
   generation_metadata?: any;
+  user_progress_onboarding?: { count: number }[];
 };
 
 export default function OnboardingManager() {
@@ -36,7 +37,7 @@ export default function OnboardingManager() {
     setLoading(true);
     const { data, error } = await supabase
       .from('onboarding_signals')
-      .select('*')
+      .select('*, user_progress_onboarding(count)')
       .order('day_number', { ascending: true });
     
     if (!error && data) {
@@ -222,6 +223,11 @@ export default function OnboardingManager() {
                             <div className="font-bold text-white flex items-center gap-2">
                                 <span>{s.theme}</span>
                                 <span className="text-xs px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase">{s.language}</span>
+                                {s.user_progress_onboarding && s.user_progress_onboarding[0]?.count > 0 && (
+                                   <span className="text-xs px-2 py-0.5 bg-green-900 text-green-400 rounded-full flex items-center gap-1">
+                                      <CheckCircle2 size={10} /> {s.user_progress_onboarding[0].count}
+                                   </span>
+                                )}
                             </div>
                             <div className="text-sm text-slate-400 truncate max-w-md">{s.script || s.focus || 'Bez textu...'}</div>
                         </div>

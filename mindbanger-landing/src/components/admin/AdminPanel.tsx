@@ -6,11 +6,13 @@ import SubscriptionsManager from "./SubscriptionsManager";
 import ResetsManager from "@/components/admin/ResetsManager";
 import AffiliateManager from "./AffiliateManager";
 import PayoutsManager from "./PayoutsManager";
-import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket } from "lucide-react";
+import B2BManager from "./B2BManager";
+import MessagesManager from "@/components/admin/MessagesManager";
+import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket, Briefcase, MessageSquare } from "lucide-react";
 import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts'>('signals');
+  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');
 
   return (
     <>
@@ -82,6 +84,28 @@ export default function AdminPanel() {
           <DollarSign size={20} />
           <span className="font-medium">Žiadosti o Výplatu</span>
         </button>
+        <button
+          onClick={() => setActiveTab('b2b')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'b2b'
+              ? 'border-amber-500 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Briefcase size={20} />
+          <span className="font-medium">B2B Klienti</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('messages')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'messages'
+              ? 'border-amber-500 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <MessageSquare size={20} />
+          <span className="font-medium">Správy</span>
+        </button>
       </div>
 
       {activeTab === 'signals' && <SignalsManager />}
@@ -90,6 +114,8 @@ export default function AdminPanel() {
       {activeTab === 'subscriptions' && <SubscriptionsManager />}
       {activeTab === 'affiliate' && <AffiliateManager />}
       {activeTab === 'payouts' && <PayoutsManager />}
+      {activeTab === 'b2b' && <B2BManager />}
+      {activeTab === 'messages' && <MessagesManager />}
     </>
   );
 }

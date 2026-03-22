@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Save, LogOut } from 'lucide-react';
+import { Save, LogOut, Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useDictionary } from '@/lib/i18n-client';
 import PushNotificationToggle from '@/components/push/PushNotificationToggle';
 
@@ -18,6 +19,7 @@ export default function SettingsPage() {
     timezone: string;
     notification_time?: string;
   } | null>(null);
+  const [orgRole, setOrgRole] = useState<'owner' | 'admin' | null>(null);
 
   // Známe časové pásma pre zjednodušenie (dali by sa natiahnuť z Intl.supportedValuesOf('timeZone'))
   const timezones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['UTC', 'Europe/Bratislava', 'Europe/Prague', 'Europe/London', 'America/New_York'];
@@ -32,6 +34,19 @@ export default function SettingsPage() {
         .select('*')
         .eq('id', user.id)
         .single();
+        
+      // Check Org Membership
+      const { data: membership } = await supabase
+        .from('organization_members')
+        .select('role, status')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .in('role', ['owner', 'admin'])
+        .maybeSingle();
+
+      if (membership) {
+          setOrgRole(membership.role);
+      }
 
       if (data) {
         setProfile({
@@ -98,6 +113,27 @@ export default function SettingsPage() {
 
       <form onSubmit={handleSave} className="space-y-6 bg-slate-900/50 p-6 md:p-8 rounded-[2rem] border border-white/5">
         
+        {/* Organization Management Link */}
+        {orgRole && (
+           <div className="bg-blue-600/10 border border-blue-500/20 rounded-xl p-4 flex items-center justify-between mb-2">
+              <div>
+                 <h3 className="font-medium text-blue-400 flex items-center gap-2">
+                    <Building2 size={18} />
+                    {(dict as any)?.organization?.title || (profile?.preferred_language === 'sk' ? 'Organizácia' : 'Organization')}
+                 </h3>
+                 <p className="text-xs text-slate-400 mt-1">
+                    {(dict as any)?.organization?.manageDesc || (profile?.preferred_language === 'sk' ? 'Spravuj svoj tím a predplatné' : 'Manage your team and subscription')}
+                 </p>
+              </div>
+              <Link 
+                href="/app/organization"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                 {(dict as any)?.organization?.manageBtn || (profile?.preferred_language === 'sk' ? 'Spravovať' : 'Manage')}
+              </Link>
+           </div>
+        )}
+
         {/* Name */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-slate-300">{dict.settings?.nameLabel}</label>

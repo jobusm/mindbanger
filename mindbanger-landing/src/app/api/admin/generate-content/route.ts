@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
             language: lang,
             theme: m[`theme_title_${suffix}`],
             title: m[`theme_title_${suffix}`], // Add redundant field
-            focus: m[`daily_vibe_${suffix}`], 
-            focus_text: m[`daily_vibe_${suffix}`], // Add redundant field
+            // focus: m[`daily_vibe_${suffix}`], // REMOVED: Column 'focus' does not exist in DB
+            focus_text: m[`daily_vibe_${suffix}`], // Correct column name
             affirmation: m[`affirmation_${suffix}`],
             script: m[`text_of_day_${suffix}`],
             signal_text: m[`text_of_day_${suffix}`], // Add redundant field

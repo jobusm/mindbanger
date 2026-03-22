@@ -115,7 +115,7 @@ export default function SignalsManager() {
         const updatedSignal: DailySignal = {
             ...signal,
             theme: data.theme || signal.theme,
-            focus: data.focus,
+            focus: data.focus_text || data.focus || "",
             affirmation: data.affirmation,
             script: data.script,
             meditation_text: data.meditation_text || "",
@@ -128,8 +128,8 @@ export default function SignalsManager() {
             .update({
                 theme: updatedSignal.theme,
                 title: updatedSignal.theme,
-                focus_text: updatedSignal.focus,
-                focus: updatedSignal.focus,
+                focus_text: updatedSignal.focus, // Correct column mapping
+                // focus: updatedSignal.focus,  // REMOVED: Extra key
                 affirmation: updatedSignal.affirmation,
                 script: updatedSignal.script,
                 signal_text: updatedSignal.script,
@@ -182,7 +182,7 @@ export default function SignalsManager() {
         setEditingSignal(prev => prev ? ({
             ...prev,
             theme: data.theme,
-            focus: data.focus,
+            focus: data.focus_text || data.focus || "",
             affirmation: data.affirmation,
             script: data.script,
             status: 'generated',
@@ -251,21 +251,7 @@ export default function SignalsManager() {
 
         // Focus Text
         focus_text: editingSignal.focus, 
-        focus: editingSignal.focus,
-        
-        affirmation: editingSignal.affirmation,
-        meditation_text: editingSignal.meditation_text, // NEW
-        push_text: editingSignal.push_text,
-
-        // Audio
-        audio_url: editingSignal.audio_url,
-        spoken_audio_url: editingSignal.spoken_audio_url,
-        meditation_audio_url: editingSignal.meditation_audio_url,
-
-        // Status & Published Flag
-        status: editingSignal.status,
-        is_published: editingSignal.status === 'published',
-
+        // focus: editingSignal.focus, // REMOVE: Extra key
         // Metadata
         generation_metadata: editingSignal.generation_metadata
     };

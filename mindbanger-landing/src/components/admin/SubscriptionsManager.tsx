@@ -61,21 +61,33 @@ export default function SubscriptionsManager() {
        if (userIds.length > 0) {
            const { data } = await supabase
               .from('profiles')
-              .select('id, full_name') // Add email if it's in profiles
+              .select('id, full_name') // Removed non-existent email column
               .in('id', userIds);
            if (data) profiles = data;
        }
 
-       const profileMap = new Map(profiles.map((p: any) => [p.id, p]));
+       // Create a map for quick profile lookup
+       const profileMap = new Map();
+       profiles.forEach((p: any) => {
+          profileMap.set(p.id, p);
+       });
 
        // 4. Merge data
-       const joined = subs.map((s: any) => ({
-           ...s,
-           profiles: profileMap.get(s.user_id) || null,
-           display_email: s.customer_email || (profileMap.get(s.user_id) as any)?.email || "N/A"
-       }));
+       // Prepare joined objects
+       const joinedList: any[] = [];
+       
+       for (const s of subs) {
+          const profile = profileMap.get(s.user_id);
+          
+          joinedList.push({
+             ...s,
+             profiles: profile || null,
+             // Use customer_email from subscription table as primary source
+             display_email: s.customer_email || "N/A"
+          });
+       }
 
-       setSubscriptions(joined);
+       setSubscriptions(joinedList);
     }
     setLoading(false);
   }

@@ -11,6 +11,7 @@ type DailySignal = {
   script: string | null; // Was signal_text
   focus: string | null; // Was focus_text
   affirmation: string | null;
+  meditation_text?: string | null; // NEW FIELD
   audio_url: string | null; // Background / Meditation
   spoken_audio_url?: string | null; // Spoken word
   push_text?: string | null;
@@ -27,6 +28,7 @@ export default function SignalsManager() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSignals();
@@ -43,6 +45,74 @@ export default function SignalsManager() {
       setSignals(data);
     }
     setLoading(false);
+  }
+
+  async function handleQuickGenerate(signal: DailySignal) {
+    if (!signal.date) return toast.error('Signál nemá dátum.');
+    if (!confirm(`Vygenerovať obsah pre ${signal.date} (${signal.language})?\nPrepíše existujúci text.`)) return;
+
+    setGeneratingId(signal.id);
+    const toastId = toast.loading('Generujem obsah... (cca 15s)');
+
+    try {
+        const res = await fetch('/api/admin/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                date: signal.date,
+                language: signal.language,
+                themeHint: signal.theme
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Chyba generovania');
+        }
+
+        const data = await res.json();
+        
+        // Update local state directly
+        const updatedSignal: DailySignal = {
+            ...signal,
+            theme: data.theme || signal.theme,
+            focus: data.focus,
+            affirmation: data.affirmation,
+            script: data.script,
+            meditation_text: data.meditation_text || "",
+            status: 'generated',
+            generation_metadata: data.generation_metadata
+        };
+
+        // Save to DB immediately to persist generation
+        const { error } = await supabase.from('daily_signals')
+            .update({
+                theme: updatedSignal.theme,
+                title: updatedSignal.theme,
+                focus_text: updatedSignal.focus,
+                focus: updatedSignal.focus,
+                affirmation: updatedSignal.affirmation,
+                script: updatedSignal.script,
+                signal_text: updatedSignal.script,
+                meditation_text: updatedSignal.meditation_text,
+                status: 'generated',
+                is_published: false,
+                generation_metadata: data.generation_metadata
+            })
+            .eq('id', signal.id);
+
+        if (error) throw error;
+
+        // Update UI
+        setSignals(prev => prev.map(s => s.id === signal.id ? updatedSignal : s));
+        toast.success('Obsah vygenerovaný a uložený!', { id: toastId });
+
+    } catch (err: any) {
+        console.error(err);
+        toast.error(err.message || 'Chyba AI', { id: toastId });
+    } finally {
+        setGeneratingId(null);
+    }
   }
 
   async function handleGenerateAI() {
@@ -142,8 +212,10 @@ export default function SignalsManager() {
 
         // Focus Text
         focus_text: editingSignal.focus, 
+        focus: editingSignal.focus,
         
         affirmation: editingSignal.affirmation,
+        meditation_text: editingSignal.meditation_text, // NEW
         push_text: editingSignal.push_text,
 
         // Audio
@@ -262,6 +334,15 @@ export default function SignalsManager() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                         {/* MOVED GENERATE BUTTON HERE */}
+                         <button 
+                            onClick={() => handleQuickGenerate(s)}
+                            disabled={!!generatingId}
+                            title="Vygenerovať s AI"
+                            className="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white rounded-lg transition-colors"
+                         >
+                            <Sparkles size={18} className={generatingId === s.id ? "animate-spin" : ""} />
+                         </button>
                          <button onClick={() => handleEdit(s)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"><Edit2 size={18} /></button>
                          <button onClick={() => handleDelete(s.id)} className="p-2 hover:bg-red-900/20 rounded-lg text-slate-600 hover:text-red-400"><Trash2 size={18} /></button>
                     </div>
@@ -337,7 +418,16 @@ export default function SignalsManager() {
 
             <div>
               <label className="block text-sm text-slate-400 mb-2">Afirmácia</label>
-              <textarea value={editingSignal.affirmation || ''} onChange={e => setEditingSignal({...editingSignal, affirmation: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" rows={2} />
+              <textarea value={editingSignal.affirmation || ''} onChange={e => setEditingSignal({...editingSignal, affirmation: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 mb-4" rows={2} />
+              
+              <label className="block text-sm text-indigo-400 mb-2 font-bold">Meditácia (Text/Script)</label>
+              <textarea 
+                value={editingSignal.meditation_text || ''} 
+                onChange={e => setEditingSignal({...editingSignal, meditation_text: e.target.value})} 
+                className="w-full bg-slate-950/50 border border-indigo-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-slate-600" 
+                placeholder="Text pre riadenú meditáciu..." 
+                rows={4} 
+              />
             </div>
 
              <div>

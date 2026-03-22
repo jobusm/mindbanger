@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase-server';
+import { sendEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
@@ -67,32 +68,18 @@ export async function POST(req: Request) {
     </html>
     `;
 
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hello@mindbanger.com'; 
-    if (!brevoApiKey) {
-        throw new Error('BREVO_API_KEY is not configured');
-    }
-
-    const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': brevoApiKey,
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        sender: { name: 'Mindbanger Daily', email: senderEmail },
-        to: [{ email: email }],
-        subject: 'Vstupny kod - Mindbanger Vault',
-        htmlContent: htmlContent
-      })
+    const { success, error } = await sendEmail({
+      to: email,
+      subject: 'Vstupný kód - Mindbanger Vault',
+      html: htmlContent
     });
 
-    if (!brevoResponse.ok) {
-      throw new Error('Nepodarilo sa odoslat email cez Brevo.');
+    if (!success) {
+      console.error('Email API Error:', error);
+      throw new Error('Nepodarilo sa odoslať email.');
     }
 
-    return NextResponse.json({ success: true, message: 'OTP token sent via Brevo!' });
+    return NextResponse.json({ success: true, message: 'OTP token sent via Email!' });
   } catch (err: any) {
     console.error('Magic Link Route Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Calendar, CreditCard, User, AlertCircle, Globe } from "lucide-react";
+import { Calendar, User, Globe } from "lucide-react";
 
 type Subscription = {
   id: string;
@@ -13,20 +13,22 @@ type Subscription = {
   country: string | null;
   amount_total: number | null;
   currency: string | null;
+  customer_email?: string | null;
 };
 
 type JoinedSubscription = Subscription & {
   profiles?: {
     full_name: string | null;
-    email?: string | null; // email might not exist in profile depending on setup, but let's try
+    email?: string | null;
   } | null;
+  display_email?: string | null;
 };
 
 export default function SubscriptionsManager() {
   const [subscriptions, setSubscriptions] = useState<JoinedSubscription[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Calculate total revenue, grouping by currency (usually 'eur' or 'usd')
+  // Calculate total revenue
   const revenueByCurrency = subscriptions.reduce((acc, sub) => {
     if (sub.amount_total && sub.currency && (sub.status === 'active' || sub.status === 'trialing' || sub.status === 'completed' || sub.status === 'succeeded')) {
       const curr = sub.currency.toUpperCase();
@@ -35,30 +37,45 @@ export default function SubscriptionsManager() {
     return acc;
   }, {} as Record<string, number>);
 
-async function fetchSubscriptions() {
+  async function fetchSubscriptions() {
     setLoading(true);
-    // Fetch subscriptions.
-    // We try to join with profiles to get user info if possible.
-    let { data, error } = await supabase
+    
+    // 1. Fetch raw subscriptions
+    let { data: subs, error } = await supabase
       .from('subscriptions')
-      .select(`
-        *,
-        profiles ( full_name )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {
-       // Fallback if foreign key doesn't exist
-       const fallback = await supabase
-         .from('subscriptions')
-         .select('*')
-         .order('created_at', { ascending: false });
-       data = fallback.data;
-       error = fallback.error as any;
+       console.error("Error fetching subscriptions:", error);
+       setLoading(false);
+       return;
     }
 
-    if (!error && data) {
-      setSubscriptions(data as JoinedSubscription[]);
+    if (subs) {
+       // 2. Extract user IDs
+       const userIds = subs.map((s: any) => s.user_id).filter(Boolean);
+       
+       // 3. Manually fetch profiles
+       let profiles: any[] = [];
+       if (userIds.length > 0) {
+           const { data } = await supabase
+              .from('profiles')
+              .select('id, full_name') // Add email if it's in profiles
+              .in('id', userIds);
+           if (data) profiles = data;
+       }
+
+       const profileMap = new Map(profiles.map((p: any) => [p.id, p]));
+
+       // 4. Merge data
+       const joined = subs.map((s: any) => ({
+           ...s,
+           profiles: profileMap.get(s.user_id) || null,
+           display_email: s.customer_email || (profileMap.get(s.user_id) as any)?.email || "N/A"
+       }));
+
+       setSubscriptions(joined);
     }
     setLoading(false);
   }
@@ -100,11 +117,10 @@ async function fetchSubscriptions() {
             <thead className="bg-slate-900 text-slate-400 border-b border-white/5">
               <tr>
                 <th className="p-4 font-medium">Stav</th>
-                <th className="p-4 font-medium">Používateľ</th>
+                <th className="p-4 font-medium">Používateľ / Email</th>
                 <th className="p-4 font-medium">Krajina</th>
                 <th className="p-4 font-medium">Suma</th>
                 <th className="p-4 font-medium">Koniec obdobia</th>
-                <th className="p-4 font-medium">Kód</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -124,7 +140,10 @@ async function fetchSubscriptions() {
                   <td className="p-4">
                     <div className="font-medium text-white flex items-center gap-2">
                       <User size={14} className="text-slate-500" />
-                      {sub.profiles?.full_name || sub.user_id}
+                      <div>
+                          <div>{sub.profiles?.full_name || "Unknown User"}</div>
+                          <div className="text-xs text-slate-500">{sub.display_email}</div>
+                      </div>
                     </div>
                   </td>
                   <td className="p-4">
@@ -144,14 +163,11 @@ async function fetchSubscriptions() {
                       <span>{sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : '-'}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-slate-500 font-mono text-xs">
-                    {sub.price_id || '-'}
-                  </td>
                 </tr>
               ))}
               {subscriptions.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500">
+                  <td colSpan={5} className="p-8 text-center text-slate-500">
                     Nenašli sa žiadne odbery.
                   </td>
                 </tr>

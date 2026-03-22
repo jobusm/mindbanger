@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { dailyEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
+import { sendEmail } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +20,7 @@ export async function GET(request: Request) {
       return new Response('Server Error', { status: 500 });
     }
 
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    if (!brevoApiKey) {
+    if (!process.env.BREVO_API_KEY) {
       console.error('Missing BREVO_API_KEY');
       return new Response('Server Error', { status: 500 });
     }
@@ -120,34 +120,18 @@ export async function GET(request: Request) {
       const batches = chunkArray(allEmails, BATCH_SIZE);
 
       for (const batch of batches) {
-        const emailData = {
-            sender: { name: "Mindbanger", email: "hello@mindbanger.com" },
-            to: [{ email: "hello@mindbanger.com", name: "Mindbanger Subscribers" }], // dummy TO
-            bcc: batch.map(email => ({ email })), // BCC to actual recipients in this batch
-            subject: template.subject,
-            htmlContent: htmlContent
-        };
+        const { success, error } = await sendEmail({
+          to: "hello@mindbanger.com",
+          bcc: batch,
+          subject: template.subject,
+          html: htmlContent
+        });
 
-        try {
-            const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-                method: 'POST',
-                headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'api-key': brevoApiKey
-                },
-                body: JSON.stringify(emailData)
-            });
-
-            if (!brevoResponse.ok) {
-                const errorData = await brevoResponse.text();
-                console.error(`Brevo API error for lang ${lang} batch:`, errorData);
-            } else {
-                sentBatches++;
-                totalSent += batch.length;
-            }
-        } catch (e: any) {
-            console.error(`Network error sending batch for ${lang}:`, e.message);
+        if (success) {
+            sentBatches++;
+            totalSent += batch.length;
+        } else {
+            console.error(`Resend API error for lang ${lang} batch:`, error);
         }
       }
     }

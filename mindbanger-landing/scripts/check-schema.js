@@ -10,8 +10,8 @@ async function queryDb() {
   const queryColumns = `
     SELECT table_name, column_name, data_type 
     FROM information_schema.columns 
-    WHERE table_schema = 'public' 
-    AND table_name IN ('profiles', 'subscriptions')
+    WHERE table_schema = 'public'
+    AND table_name IN ('daily_signals')
     ORDER BY table_name, column_name;
   `;
   const resColumns = await client.query(queryColumns);

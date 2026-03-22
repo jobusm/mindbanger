@@ -90,7 +90,7 @@ const sendReleaseEmails = async () => {
             const emailData = {
                 sender: { name: "Mindbanger", email: "hello@mindbanger.com" },
                 to: [{ email: "hello@mindbanger.com", name: "Mindbanger Early Adopters" }],
-                bcc: bccList,
+                bcc: bccList, 
                 subject: subject,
                 htmlContent: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #050505; color: #ffffff; border-radius: 12px; border: 1px solid #1a1a1a;">
@@ -130,6 +130,7 @@ const sendReleaseEmails = async () => {
                     .in('email', emails);
             }
         }
+
 
         console.log(`\n✅ Hotovo! Celkovo pozvaných používateľov: ${totalSent}`);
         process.exit(0);

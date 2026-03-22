@@ -22,11 +22,23 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
   
   // Volume states
   const [voiceVolume, setVoiceVolume] = useState(1.0);
-  const [musicVolume, setMusicVolume] = useState(0.5);
+  const [musicVolume, setMusicVolume] = useState(0.22);
   const [showMixer, setShowMixer] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Refs for fade timers
+  const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -47,10 +59,35 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
       setCurrentTime(0);
       if (audio) audio.currentTime = 0;
       
-      // Stop background music when voice ends
+      // Stop background music with fade logic
       if (bgAudioRef.current) {
-        bgAudioRef.current.pause();
-        bgAudioRef.current.currentTime = 0;
+        if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+        if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+
+        const fadeDuration = 3000;
+        const delay = 7000;
+        
+        fadeTimeoutRef.current = setTimeout(() => {
+          const startVol = bgAudioRef.current?.volume || 0;
+          const steps = 30;
+          const stepTime = fadeDuration / steps; 
+          const volStep = startVol / steps;
+
+          fadeIntervalRef.current = setInterval(() => {
+             if (bgAudioRef.current) {
+                const newVol = Math.max(0, bgAudioRef.current.volume - volStep);
+                bgAudioRef.current.volume = newVol;
+
+                if (newVol <= 0) {
+                   if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+                   bgAudioRef.current.pause();
+                   bgAudioRef.current.currentTime = 0;
+                }
+             } else {
+                if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+             }
+          }, stepTime);
+        }, delay);
       }
     };
 
@@ -73,21 +110,31 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
   }, [voiceVolume]);
 
   useEffect(() => {
+    // If user manually changes volume, cancel any automated fading
     if (bgAudioRef.current) {
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+      
       bgAudioRef.current.volume = musicVolume;
     }
   }, [musicVolume]);
 
   const togglePlay = () => {
+    // Clear fade timers on interaction
+    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
         if (bgAudioRef.current) bgAudioRef.current.pause();
       } else {
-        audioRef.current.play();
+        // RESET Background Volume before playing
         if (bgAudioRef.current) {
-           bgAudioRef.current.play().catch(e => console.error("Background audio play failed:", e));
+            bgAudioRef.current.volume = musicVolume;
+            bgAudioRef.current.play().catch(e => console.error("Background audio play failed:", e));
         }
+        audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }

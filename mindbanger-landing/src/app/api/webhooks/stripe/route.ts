@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/lib/supabase-server';
+import { sendEmail } from '@/lib/email';
 import { welcomeEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -64,9 +65,9 @@ export async function POST(req: Request) {
             await supabase.from('profiles').update({ subscription_status: 'premium' }).eq('id', userId);
           }
 
-          // Send welcome email via Brevo
+          // Send welcome email via Resend
           const email = session.customer_details?.email;
-          if (email && process.env.BREVO_API_KEY) {
+          if (email) {
             let userLang = 'en';
             try {
               const { data: profile } = await supabase.from('profiles').select('preferred_language').eq('id', userId).single();
@@ -93,23 +94,14 @@ export async function POST(req: Request) {
 
             const htmlContent = generateEmailHtml(template.headline, template.body, template.cta, magicUrl);
 
-            const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
-              method: 'POST',
-              headers: {
-                'accept': 'application/json',
-                'api-key': process.env.BREVO_API_KEY,
-                'content-type': 'application/json'
-              },
-              body: JSON.stringify({
-                sender: { name: 'Mindbanger Daily', email: 'hello@mindbanger.com' },
-                to: [{ email: email, name: session.customer_details?.name || 'Člen' }],
-                subject: template.subject,
-                htmlContent: htmlContent
-              })
+            const { success, error } = await sendEmail({
+              to: email,
+              subject: template.subject,
+              html: htmlContent
             });
             
-            if (!brevoRes.ok) {
-                console.error('Brevo error:', await brevoRes.text());
+            if (!success) {
+                console.error('Email sending error:', error);
             }
           }
         }

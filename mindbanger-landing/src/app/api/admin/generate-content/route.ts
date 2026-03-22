@@ -55,9 +55,13 @@ export async function POST(request: NextRequest) {
             date: date,
             language: lang,
             theme: m[`theme_title_${suffix}`],
+            title: m[`theme_title_${suffix}`], // Add redundant field
             focus: m[`daily_vibe_${suffix}`], 
+            focus_text: m[`daily_vibe_${suffix}`], // Add redundant field
             affirmation: m[`affirmation_${suffix}`],
             script: m[`text_of_day_${suffix}`],
+            signal_text: m[`text_of_day_${suffix}`], // Add redundant field
+            meditation_text: m[`meditation_${suffix}`], // Add new field
             status: 'generated',
             generation_metadata: {
                 microstep: m[`microstep_${suffix}`],

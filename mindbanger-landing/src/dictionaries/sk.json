@@ -24,11 +24,11 @@
   "b2b": {
      "hero": {
         "title": "Mentálna Výkonnosť pre Váš Tím",
-        "subtitle": "Mindbanger Daily pre Firmy. Denný mentálny reštart, ktorý vaši zamestnanci potrebujú pre sústredenie, odolnosť a kreativitu."
+        "subtitle": "Mindbanger Daily pre Firmy. Denné mentálne ladenie, ktoré vaši zamestnanci potrebujú pre sústredenie, odolnosť a kreativitu."
      },
      "features": {
         "title": "Prečo Mindbanger pre Firmy?",
-        "f1": "Denný Mentálny Reštart",
+        "f1": "Denný Mentálny Mindset",
         "f2": "Zvýšenie Produktivity",
         "f3": "Redukcia Stresu",
         "f4": "Tímové Štatistiky"
@@ -67,19 +67,19 @@
   "nav": {
     "today": "Dnes",
     "archive": "Archív",
-    "resets": "Reštarty",
+    "resets": "Mindsety",
     "account": "Účet",
     "affiliate": "Affiliate"
   },
   "today": {
     "goodMorning": "Dobré ráno",
     "todaysSignal": "Dnešný Signál",
-    "dailyReset": "Denný Reštart",
+    "dailyReset": "Denný Mindset",
     "listenToText": "Vypočuť si text",
     "todaysFocus": "Dnešné zameranie",
     "affirmation": "Afirmácia",
     "tuning": "Ladenie frekvencie...",
-    "notBroadcasted": "Dnešný signál ešte nebol vysielaný. Skús to neskôr pre svoj denný reštart.",
+    "notBroadcasted": "Dnešný signál ešte nebol vysielaný. Skús to neskôr pre svoj denný mindset.",
     "markCompleted": "Označiť za hotové",
     "completedLabel": "Denný Mindset Nastavený"
   },
@@ -99,14 +99,14 @@
     "tabProducts": "Rýchle Reštarty",
     "libraryEmpty": "Vaša knižnica je zatiaľ prázdna",
     "checkBack": "Zajtra tu nájdeš svoj prvý odomknutý signál.",
-    "preparing": "Pripravujeme nové resety",
-    "workingOnIt": "Pracujeme na tom, aby sme sem čoskoro pridali ďalšie špecializované audio reštarty.",
-    "readReset": "Načítať reset",
+    "preparing": "Pripravujeme nové mindset nástroje",
+    "workingOnIt": "Pracujeme na tom, aby sme sem čoskoro pridali ďalšie špecializované audia.",
+    "readReset": "Načítať audio",
     "temporalLockText": "Temporal Content Lock aktívny. Vaša cesta a archív začínajú plynúť dnešným dňom. Každý ďalší deň tu nájdete predošlé rituály, ktoré môžete kedykoľvek zopakovať.",
     "audioAdjust": "Audio Session",
-    "quickReset": "Rýchly Reset",
-    "startReset": "Začať reset",
-    "noResetsText": "Rýchle zvukové resety na zmenu vášho stavu už čoskoro pribudnú do archívu."
+    "quickReset": "Rýchly Mindset",
+    "startReset": "Začať audio",
+    "noResetsText": "Rýchle zvukové nástroje na zmenu vášho stavu už čoskoro pribudnú do archívu."
   },
   "settings": {
     "loading": "Načítavam nastavenia...",
@@ -184,8 +184,8 @@
           "desc": "Silné posilňujúce prehlásenie."
         },
         {
-          "title": "Audio Reset",
-          "desc": "Krátky upokojujúci hlasový reset."
+          "title": "Mindset Audio",
+          "desc": "Krátky upokojujúci hlasový sprievodca."
         }
       ]
     },

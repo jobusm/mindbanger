@@ -18,7 +18,7 @@ export default function AboutTrustSection() {
           <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-slate-700/50">
              <Image 
                src="/miro-profile.jpg" 
-               alt="Miroslav Jobus" 
+               alt="Mgr. Miroslav Jobus" 
                fill
                className="object-cover"
              />
@@ -33,7 +33,7 @@ export default function AboutTrustSection() {
           <p className="text-amber-500 font-medium tracking-wide text-sm uppercase">{dict?.landing?.about?.badge}</p>
           <Link href="/about" className="block w-fit mx-auto group">
             <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight leading-tight group-hover:text-amber-500 transition-colors duration-300">
-              Miroslav Jobus
+              Mgr. Miroslav Jobus
             </h2>
             <div className="h-0.5 bg-amber-500 w-0 group-hover:w-full transition-all duration-300 mx-auto mt-1" />
           </Link>

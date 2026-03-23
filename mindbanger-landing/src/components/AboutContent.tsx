@@ -39,7 +39,7 @@ export default function AboutContent() {
               <div className="relative inline-flex items-center justify-center w-36 h-36 rounded-full bg-slate-900 border border-white/10 text-slate-400 mb-4 shadow-2xl overflow-hidden">
                  <Image 
                    src="/miro-profile.jpg" 
-                   alt="Miroslav Jobus" 
+                   alt="Mgr. Miroslav Jobus" 
                    fill
                    className="object-cover"
                    priority
@@ -52,6 +52,14 @@ export default function AboutContent() {
               <h1 className="text-4xl md:text-6xl font-serif text-white">{t.title}</h1>
               <p className="text-xl text-amber-500/90 font-medium tracking-wide uppercase">{t.role}</p>
            </header>
+
+           {/* Intro Section */}
+           {(t.introTitle || t.introText) && (
+             <div className="text-center max-w-3xl mx-auto mt-8 mb-16 space-y-6">
+                {t.introTitle && <h2 className="text-2xl md:text-3xl font-serif text-amber-500">{t.introTitle}</h2>}
+                {t.introText && <p className="text-xl md:text-2xl text-white font-light leading-relaxed">{t.introText}</p>}
+             </div>
+           )}
 
            {/* Content */}
            <div className="prose prose-invert prose-lg max-w-none space-y-8 leading-relaxed text-slate-300 font-light">
@@ -77,6 +85,12 @@ export default function AboutContent() {
               <blockquote className="border-l-4 border-amber-500 pl-6 py-2 my-8 text-xl font-serif text-white italic bg-gradient-to-r from-amber-500/10 to-transparent rounded-r-lg">
                 „{t.quote}“
               </blockquote>
+
+              {t.p5 && (
+                 <p className="text-lg text-slate-300">
+                    {t.p5}
+                 </p>
+              )}
            </div>
 
            {/* CTA */}
@@ -88,7 +102,7 @@ export default function AboutContent() {
            
            {/* Footer */}
            <footer className="text-center text-slate-500 text-sm py-12">
-             &copy; {new Date().getFullYear()} Miroslav Jobus & Mindbanger. All rights reserved.
+             &copy; {new Date().getFullYear()} Mgr. Miroslav Jobus & Mindbanger. All rights reserved.
            </footer>
 
         </div>

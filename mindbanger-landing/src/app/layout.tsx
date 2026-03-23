@@ -26,6 +26,9 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'Mindbanger Daily | Daily mental clarity & focus',
   description: 'Daily mind signals for clarity, calm & focus. Created by a Life Coach & Hypnotherapist. The way your mind is set begins to shape your reality.',
+  icons: {
+    icon: '/favicon.jpg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',

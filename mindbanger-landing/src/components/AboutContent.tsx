@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 export default function AboutContent() {
   const { dict } = useDictionary();
-  const t = dict?.aboutPage;
+  const t = dict?.aboutPage || dict?.landing?.aboutPage;
 
   if (!t) return null;
 

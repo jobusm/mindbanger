@@ -43,8 +43,8 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   if (currentTab === 'daily') {
     const { data } = await supabase
       .from('daily_signals')
-      // Map legacy/wrong fields to schema: title->theme, signal_text->focus
-      .select('id, date, theme, focus, affirmation, status, script') 
+      // Map legacy/wrong fields to schema: title->theme, signal_text->focus_text
+      .select('id, date, theme, focus_text, affirmation, status, script') 
       .eq('language', userLang)
       .eq('status', 'published') // Changed from is_published
       .gte('date', formattedLockDate)
@@ -55,7 +55,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
     signals = data?.map((item: any) => ({
       ...item,
       title: item.theme, 
-      signal_text: item.script || item.focus || item.affirmation
+      signal_text: item.script || item.focus_text || item.affirmation
     })) || [];
   } else {
     // Načítať samostatné produkty - Quick Resets

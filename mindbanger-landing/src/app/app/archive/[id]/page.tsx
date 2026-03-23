@@ -33,7 +33,7 @@ export default async function ArchiveDetailPage({ params }: { params: Promise<{ 
     .select('*')
     .eq('id', signalId)
     .eq('language', userLang)
-    .eq('is_published', true)
+    .eq('status', 'published') // Changed from is_published
     .gte('date', formattedLockDate) // Striktne overíme či má nárok
     .single();
 

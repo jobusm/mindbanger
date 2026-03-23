@@ -18,7 +18,7 @@ export default function AboutTrustSection() {
           <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-slate-700/50">
              <Image 
                src="/miro-profile.jpg" 
-               alt="Mgr. Miroslav Jobus" 
+               alt="Miroslav Jobus" 
                fill
                className="object-cover"
              />

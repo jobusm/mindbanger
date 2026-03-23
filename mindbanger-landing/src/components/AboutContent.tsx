@@ -39,7 +39,7 @@ export default function AboutContent() {
               <div className="relative inline-flex items-center justify-center w-36 h-36 rounded-full bg-slate-900 border border-white/10 text-slate-400 mb-4 shadow-2xl overflow-hidden">
                  <Image 
                    src="/miro-profile.jpg" 
-                   alt="Mgr. Miroslav Jobus" 
+                   alt="Miroslav Jobus" 
                    fill
                    className="object-cover"
                    priority
@@ -102,7 +102,7 @@ export default function AboutContent() {
            
            {/* Footer */}
            <footer className="text-center text-slate-500 text-sm py-12">
-             &copy; {new Date().getFullYear()} Mgr. Miroslav Jobus & Mindbanger. All rights reserved.
+             &copy; {new Date().getFullYear()} Miroslav Jobus & Mindbanger. All rights reserved.
            </footer>
 
         </div>

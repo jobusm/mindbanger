@@ -5,6 +5,7 @@ import React from 'react';
 import { User } from 'lucide-react';
 import { useDictionary } from './LanguageProvider';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AboutTrustSection() {
   const { dict } = useDictionary();
@@ -14,8 +15,17 @@ export default function AboutTrustSection() {
       
       <div className="max-w-4xl mx-auto space-y-12 relative z-10 text-center">
         <div className="inline-flex items-center justify-center p-4 rounded-full bg-slate-800/50 border border-white/5 shadow-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
-          <div className="bg-slate-700/50 rounded-full p-6 text-slate-300">
-             <User size={64} strokeWidth={1} />
+          <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-slate-700/50">
+             <Image 
+               src="/miro-profile.jpg" 
+               alt="Miroslav Jobus" 
+               fill
+               className="object-cover"
+             />
+             {/* Fallback visual if image fails to load */}
+             <div className="absolute inset-0 bg-slate-700/50 flex items-center justify-center text-slate-300 -z-10">
+                <User size={64} strokeWidth={1} />
+             </div>
           </div>
         </div>
 

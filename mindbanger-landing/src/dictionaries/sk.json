@@ -257,7 +257,19 @@
         }
       ]
     },
-    "about": {
+      "aboutPage": {
+    "title": "Miroslav Jobus",
+    "role": "Hypnoterapeut & Mentor",
+    "back": "Späť na Mindbanger",
+    "p1": "Miroslav Jobus je hypnoterapeut, mentor a tvorca projektov zameraných na vnútornú zmenu, duševnú pohodu a osobný rast. Vo svojej práci prepája citlivý prístup k človeku, hlboký záujem o fungovanie mysle a praktické vedenie k reálnej premene. Nepracuje len s teóriou, ale s reálnou skúsenosťou, pochopením emócií, návykov, vnútorných blokov aj potenciálu, ktorý v sebe každý človek nesie.",
+    "h1": "Prístup založený na dôvere",
+    "p2": "Jeho prístup stojí na dôvere, ľudskosti a presvedčení, že správne vedené slovo, pokoj, bezpečný priestor a vedomá práca s podvedomím môžu človeku pomôcť meniť život zvnútra.",
+    "h2": "Systémy pre zmenu",
+    "p3": "Miroslav vytvára systémy, nahrávky a procesy, ktoré majú ľuďom pomôcť cítiť sa silnejšie, pokojnejšie, istejšie a viac v súlade so sebou samými.",
+    "p4": "Za jeho tvorbou je nielen vízia, ale aj skutočný záujem pomáhať ľuďom — či už ide o lepší spánok, väčší vnútorný pokoj, sebavedomie, disciplínu alebo hlbšie osobné uvedomenie.",
+    "quote": "Práve táto originálna kombinácia ľudského prístupu, zámeru a autentickosti je implementovaná do systému Mindbanger a dáva mu jasnú pridanú hodnotu ľudskosti a funkčnosti zároveň."
+  },
+  "about": {
       "badge": "O Tvorcovi",
       "role": "Životný kouč, hypnoterapeut a sprievodca mentálnym výkonom.",
       "quote1": "Mindbanger Daily bol vytvorený aby pomáhal ľuďom formovať každý svoj deň pre životnú pohodu, úspech a radosť zo života prostredníctvom ",

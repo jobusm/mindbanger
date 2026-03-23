@@ -255,7 +255,19 @@
         }
       ]
     },
-    "about": {
+    "aboutPage": {
+    "title": "Miroslav Jobus",
+    "role": "Hypnotherapist & Mentor",
+    "back": "Back to Mindbanger",
+    "p1": "Miroslav Jobus is a hypnotherapist, mentor, and creator of projects focused on inner transformation, mental well-being, and personal growth. In his work, he combines a sensitive approach to people, a deep interest in how the mind works, and practical guidance towards real change. He doesn't work solely with theory but with real experience, understanding of emotions, habits, inner blocks, and the potential that every person carries within themselves.",
+    "h1": "Trust-based Approach",
+    "p2": "His approach is built on trust, humanity, and the belief that the right spoken word, peace, a safe space, and conscious work with the subconscious can help people change their lives from within.",
+    "h2": "Systems for Change",
+    "p3": "Miroslav creates systems, recordings, and processes designed to help people feel stronger, calmer, more confident, and more in harmony with themselves.",
+    "p4": "Behind his work lies not only a vision but also genuine interest in helping people—whether it's about better sleep, greater inner peace, self-confidence, discipline, or deeper personal awareness.",
+    "quote": "It is precisely this original combination of human approach, intention, and authenticity that is implemented into the Mindbanger system and gives it clear added value of humanity and functionality at the same time."
+  },
+  "about": {
       "badge": "About the Creator",
       "role": "Life Coach, Hypnotherapist, and mental performance guide.",
       "quote1": "Mindbanger Daily was created to help people shape each day from the inside out � through",

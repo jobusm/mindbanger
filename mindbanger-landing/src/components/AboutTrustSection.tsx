@@ -4,6 +4,7 @@
 import React from 'react';
 import { User } from 'lucide-react';
 import { useDictionary } from './LanguageProvider';
+import Link from 'next/link';
 
 export default function AboutTrustSection() {
   const { dict } = useDictionary();
@@ -20,7 +21,12 @@ export default function AboutTrustSection() {
 
         <div className="space-y-4 max-w-2xl mx-auto">
           <p className="text-amber-500 font-medium tracking-wide text-sm uppercase">{dict?.landing?.about?.badge}</p>
-          <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight leading-tight">Miroslav Jobus</h2>
+          <Link href="/about" className="block w-fit mx-auto group">
+            <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight leading-tight group-hover:text-amber-500 transition-colors duration-300">
+              Miroslav Jobus
+            </h2>
+            <div className="h-0.5 bg-amber-500 w-0 group-hover:w-full transition-all duration-300 mx-auto mt-1" />
+          </Link>
           <p className="text-lg md:text-xl text-slate-400 font-light italic">
             {dict?.landing?.about?.role}
           </p>

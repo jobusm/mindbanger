@@ -12,10 +12,12 @@ type SignalType = 'daily' | 'onboarding' | 'corporate';
 export default function CompleteButton({ 
   signalId, 
   label, 
+  completedLabel = 'Completed',
   type = 'daily' 
 }: { 
   signalId: SignalId; 
   label: string; 
+  completedLabel?: string;
   type?: SignalType 
 }) {
   const [loading, setLoading] = useState(false);
@@ -63,19 +65,25 @@ export default function CompleteButton({
 
     if (!error) {
       setCompleted(true);
-      toast.success('Completed!');
+      toast.success('Hotovo!');
       confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 }
+        particleCount: 200,
+        spread: 120,
+        origin: { y: 0.65 },
+        colors: ['#FFD700', '#FFA500', '#FFFFFF'], // Gold, Orange, White
+        shapes: ['circle', 'square'],
+        scalar: 1.2
       });
     } else {
         if (error.code === '23505') { // Unique violation
             setCompleted(true);
             confetti({
-              particleCount: 150,
-              spread: 70,
-              origin: { y: 0.6 }
+              particleCount: 200,
+              spread: 120,
+              origin: { y: 0.65 },
+              colors: ['#FFD700', '#FFA500', '#FFFFFF'],
+              shapes: ['circle', 'square'],
+              scalar: 1.2
             });
         } else {
             console.error(error);
@@ -89,10 +97,10 @@ export default function CompleteButton({
     return (
       <button 
         disabled
-        className="px-8 py-3 rounded-full bg-slate-800 text-slate-500 font-medium flex items-center gap-2 cursor-default border border-white/5"
+        className="px-8 py-3 rounded-full bg-amber-500/10 text-amber-500 font-bold flex items-center gap-2 cursor-default border border-amber-500/20 shadow-[0_0_15px_rgba(251,191,36,0.2)]"
       >
         <Check size={18} />
-        {label}
+        {completedLabel}
       </button>
     );
   }

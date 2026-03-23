@@ -158,6 +158,7 @@ export default function TodayClientView({
           <CompleteButton 
             signalId={currentSignal.id} 
             label={t.markCompleted}
+            completedLabel={t.completedLabel || "Denný Mindset Nastavený"}
             type={currentSignal.type || 'daily'}
              />
         </div>

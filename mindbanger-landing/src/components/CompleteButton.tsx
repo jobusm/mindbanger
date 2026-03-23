@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Check } from 'lucide-react';
 import toast from 'react-hot-toast';
+import confetti from 'canvas-confetti';
 
 type SignalId = number | string;
 type SignalType = 'daily' | 'onboarding' | 'corporate';
@@ -63,9 +64,19 @@ export default function CompleteButton({
     if (!error) {
       setCompleted(true);
       toast.success('Completed!');
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     } else {
         if (error.code === '23505') { // Unique violation
             setCompleted(true);
+            confetti({
+              particleCount: 150,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
         } else {
             console.error(error);
             toast.error('Error saving progress');

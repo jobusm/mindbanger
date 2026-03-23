@@ -49,12 +49,21 @@ export default function CompleteButton({
   }, [signalId, type]);
 
   async function handleComplete() {
-    if (!userId) return;
+    console.log("🟠 CompleteButton: handleComplete started. UserID:", userId, "SignalID:", signalId, "Type:", type);
+    
+    if (!userId) {
+      console.error("❌ CompleteButton error: User ID is missing in handleComplete");
+      toast.error('Prosím, najprv sa prihláste.');
+      return;
+    }
+    
     setLoading(true);
 
     let table = 'user_progress';
     if (type === 'onboarding') table = 'user_progress_onboarding';
     if (type === 'corporate') table = 'user_progress_corporate';
+    
+    console.log(`🟡 CompleteButton: Attempting insert into table: '${table}'`);
 
     const { error } = await supabase
       .from(table)
@@ -64,8 +73,9 @@ export default function CompleteButton({
       });
 
     if (!error) {
+      console.log("✅ CompleteButton: Insert successful!");
       setCompleted(true);
-      toast.success('Hotovo!');
+      toast.success('Denný mindset nastavený!');
       confetti({
         particleCount: 200,
         spread: 120,
@@ -75,7 +85,10 @@ export default function CompleteButton({
         scalar: 1.2
       });
     } else {
+        console.error("❌ CompleteButton: Check failed. Error code:", error.code, "Details:", error.message, error.details);
+        
         if (error.code === '23505') { // Unique violation
+            console.log("⚠️ CompleteButton: Unique violation (already completed). Marking as done.");
             setCompleted(true);
             confetti({
               particleCount: 200,
@@ -86,8 +99,8 @@ export default function CompleteButton({
               scalar: 1.2
             });
         } else {
-            console.error(error);
-            toast.error('Error saving progress');
+            console.error("🛑 CompleteButton: Serious database error:", error);
+            toast.error(`Chyba pri ukladaní: ${error.message}`);
         }
     }
     setLoading(false);

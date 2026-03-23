@@ -78,7 +78,8 @@
     "affirmation": "Affirmation",
     "tuning": "Tuning the frequency...",
     "notBroadcasted": "Todays signal hasn\t been broadcasted yet. Check back a little later for your daily reset.",
-    "markCompleted": "Mark as completed"
+    "markCompleted": "Mark as completed",
+    "completedLabel": "Daily Mindset Set"
   },
   "audio": {
     "voiceVolume": "Voice",

@@ -80,7 +80,8 @@
     "affirmation": "Afirmácia",
     "tuning": "Ladenie frekvencie...",
     "notBroadcasted": "Dnešný signál ešte nebol vysielaný. Skús to neskôr pre svoj denný reštart.",
-    "markCompleted": "Označiť za hotové"
+    "markCompleted": "Označiť za hotové",
+    "completedLabel": "Denný Mindset Nastavený"
   },
   "audio": {
     "voiceVolume": "Hlas",

@@ -49,7 +49,8 @@
     "affirmation": "Afirmace",
     "tuning": "Ladění frekvence...",
     "notBroadcasted": "Dnešní signál ještě nebyl vysílán. Zkus to později pro svůj denní restart.",
-    "markCompleted": "Označit za hotové"
+    "markCompleted": "Označit za hotové",
+    "completedLabel": "Denní Mindset Nastaven"
   },
   "audio": {
     "voiceVolume": "Hlas",

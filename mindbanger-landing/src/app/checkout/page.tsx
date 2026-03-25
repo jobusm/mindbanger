@@ -115,7 +115,7 @@ function CheckoutContent() {
             </div>
             
             <div className="flex flex-col gap-2 text-left">
-               {t.features.slice(0, 3).map((feat: string, idx: number) => (
+               {t.features.map((feat: string, idx: number) => (
                   <div key={idx} className="flex items-center space-x-2 text-slate-300 text-sm">
                     <Check size={16} className="text-amber-500 flex-shrink-0" />
                     <span>{feat}</span>

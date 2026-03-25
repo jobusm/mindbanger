@@ -63,20 +63,20 @@ export default function PushNotificationBanner() {
           </div>
           <div>
             <p className="text-sm text-white font-medium">
-               {(dict.settings as any)?.pushBannerTitle || 'Zapni si ranné notifikácie'}
+               {(dict.settings as any)?.pushBannerTitle || 'Začni deň s čistou hlavou'}
             </p>
             <p className="text-xs text-slate-400">
-               {(dict.settings as any)?.pushBannerText || 'Dostávaj denný signál priamo na plochu.'}
+               {(dict.settings as any)?.pushBannerText || 'Aktivuj si denné Mindsety ešte dnes.'}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
             <a 
-              href="/app/settings" 
+              href="/checkout" 
               className="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-full transition-colors whitespace-nowrap text-center flex-1 sm:flex-none"
             >
-              {(dict.settings as any)?.pushBannerBtn || 'Nastaviť'}
+              {(dict.settings as any)?.pushBannerBtn || 'Odoberať Mindsety'}
             </a>
             <button 
               onClick={handleDismiss}

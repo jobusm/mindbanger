@@ -26,14 +26,15 @@ function CheckoutContent() {
   const inviteCode = searchParams.get('invite');
 
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(true); // Default to true now that public
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     async function checkAccess() {
-      // Check if returning user to pre-fill email
+      // Check if returning user
       const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user.email) {
-        setEmail(session.user.email);
+      if (session?.user) {
+        setIsLoggedIn(true);
+        if (session.user.email) setEmail(session.user.email);
       }
       setCheckingAuth(false);
     }
@@ -58,42 +59,49 @@ function CheckoutContent() {
     try {
       // 1. Create or log in the user quickly
       let userId: string | undefined;
-      
-      // Get ref if exists in browser
-      const referredBy = typeof window !== 'undefined' ? localStorage.getItem('mindbanger_ref') : null;
-      
-      let localTimezone = 'UTC';
-      if (typeof window !== 'undefined') {
-        localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-      }
 
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: firstName,
-            referred_by: referredBy,
-            preferred_language: lang,
-            timezone: localTimezone
-          }
-        }
-      });
-
-      if (signUpError) {
-        // Sometimes the user is already registered, try to log them in
-        if (signUpError.message.includes('already registered') || signUpError.status === 400) {
-           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-             email,
-             password
-           });
-           if (signInError) throw new Error('wrongPassword');
-           userId = signInData.user?.id;
-        } else {
-           throw signUpError;
+      if (isLoggedIn) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          userId = user.id;
         }
       } else {
-        userId = signUpData.user?.id;
+        // Get ref if exists in browser
+        const referredBy = typeof window !== 'undefined' ? localStorage.getItem('mindbanger_ref') : null;
+        
+        let localTimezone = 'UTC';
+        if (typeof window !== 'undefined') {
+          localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        }
+
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: firstName,
+              referred_by: referredBy,
+              preferred_language: lang,
+              timezone: localTimezone
+            }
+          }
+        });
+
+        if (signUpError) {
+          // Sometimes the user is already registered, try to log them in
+          if (signUpError.message.includes('already registered') || signUpError.status === 400) {
+             const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+               email,
+               password
+             });
+             if (signInError) throw new Error('wrongPassword');
+             userId = signInData.user?.id;
+          } else {
+             throw signUpError;
+          }
+        } else {
+          userId = signUpData.user?.id;
+        }
       }
 
       if (!userId) {
@@ -188,41 +196,50 @@ function CheckoutContent() {
             )}
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">{t.firstName}</label>
-                <input
-                  type="text"
-                  placeholder={t.firstNamePlaceholder}
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
-                />
-              </div>
+              {isLoggedIn ? (
+                <div className="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                  <p className="text-sm text-slate-400 mb-1">{t.email || 'Account'}:</p>
+                  <p className="text-white font-medium">{email}</p>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-2">{t.firstName}</label>
+                    <input
+                      type="text"
+                      placeholder={t.firstNamePlaceholder}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">{t.email}</label>
-                <input
-                  type="email"
-                  placeholder={t.emailPlaceholder}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-2">{t.email}</label>
+                    <input
+                      type="email"
+                      placeholder={t.emailPlaceholder}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">{t.password}</label>
-                <input
-                  type="password"
-                  placeholder={t.passwordPlaceholder}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-2">{t.password}</label>
+                    <input
+                      type="password"
+                      placeholder={t.passwordPlaceholder}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="space-y-3 pt-2 pb-4">
@@ -265,7 +282,7 @@ function CheckoutContent() {
                 </>
               ) : (
                 <>
-                  {t.submit}
+                  {isLoggedIn ? (t.cta || 'Upgrade') : t.submit}
                   <ArrowRight size={18} />
                 </>
               )}
@@ -275,11 +292,13 @@ function CheckoutContent() {
             </p>
           </form>
           
-          <div className="mt-8 text-center border-t border-slate-800 pt-6">
-             <Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors">
-                {t.alreadyHaveAccount}
-             </Link>
-          </div>
+          {!isLoggedIn && (
+            <div className="mt-8 text-center border-t border-slate-800 pt-6">
+               <Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors">
+                  {t.alreadyHaveAccount}
+               </Link>
+            </div>
+          )}
         </div>
       </div>
       {dict?.cookieBanner && <CookieBanner dict={dict.cookieBanner} />}

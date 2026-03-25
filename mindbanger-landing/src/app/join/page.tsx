@@ -14,6 +14,10 @@ export default function JoinPage() {
   const [email, setEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  
+  // Consents
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [gdprAccepted, setGdprAccepted] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,11 +43,24 @@ export default function JoinPage() {
     setMessage(null);
 
     try {
+      if (!termsAccepted || !gdprAccepted) {
+        throw new Error('Please accept the Terms and Privacy Policy to continue.');
+      }
+
       // 1. Send code via our API (handling user creation if new)
       const response = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ 
+          email, 
+          options: {
+             data: {
+               terms_accepted: termsAccepted,
+               privacy_policy_accepted: gdprAccepted,
+               consents_timestamp: new Date().toISOString()
+             }
+          }
+        }),
       });
 
       const data = await response.json();
@@ -140,6 +157,38 @@ export default function JoinPage() {
                    </>
                 )}
               </button>
+
+              <div className="space-y-3 pt-2">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="flex items-center h-5 mt-0.5">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900 focus:ring-2 cursor-pointer transition-colors"
+                    />
+                  </div>
+                  <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
+                    I agree to the <Link href="/terms" className="text-amber-500 hover:underline" target="_blank">Terms of Service</Link>
+                  </span>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="flex items-center h-5 mt-0.5">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={gdprAccepted}
+                      onChange={(e) => setGdprAccepted(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900 focus:ring-2 cursor-pointer transition-colors"
+                    />
+                  </div>
+                  <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
+                    I accept the <Link href="/privacy" className="text-amber-500 hover:underline" target="_blank">Privacy Policy</Link> and data processing.
+                  </span>
+                </label>
+              </div>
             </form>
           ) : (
             <form onSubmit={handleVerifyCode} className="space-y-4">

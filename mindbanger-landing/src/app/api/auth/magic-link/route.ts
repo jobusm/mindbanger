@@ -4,7 +4,7 @@ import { sendEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, options } = await req.json();
     if (!email) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
     }
@@ -14,14 +14,23 @@ export async function POST(req: Request) {
     // 1. (Variant B) Check if user exists, if not, create them so they can receive the code
     try {
       // Just check existence first
-      const { data: userList } = await supabase.auth.admin.listUsers(); // Note: inefficient for large user base, better use getUserById or attempt create
-      // Actually, createUser with same email throws error, which is fine
-      await supabase.auth.admin.createUser({
-          email: email,
-          email_confirm: true // Auto-confirm so they can login immediately? Or false to require verification?
-          // Since we use OTP for login, that IS the verification.
-          // If we set confirm: true, they are verified.
-      });
+      const { data: userList } = await supabase.auth.admin.listUsers();
+      
+      const existingUser = userList.users.find(u => u.email === email);
+      
+      if (!existingUser) {
+        await supabase.auth.admin.createUser({
+            email: email,
+            email_confirm: true,
+            user_metadata: options?.data // Save consents
+        });
+      } else if (options?.data) {
+        // Update existing user with new consents if provided (e.g. re-registering)
+        await supabase.auth.admin.updateUserById(existingUser.id, {
+            user_metadata: { ...existingUser.user_metadata, ...options.data }
+        });
+      }
+
     } catch (createError: any) {
         // Ignore "User already registered" error
         // console.log("User likely exists or error in creation:", createError.message);

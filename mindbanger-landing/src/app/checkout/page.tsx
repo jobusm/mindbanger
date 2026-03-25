@@ -196,12 +196,7 @@ function CheckoutContent() {
             )}
 
             <div className="space-y-4">
-              {isLoggedIn ? (
-                <div className="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
-                  <p className="text-sm text-slate-400 mb-1">{t.email || 'Account'}:</p>
-                  <p className="text-white font-medium">{email}</p>
-                </div>
-              ) : (
+              {isLoggedIn ? null : (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-2">{t.firstName}</label>
@@ -213,7 +208,6 @@ function CheckoutContent() {
                       className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-2">{t.email}</label>
                     <input
@@ -225,7 +219,6 @@ function CheckoutContent() {
                       className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-2">{t.password}</label>
                     <input

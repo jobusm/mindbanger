@@ -19,7 +19,9 @@
     "email": "E-mailová adresa",
     "emailPlaceholder": "ty@priklad.sk",
     "cta": "Prejsť k platbe",
-    "secure": "Bezpečná platba cez Stripe"
+    "secure": "Bezpečná platba cez Stripe",
+    "digitalConsent": "Výslovne súhlasím s okamžitým dodaním digitálneho obsahu a beriem na vedomie, že tým strácam právo na odstúpenie od zmluvy do 14 dní.",
+    "ageConsent": "Potvrdzujem, že mám viac ako 18 rokov pre možnosť platby, resp. 16+ rokov pre používanie služby."
   },
   "b2b": {
      "hero": {
@@ -120,8 +122,7 @@
     "langCs": "Čeština (Czech)",
     "languageDesc": "Určuje v akom jazyku dostanete denný signál.",
     "timezoneLabel": "Moje Časové Pásmo",
-    "timezoneDesc": "Dôležité, ak cestujete. Pomáha nám odomknúť dnešný obsah presne pre váš lokálny čas.",
-    "saveBtn": "Uložiť nastavenia",
+    "timezoneDesc": "Dôležité, ak cestujete. Pomáha nám odomknúť dnešný obsah presne pre váš lokálny čas.",    "pushBannerBtn": "Odoberať Mindsety",    "saveBtn": "Uložiť nastavenia",
     "savingBtn": "Ukladám...",
     "dangerZone": "Správa odberu & Odhlásenie",
     "dangerDesc": "Tu si môžete spravovať svoju kartu, faktúry cez Stripe alebo sa odhlásiť z aplikácie.",

@@ -19,7 +19,9 @@
     "email": "Email Address",
     "emailPlaceholder": "you@example.com",
     "cta": "Proceed to Payment",
-    "secure": "Secure Payment via Stripe"
+    "secure": "Secure Payment via Stripe",
+    "digitalConsent": "I explicitly consent to the immediate delivery of digital content and acknowledge that I thereby lose my right of withdrawal within 14 days.",
+    "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service."
   },
   "b2b": {
      "hero": {
@@ -119,6 +121,7 @@
     "languageDesc": "Determines the language of your daily signal.",
     "timezoneLabel": "My Timezone",
     "timezoneDesc": "Important if you travel. Helps us unlock today's content exactly for your local time.",
+    "pushBannerBtn": "Subscribe to Mindsets",
     "saveBtn": "Save settings",
     "savingBtn": "Saving...",
     "dangerZone": "Subscription & Sign Out",

@@ -30,8 +30,10 @@
       "default": "Došlo k neznámé chybě. Zkontrolujte své údaje a zkuste to prosím znovu.",
       "rateLimit": "Překročili jste limit žádostí. Počkejte, prosím, chvíli a zkuste to znovu.",
       "wrongPassword": "Účet s tímto e-mailem již existuje, ale zadali jste nesprávné heslo. Přihlaste se nejprve.",
-      "missingData": "Chybí e-mail nebo ID. Zkuste to prosím znovu."
-    }
+      "cta": "Přejít k platbě",
+    "secure": "Bezpečná platba přes Stripe",
+    "digitalConsent": "Výslovně souhlasím s okamžitým dodáním digitálního obsahu a beru na vědomí, že tím ztrácím právo na odstoupení od smlouvy do 14 dnů.",
+    "ageConsent": "Potvrzuji, že je mi více než 18 let pro možnost platby, resp. 16+ let pro používání služby."
   },
   "nav": {
     "today": "Dnes",
@@ -90,6 +92,7 @@
     "languageDesc": "Určuje v jakém jazyce dostanete denní signál.",
     "timezoneLabel": "Moje Časové Pásmo",
     "timezoneDesc": "Důležité, pokud cestujete. Pomáhá nám odemknout dnešní obsah přesně pro váš lokální čas.",
+    "pushBannerBtn": "Odebírat Mindsety",
     "saveBtn": "Uložit nastavení",
     "savingBtn": "Ukládám...",
     "dangerZone": "Správa odběru & Odhlášení",

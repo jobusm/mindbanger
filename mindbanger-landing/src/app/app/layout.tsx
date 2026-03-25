@@ -48,6 +48,7 @@ export default async function AppLayout({
         hasAccess = true;
       }
     }
+  }
 
   if (!hasAccess) {
     // Ak nema zive predplatne, NEVYHADZUJEME HO (B - Variant)

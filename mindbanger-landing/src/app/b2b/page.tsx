@@ -69,7 +69,7 @@ export default async function B2BPage(props: {
                    <ul className="space-y-3">
                       <li className="flex items-center gap-3">
                          <CheckCircle2 size={16} className="text-amber-500" />
-                         <span>{t.pricing.tier1} – €7.99 / seat</span>
+                         <span>{t.pricing.tier1} – €7.99 / seat {t.pricing.vatExcluded}</span>
                       </li>
                       <li className="flex items-center gap-3">
                          <CheckCircle2 size={16} className="text-green-500" />

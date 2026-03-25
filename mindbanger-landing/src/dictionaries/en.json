@@ -5,6 +5,7 @@
     "productInfo": "Mindbanger Daily",
     "price": "7.99€",
     "perMonth": "/ month",
+    "vatExcluded": "Price excludes VAT",
     "features": [
       "Daily mind signal",
       "Daily focus",
@@ -40,6 +41,7 @@
         "tier1": "1-4 Seats",
         "tier2": "5-25 Seats (15% OFF)",
         "tier3": "25+ Seats (25% OFF)",
+        "vatExcluded": "(excl. VAT)",
         "cta": "Get Started"
      },
      "form": {
@@ -290,8 +292,9 @@
       "title1": "Simple daily support.",
       "title2": "One monthly plan.",
       "planName": "Mindbanger Daily",
-      "price": "€7.90",
+      "price": "€7.99",
       "period": "/ month",
+      "vatExcluded": "Price excludes VAT",
       "subtitle": "Less than a cup of coffee per week.",
       "features": [
         "Daily mind signal",

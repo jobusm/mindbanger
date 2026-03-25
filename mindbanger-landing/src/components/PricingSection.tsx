@@ -33,9 +33,13 @@ export default function PricingSection() {
           <h3 className="text-xl font-medium text-amber-500 uppercase tracking-widest mb-4">{dict?.landing?.pricing?.planName || 'Mindbanger Daily'}</h3>
           
           <div className="text-5xl md:text-6xl font-bold text-white mb-2">
-            {dict?.landing?.pricing?.price || '€7.90'}
+            {dict?.landing?.pricing?.price || '€7.99'}
             <span className="text-xl md:text-2xl text-slate-400 font-medium font-serif normal-case ml-2">{dict?.landing?.pricing?.period || '/ month'}</span>
           </div>
+
+          {dict?.landing?.pricing?.vatExcluded && (
+             <p className="text-xs text-slate-500 mb-4">{dict.landing.pricing.vatExcluded}</p>
+          )}
           
           {dict?.landing?.pricing?.priceNote && (
             <p className="text-slate-300 text-sm font-medium mb-2">{dict.landing.pricing.priceNote}</p>

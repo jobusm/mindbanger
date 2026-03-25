@@ -5,6 +5,7 @@
     "productInfo": "Mindbanger Daily",
     "price": "7,99€",
     "perMonth": "/ mesačne",
+    "vatExcluded": "Cena je bez DPH",
     "features": [
       "Denný mind signál",
       "Denné zameranie",
@@ -40,6 +41,7 @@
         "tier1": "1-4 Licencií",
         "tier2": "5-25 Licencií (15% ZĽAVA)",
         "tier3": "25+ Licencií (25% ZĽAVA)",
+        "vatExcluded": "(bez DPH)",
         "cta": "Začať"
      },
      "form": {
@@ -292,6 +294,7 @@
       "planName": "Mindbanger Daily",
       "price": "7,99€",
       "period": "/ mesiac",
+      "vatExcluded": "Cena je bez DPH",
       "subtitle": "Menej ako jedna káva týždenne.",
       "features": [
         "Denný mind signál",

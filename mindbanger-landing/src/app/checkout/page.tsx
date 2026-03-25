@@ -112,6 +112,9 @@ function CheckoutContent() {
               <div className="text-5xl font-bold text-white">
                 {t.price}<span className="text-xl text-slate-400 font-medium font-serif normal-case ml-2">{t.perMonth}</span>
               </div>
+              {t.vatExcluded && (
+                <p className="text-xs text-slate-500 mt-1 font-sans">{t.vatExcluded}</p>
+              )}
             </div>
             
             <div className="flex flex-col gap-2 text-left">

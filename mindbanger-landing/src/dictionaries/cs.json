@@ -5,6 +5,7 @@
     "productInfo": "Mindbanger Daily",
     "price": "7,99€",
     "perMonth": "/ měsíčně",
+    "vatExcluded": "Cena je bez DPH",
     "features": [
       "Denní mind signál",
       "Denní zaměření",
@@ -263,6 +264,7 @@
       "planName": "Mindbanger Daily",
       "price": "7,99€",
       "period": "/ měsíc",
+      "vatExcluded": "Cena je bez DPH",
       "subtitle": "Méně než jedna káva týdně.",
       "features": [
         "Denní mind signál",

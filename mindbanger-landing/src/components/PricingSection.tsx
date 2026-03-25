@@ -54,7 +54,7 @@ export default function PricingSection() {
 
           <div className="pt-4 px-0 md:px-8">
             <Link 
-              href="/checkout" 
+              href="/join" 
               className="w-full py-4 px-8 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
             >
               {dict?.landing?.pricing?.cta || 'Start Mindbanger Daily'}

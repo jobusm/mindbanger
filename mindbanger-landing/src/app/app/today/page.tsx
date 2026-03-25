@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import { getSecureAudioUrl } from '@/lib/cloudflare-r2';
 import { getDictionary } from '@/lib/i18n';
 import TodayClientView from '@/components/app/TodayClientView';
+import LockedDashboard from '@/components/app/LockedDashboard';
 
 export const revalidate = 0; // Ensure fresh data on every load for 'today'
 
@@ -13,7 +14,7 @@ export default async function TodayPage() {
   // Get user profile for name, language and timezone
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, preferred_language, timezone, created_at')
+    .select('full_name, preferred_language, timezone, created_at, subscription_status')
     .eq('id', session?.user.id)
     .single();
 
@@ -23,6 +24,15 @@ export default async function TodayPage() {
   
   const dict = getDictionary(userLang);
   const t = dict.today || { goodMorning: 'Good morning', todaysSignal: "{t.todaysSignal}", dailyReset: 'Daily Reset', todaysFocus: "{t.todaysFocus}", affirmation: 'Affirmation', tuning: '{t.tuning}', notBroadcasted: "{t.notBroadcasted}", markCompleted: '{t.markCompleted}' };
+
+  // CHECK ACCESS LEVEL (Variant B)
+  const hasAccess = profile?.subscription_status === 'premium';
+
+  if (!hasAccess) {
+      return (
+        <LockedDashboard title={t.todaysFocus} lang={userLang} />
+      );
+  }
 
   // Get localized today's date in YYYY-MM-DD format based on user's timezone
   const now = new Date();

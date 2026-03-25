@@ -48,11 +48,11 @@ export default async function AppLayout({
         hasAccess = true;
       }
     }
-  }
 
   if (!hasAccess) {
-    // Ak nema zive predplatne, zablokujeme ho a posleme obnovit predplatne
-    redirect('/checkout');
+    // Ak nema zive predplatne, NEVYHADZUJEME HO (B - Variant)
+    // Nechame ho prejst, ale vnutri komponentov (Page) si to ohandlujeme
+    // redirect('/checkout'); 
   }
 
   return (

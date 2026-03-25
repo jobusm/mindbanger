@@ -45,9 +45,12 @@ export default function Navbar() {
           <Link href="/login" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
             {dict?.landing?.navbar?.login || 'Login'}
           </Link>
-          <button className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold text-sm hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all transform hover:scale-105">
+          <Link 
+            href="/join"
+            className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold text-sm hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all transform hover:scale-105"
+          >
             {dict?.landing?.navbar?.join || 'Join Now'}
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -72,12 +75,13 @@ export default function Navbar() {
           >
             {dict?.landing?.navbar?.login || 'Login'}
           </Link>
-          <button
-            className="w-full py-3 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold"
+          <Link
+            href="/join"
+            className="w-full py-3 rounded-full bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-slate-900 font-bold text-center"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             {dict?.landing?.navbar?.join || 'Join Now'}
-          </button>
+          </Link>
         </div>
       )}
     </nav>

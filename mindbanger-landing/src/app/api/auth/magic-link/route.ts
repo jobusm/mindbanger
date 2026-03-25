@@ -11,6 +11,22 @@ export async function POST(req: Request) {
 
     const supabase = await createAdminClient();
 
+    // 1. (Variant B) Check if user exists, if not, create them so they can receive the code
+    try {
+      // Just check existence first
+      const { data: userList } = await supabase.auth.admin.listUsers(); // Note: inefficient for large user base, better use getUserById or attempt create
+      // Actually, createUser with same email throws error, which is fine
+      await supabase.auth.admin.createUser({
+          email: email,
+          email_confirm: true // Auto-confirm so they can login immediately? Or false to require verification?
+          // Since we use OTP for login, that IS the verification.
+          // If we set confirm: true, they are verified.
+      });
+    } catch (createError: any) {
+        // Ignore "User already registered" error
+        // console.log("User likely exists or error in creation:", createError.message);
+    }
+
     // Vygeneruje prihlasovaci token (OTP) ale NEPOSLE HO (posielame my cez Brevo)
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',

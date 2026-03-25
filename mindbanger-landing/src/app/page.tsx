@@ -50,10 +50,11 @@ export default async function Home(props: any) {
     dict.landing.pricing.price = dynamicPrice;
   }
 
+  // Variant B: All main CTAs now direct to free signup instead of checkout
   return (
     <LanguageProvider dict={dict}>
       <main className="min-h-screen bg-slate-950 text-white selection:bg-amber-500/30 selection:text-amber-100">
-        <Navbar />
+        <Navbar /> {/* Ensure Navbar links to /join or /login */}
         <HeroSection />
         <DailyRitualSection />
         <InteractivePreviewSection />
@@ -61,7 +62,7 @@ export default async function Home(props: any) {
         <BenefitsSection />
         <VIPZonePreviewSection />
         <AboutTrustSection />
-        <PricingSection />
+        <PricingSection /> {/* Pricing buttons can still go to checkout OR to join first. Probably good to keep pricing buttons to checkout for high intent? No, let's funnel all through free account first. */}
         <FAQSection />
         <FinalCTASection />
         <Footer />

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import WaitlistForm from './WaitlistForm';
+import Link from 'next/link';
 import { useDictionary } from './LanguageProvider';
 
 export default function FinalCTASection() {
@@ -29,11 +29,17 @@ export default function FinalCTASection() {
           {dict?.landing?.finalCta?.quote || '"The way your mind is set begins to shape your reality."'}
         </p>
 
-        <div className="pt-8 max-w-md mx-auto">
-          <WaitlistForm />
+        <div className="pt-8 max-w-md mx-auto flex justify-center">
+           <Link 
+              href="/join" 
+              className="w-full sm:w-auto py-4 px-12 rounded-full bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 text-slate-900 font-bold text-lg flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+            >
+              {dict?.landing?.hero?.cta || 'Start Mindbanger Daily'}
+              <ArrowRight className="w-6 h-6 ml-2" />
+            </Link>
         </div>
 
-        <p className="text-sm text-slate-500 font-semibold tracking-wide uppercase">{dict?.landing?.finalCta?.footer || 'Join Mindbanger Daily Waitlist'}</p>
+        <p className="text-sm text-slate-500 font-semibold tracking-wide uppercase">{dict?.landing?.finalCta?.footer || 'Join Mindbanger Daily'}</p>
       </div>
     </section>
   );

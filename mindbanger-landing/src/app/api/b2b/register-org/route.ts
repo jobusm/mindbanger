@@ -10,14 +10,45 @@ export async function POST(req: Request) {
         const supabase = await createClient();
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (!session) {
+        let userId = session?.user?.id;
+
+        const supabaseAdmin = getServiceSupabase();
+
+        // Fallback: check Authorization header if session is not yet in cookies
+        if (!userId) {
+            const authHeader = req.headers.get('Authorization');
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.split(' ')[1];
+                const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
+                if (user && !userError) {
+                    userId = user.id;
+                }
+            }
+        }
+
+        // Second Fallback: if user just registered but email is unconfirmed, we might get user ID from body
+        // Only allow this if we pass a special one-time registration token? 
+        // For now, if we don't have a userId, we reject.
+        if (!userId) {
+            // Check if client passed the new user ID explicitly (less secure but required if email confirmation is strictly on without session)
+            const { newUserId } = await req.clone().json().catch(() => ({}));
+            if (newUserId) {
+                // Verify the user was created very recently (within 5 minutes)
+                const { data: recentUser } = await supabaseAdmin.auth.admin.getUserById(newUserId);
+                if (recentUser?.user) {
+                    const createdTime = new Date(recentUser.user.created_at).getTime();
+                    if (Date.now() - createdTime < 5 * 60 * 1000) {
+                        userId = recentUser.user.id;
+                    }
+                }
+            }
+        }
+
+        if (!userId) {
             return new NextResponse('Unauthorized: Please sign in first', { status: 401 });
         }
 
-        const userId = session.user.id;
-
         // Use SERVICE ROLE key because a new user has no rights to create organizations
-        const supabaseAdmin = getServiceSupabase();
         
         // 2. Create Organization
         // Status: 'registered' - means account created but not yet active/paid.

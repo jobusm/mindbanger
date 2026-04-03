@@ -89,9 +89,10 @@ function B2BContent() {
                 'Content-Type': 'application/json',
                 ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}) 
             },
-            body: JSON.stringify({
-                // userId is now inferred from token/session
-                companyName: formData.companyName,
+                body: JSON.stringify({
+                  // userId is now inferred from token/session
+                  companyName: formData.companyName,
+                  email: formData.email, // Pass email for billing
                 industry: formData.industry,
                 initialSeats: 0, // No free seats
                 phone: formData.phone, // Pass phone

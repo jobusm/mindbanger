@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase-server';
 
 export async function POST(req: Request) {
     try {
-        const { companyName, industry, initialSeats, phone, affiliateId, newUserId } = await req.json();
-        
+        const { companyName, email, industry, initialSeats, phone, affiliateId, newUserId } = await req.json();
+
         // 1. Validated Authenticated User
         const supabase = await createClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -57,10 +57,7 @@ export async function POST(req: Request) {
             .from('organizations')
             .insert({
                 name: companyName,
-                industry: industry,
-                seats_limit: initialSeats || 0, 
-                subscription_status: 'registered',
-                contact_phone: phone,
+                billing_email: email, // Required parameter
                 affiliate_id: affiliateId || null // Save affiliate reference
             })
             .select()

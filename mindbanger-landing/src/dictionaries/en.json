@@ -148,7 +148,8 @@
       "howItWorks": "How it works",
       "faq": "FAQ",
       "joinSub": "Join Waitlist",
-      "login": "Login"
+      "login": "Login",
+      "b2b": "For Teams"
     },
     "hero": {
       "badge": "Mindbanger Daily",
@@ -307,6 +308,11 @@
       "cancelText": "Cancel anytime. No questions asked.",
       "cta": "Start Mindbanger Daily"
     },
+    "b2bCta": {
+      "title": "Want to bring mental clarity and calm to your team?",
+      "desc": "Reduce workplace stress, boost focus, and build a more resilient team with our special program for businesses.",
+      "btn": "Discover Mindbanger for Teams"
+    },
     "faq": {
       "title": "Questions",
       "faqs": [
@@ -345,7 +351,8 @@
       "join": "Join",
       "privacy": "Privacy",
       "terms": "Terms",
-      "affiliateTerms": "Affiliate Terms"
+      "affiliateTerms": "Affiliate Terms",
+      "b2b": "For Teams"
     }
   },
   "cookieBanner": {

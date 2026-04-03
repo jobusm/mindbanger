@@ -11,6 +11,7 @@ import PricingSection from '@/components/PricingSection';
 import FAQSection from '@/components/FAQSection';
 import FinalCTASection from '@/components/FinalCTASection';
 import Footer from '@/components/Footer';
+import B2BCtaBanner from '@/components/B2BCtaBanner';
 import { CookieBanner } from '@/components/CookieBanner';
 import { LanguageProvider } from '@/components/LanguageProvider';
 import { cookies, headers } from 'next/headers';
@@ -63,6 +64,7 @@ export default async function Home(props: any) {
         <VIPZonePreviewSection />
         <AboutTrustSection />
         <PricingSection /> {/* Pricing buttons can still go to checkout OR to join first. Probably good to keep pricing buttons to checkout for high intent? No, let's funnel all through free account first. */}
+        <B2BCtaBanner />
         <FAQSection />
         <FinalCTASection />
         <Footer />

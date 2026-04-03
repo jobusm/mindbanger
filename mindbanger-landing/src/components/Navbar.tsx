@@ -42,6 +42,9 @@ export default function Navbar() {
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-6">
           <LanguageSwitcher />
+          <Link href="/b2b" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+            {dict?.landing?.navbar?.b2b || 'For Teams'}
+          </Link>
           <Link href="/login" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
             {dict?.landing?.navbar?.login || 'Login'}
           </Link>
@@ -68,6 +71,13 @@ export default function Navbar() {
           <div className="flex justify-center border-b border-white/10 pb-4">
             <LanguageSwitcher />
           </div>
+          <Link
+            href="/b2b"
+            className="text-amber-400 hover:text-amber-300 py-2 text-center font-medium"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            {dict?.landing?.navbar?.b2b || 'For Teams'}
+          </Link>
           <Link
             href="/login"
             className="text-gray-300 hover:text-white py-2 text-center"

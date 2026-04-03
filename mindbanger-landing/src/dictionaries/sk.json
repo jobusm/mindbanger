@@ -148,7 +148,8 @@
       "howItWorks": "Ako to funguje",
       "faq": "Časté otázky",
       "joinSub": "Pridať sa",
-      "login": "Prihlásiť"
+      "login": "Prihlásiť",
+      "b2b": "Pre firmy"
     },
     "hero": {
       "badge": "Mindbanger Daily",
@@ -307,6 +308,11 @@
       "cancelText": "Zrušenie kedykoľvek. Žiadne otázky.",
       "cta": "Začať Mindbanger Daily"
     },
+    "b2bCta": {
+      "title": "Chcete priniesť mentálnu jasnosť a kľud do vášho tímu?",
+      "desc": "Znížte stres na pracovisku, podporte sústredenie a formujte odolnejší tím s našim špeciálnym programom pre firmy.",
+      "btn": "Spoznajte Mindbanger pre tímy"
+    },
     "faq": {
       "title": "Otázky",
       "faqs": [
@@ -345,7 +351,8 @@
       "join": "Pridať sa",
       "privacy": "Súkromie",
       "terms": "Podmienky",
-      "affiliateTerms": "Affiliate podmienky"
+      "affiliateTerms": "Affiliate podmienky",
+      "b2b": "Pre firmy"
     }
   },
   "cookieBanner": {

@@ -19,6 +19,7 @@ export default async function B2BPage(props: {
     { icon: CheckCircle2, title: lang === 'sk' ? "Atraktívny unikátny sociálny benefit" : "Unique attractive social benefit", desc: lang === 'sk' ? "– moderný a hodnotný benefit, ktorý firma poskytuje nad rámec bežných výhod" : "– modern and valuable benefit provided beyond standard perks" },
     { icon: Users, title: lang === 'sk' ? "Podpora lojality a vzťahu k firme" : "Support loyalty and culture", desc: lang === 'sk' ? "– zamestnanci cítia, že firme záleží aj na ich vnútornom nastavení, nie len výkone" : "– employees feel the company cares about their mental state, not just performance" },
     { icon: TrendingUp, title: lang === 'sk' ? "Silný employer branding" : "Strong employer branding", desc: lang === 'sk' ? "– firma pôsobí moderne, ľudsky a progresívne" : "– company appears modern, human, and progressive" },
+    { icon: CheckCircle2, title: lang === 'sk' ? "Dostupná a transparentná cena" : "Accessible pricing", desc: lang === 'sk' ? "– od 6,49€ / mesiac / zamestnanca, bez skrytých poplatkov" : "– from €6.49 / month / employee, no hidden fees" },
   ];
 
   return (
@@ -95,12 +96,14 @@ export default async function B2BPage(props: {
                <div className="bg-slate-900 border border-amber-500/20 rounded-3xl p-8 relative overflow-hidden group hover:border-amber-500/40 transition-all">
                   <div className="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors" />
 
-                  <h3 className="text-2xl font-bold mb-2 relative z-10 text-white">
-                     {lang === 'sk' ? 'Získajte prístup pre váš tím' : 'Get access for your team'}
+                  <h3 className="text-2xl font-bold mb-4 relative z-10 text-white">
+                     {lang === 'sk' ? 'Vytvorenie účtu je zdarma' : 'Creating an account is free'}
                   </h3>
 
-                  <p className="text-amber-500 font-bold text-2xl mb-8 relative z-10">
-                     {lang === 'sk' ? 'Od 6,49€/mes/zamestnanca' : 'From €6.49/mo/employee'}
+                  <p className="text-slate-400 mb-8 relative z-10 leading-relaxed">
+                     {lang === 'sk' 
+                       ? 'Bezplatne vám založíme firemný účet v systéme a budete si v ňom môcť spravovať balíky pre svojich zamestnancov.' 
+                       : 'We will create a free company account where you can easily manage packages for your employees.'}
                   </p>
 
                   <Link 

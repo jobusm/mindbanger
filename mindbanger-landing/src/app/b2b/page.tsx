@@ -8,22 +8,19 @@ export default async function B2BPage(props: {
   searchParams: Promise<{ lang?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const lang = (searchParams.lang === 'sk' ? 'sk' : 'en') as 'sk' | 'en';
+  const lang = (searchParams.lang === 'sk' ? 'sk' : searchParams.lang === 'cs' ? 'cs' : 'en') as 'sk' | 'cs' | 'en';
   const dict = getDictionary(lang);
   const t = dict.b2b;
-  
-  const businessBenefits = [
-    { icon: BrainCircuit, title: lang === 'sk' ? "Vyššia psychická odolnosť" : "Higher mental resilience", desc: lang === 'sk' ? "– lepšie zvládanie stresu, tlaku a pracovného tempa" : "– better management of stress, pressure, and work pace" },
-    { icon: TrendingUp, title: lang === 'sk' ? "Lepší fokus a výkon" : "Better focus and performance", desc: lang === 'sk' ? "– menej mentálneho chaosu, viac koncentrácie na úlohy" : "– less mental chaos, more concentration on tasks" },
-    { icon: Users, title: lang === 'sk' ? "Prevencia vyčerpania a poklesu motivácie" : "Burnout and motivation drop prevention", desc: lang === 'sk' ? "– pravidelné mentálne nastavenie pomáha udržať energiu" : "– regular mindset tuning helps maintain energy" },
-    { icon: CheckCircle2, title: lang === 'sk' ? "Atraktívny unikátny sociálny benefit" : "Unique attractive social benefit", desc: lang === 'sk' ? "– moderný a hodnotný benefit, ktorý firma poskytuje nad rámec bežných výhod" : "– modern and valuable benefit provided beyond standard perks" },
-    { icon: Users, title: lang === 'sk' ? "Podpora lojality a vzťahu k firme" : "Support loyalty and culture", desc: lang === 'sk' ? "– zamestnanci cítia, že firme záleží aj na ich vnútornom nastavení, nie len výkone" : "– employees feel the company cares about their mental state, not just performance" },
-    { icon: TrendingUp, title: lang === 'sk' ? "Silný employer branding" : "Strong employer branding", desc: lang === 'sk' ? "– firma pôsobí moderne, ľudsky a progresívne" : "– company appears modern, human, and progressive" },
-    { icon: CheckCircle2, title: lang === 'sk' ? "Dostupná a transparentná cena" : "Accessible pricing", desc: lang === 'sk' ? "– od 6,49€ / mesiac / zamestnanca, bez skrytých poplatkov" : "– from €6.49 / month / employee, no hidden fees" },
-  ];
+  const tr = (sk: string, cs: string, en: string) => lang === 'sk' ? sk : lang === 'cs' ? cs : en;
 
-  return (
-    <div className="min-h-screen bg-black text-white selection:bg-amber-500/30">
+  const businessBenefits = [
+    { icon: BrainCircuit, title: tr("Vyššia psychická odolnosť", "Vyšší psychická odolnost", "Higher mental resilience"), desc: tr("– lepšie zvládanie stresu, tlaku a pracovného tempa", "– lepší zvládání stresu, tlaku a pracovního tempa", "– better management of stress, pressure, and work pace") },
+    { icon: TrendingUp, title: tr("Lepší fokus a výkon", "Lepší fokus a výkon", "Better focus and performance"), desc: tr("– menej mentálneho chaosu, viac koncentrácie na úlohy", "– méně mentálního chaosu, více koncentrace na úkoly", "– less mental chaos, more concentration on tasks") },
+    { icon: Users, title: tr("Prevencia vyčerpania a poklesu motivácie", "Prevence vyčerpání a poklesu motivace", "Burnout and motivation drop prevention"), desc: tr("– pravidelné mentálne nastavenie pomáha udržať energiu", "– pravidelné mentální nastavení pomáhá udržet energii", "– regular mindset tuning helps maintain energy") },
+    { icon: CheckCircle2, title: tr("Atraktívny unikátny sociálny benefit", "Atraktivní unikátní sociální benefit", "Unique attractive social benefit"), desc: tr("– moderný a hodnotný benefit, ktorý firma poskytuje nad rámec bežných výhod", "– moderní a hodnotný benefit, který firma poskytuje nad rámec běžných výhod", "– modern and valuable benefit provided beyond standard perks") },
+    { icon: Users, title: tr("Podpora lojality a vzťahu k firme", "Podpora loajality a vztahu k firmě", "Support loyalty and culture"), desc: tr("– zamestnanci cítia, že firme záleží aj na ich vnútornom nastavení, nie len výkone", "– zaměstnanci cítí, že firmě záleží i na jejich vnitřním nastavení, nejen na výkonu", "– employees feel the company cares about their mental state, not just performance") },
+    { icon: TrendingUp, title: tr("Silný employer branding", "Silný employer branding", "Strong employer branding"), desc: tr("– firma pôsobí moderne, ľudsky a progresívne", "– firma působí moderně, lidsky a progresivně", "– company appears modern, human, and progressive") },
+    { icon: CheckCircle2, title: tr("Dostupná a transparentná cena", "Dostupná a transparentní cena", "Accessible pricing"), desc: tr("– od 6,49€ / mesiac / zamestnanca, bez skrytých poplatkov", "– od 6,49€ / měsíc / zaměstnance, bez skrytých poplatků", "– from €6.49 / month / employee, no hidden fees") },
       
       {/* Simple Header */}
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
@@ -34,6 +31,7 @@ export default async function B2BPage(props: {
            <div className="flex gap-4">
               <Link href="/b2b?lang=en" className={`text-sm font-medium ${lang === 'en' ? 'text-white' : 'text-slate-500'}`}>EN</Link>
               <Link href="/b2b?lang=sk" className={`text-sm font-medium ${lang === 'sk' ? 'text-white' : 'text-slate-500'}`}>SK</Link>
+              <Link href="/b2b?lang=cs" className={`text-sm font-medium ${lang === 'cs' ? 'text-white' : 'text-slate-500'}`}>CZ</Link>
            </div>
         </div>
       </nav>
@@ -57,7 +55,7 @@ export default async function B2BPage(props: {
 
                <div className="space-y-6 pt-8 border-t border-white/10">
                   <h3 className="text-3xl font-bold font-serif text-white mb-6">
-                     {lang === 'sk' ? 'Výhody pre biznis:' : 'Business Benefits:'}
+                     {tr('Výhody pre biznis:', 'Výhody pro byznys:', 'Business Benefits:')}
                   </h3>
                   {businessBenefits.map((f, i) => (
                     <div key={i} className="flex gap-4">
@@ -73,15 +71,22 @@ export default async function B2BPage(props: {
                <div className="bg-slate-900/50 p-8 rounded-2xl border border-white/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl opacity-50" />
                   <h3 className="text-2xl font-bold font-serif text-white mb-4 relative z-10">
-                     {lang === 'sk' ? 'Prínos pre zamestnancov:' : 'Employee Benefits:'}
+                     {tr('Prínos pre zamestnancov:', 'Přínos pro zaměstnance:', 'Employee Benefits:')}
                   </h3>
                   <div className="text-slate-300 leading-relaxed space-y-4 relative z-10">
-                     {lang === 'sk' ? (
+                     {lang === 'sk' && (
                        <>
                          <p className="font-bold text-white text-lg">Mindbanger pre zamestnanca nie je len ďalší firemný benefit.</p>
                          <p className="text-lg">Je to pár minút denne, ktoré mu pomôžu lepšie zvládať tlak, pokojnejšie začínať deň, viac sa sústrediť a cítiť sa lepšie nielen v práci, ale aj mimo nej. Je to benefit, ktorý má reálny dopad na mentálnu pohodu, energiu a životnú spokojnosť v práci aj mimo nej.</p>
                        </>
-                     ) : (
+                     )}
+                     {lang === 'cs' && (
+                       <>
+                         <p className="font-bold text-white text-lg">Mindbanger pro zaměstnance není jen další firemní benefit.</p>
+                         <p className="text-lg">Je to pár minut denně, které mu pomohou lépe zvládat tlak, klidněji začínat den, víc se soustředit a cítit se lépe nejen v práci, ale i mimo ni. Je to benefit, který má reálný dopad na mentální pohodu, energii a životní spokojenost v práci i mimo ni.</p>
+                       </>
+                     )}
+                     {lang === 'en' && (
                        <>
                          <p className="font-bold text-white text-lg">Mindbanger for an employee is not just another corporate perk.</p>
                          <p className="text-lg">It's a few minutes a day that help them handle pressure better, start the day more calmly, focus more deeply, and feel better not only at work but also outside of it. It's a benefit with a real impact on mental well-being, energy, and life satisfaction in and out of work.</p>
@@ -97,24 +102,26 @@ export default async function B2BPage(props: {
                   <div className="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors" />
 
                   <h3 className="text-2xl font-bold mb-4 relative z-10 text-white">
-                     {lang === 'sk' ? 'Vytvorenie účtu je zdarma' : 'Creating an account is free'}
+                     {tr('Vytvorenie účtu je zdarma', 'Vytvoření účtu je zdarma', 'Creating an account is free')}
                   </h3>
 
                   <p className="text-slate-400 mb-8 relative z-10 leading-relaxed">
-                     {lang === 'sk' 
-                       ? 'Bezplatne vám založíme firemný účet v systéme a budete si v ňom môcť spravovať balíky pre svojich zamestnancov.' 
-                       : 'We will create a free company account where you can easily manage packages for your employees.'}
+                     {tr(
+                       'Bezplatne vám založíme firemný účet v systéme a budete si v ňom môcť spravovať balíky pre svojich zamestnancov.',
+                       'Bezplatně vám založíme firemní účet v systému a budete si v něm moci spravovat balíčky pro své zaměstnance.',
+                       'We will create a free company account where you can easily manage packages for your employees.'
+                     )}
                   </p>
 
                   <Link 
                      href="/b2b/register" 
                      className="w-full block text-center py-4 px-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold rounded-xl shadow-lg relative z-10 transition-all transform hover:scale-[1.02]"
                   >
-                     {lang === 'sk' ? 'Vytvoriť firemný účet' : 'Create Company Account'}
+                     {tr('Vytvoriť firemný účet', 'Vytvořit firemní účet', 'Create Company Account')}
                   </Link>
 
                   <p className="text-xs text-center text-slate-500 mt-4 relative z-10">
-                     {lang === 'sk' ? 'Už máte účet?' : 'Already have an account?'} <Link href="/login" className="text-amber-500 hover:underline">{lang === 'sk' ? 'Prihlásiť sa' : 'Login'}</Link>
+                     {tr('Už máte účet?', 'Už máte účet?', 'Already have an account?')} <Link href="/login" className="text-amber-500 hover:underline">{tr('Prihlásiť sa', 'Přihlásit se', 'Login')}</Link>
                   </p>
                </div>
             </div>
@@ -126,7 +133,8 @@ export default async function B2BPage(props: {
   );
 }
 
-function CurrentDate({ lang }: { lang: 'en' | 'sk' }) {
-    const today = new Date().toLocaleDateString(lang === 'sk' ? 'sk-SK' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+function CurrentDate({ lang }: { lang: 'en' | 'sk' | 'cs' }) {
+    const locale = lang === 'sk' ? 'sk-SK' : lang === 'cs' ? 'cs-CZ' : 'en-US';
+    const today = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
     return <>{today}</>;
 }

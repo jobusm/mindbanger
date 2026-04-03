@@ -4,13 +4,20 @@ import React, { useState, Suspense } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Building2, User, Mail, Lock, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
+
+function tr(sk: React.ReactNode, cs: React.ReactNode, en: React.ReactNode, lang: string) {
+  if (lang === 'cs') return cs;
+  if (lang === 'en') return en;
+  return sk;
+}
 
 function B2BContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const lang = searchParams?.get('lang') || 'sk';
   const [loading, setLoading] = useState(false);
-  
+
   // Affiliate Tracking
   const [affiliateId, setAffiliateId] = useState<string | null>(null);
 
@@ -26,7 +33,7 @@ function B2BContent() {
     const ref = localStorage.getItem('mindbanger_ref');
     if (ref) setAffiliateId(ref);
   }, [searchParams]);
-  
+
   // Form State
   const [formData, setFormData] = useState({
     companyName: '',
@@ -46,7 +53,13 @@ function B2BContent() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading('Vytváram firemný účet...');
+
+    const msgStart = tr('Vytváram firemný účet...', 'Vytvářím firemní účet...', 'Creating company account...', lang) as string;
+    const msgSuccess = tr('B2B Účet vytvorený! Presmerovávam...', 'B2B Účet vytvořený! Přesměrovávám...', 'B2B Account created! Redirecting...', lang) as string;
+    const msgFailUser = tr('Registrácia zlyhala. Skúste znova.', 'Registrace selhala. Zkuste to znovu.', 'Registration failed. Try again.', lang) as string;
+    const msgFailOrg = tr('Chyba pri vytváraní organizácie', 'Chyba při vytváření organizace', 'Error creating organization', lang) as string;
+
+    const toastId = toast.loading(msgStart);
 
     try {
         // 1. Create User via Supabase Auth
@@ -63,9 +76,10 @@ function B2BContent() {
 
         if (authError) throw authError;
 
-        if (!authData.user) throw new Error('Registrácia zlyhala. Skúste znova.');
+        if (!authData.user) throw new Error(msgFailUser);
 
         const accessToken = authData.session?.access_token;
+        const newUserId = authData.user.id;
 
         // 2. Call API to Create Organization & Link Owner
         // We do this server-side to ensure atomicity and correct permissions
@@ -81,16 +95,17 @@ function B2BContent() {
                 industry: formData.industry,
                 initialSeats: 0, // No free seats
                 phone: formData.phone, // Pass phone
-                affiliateId: affiliateId // Pass affiliate ID from localStorage
+                affiliateId: affiliateId, // Pass affiliate ID from localStorage
+                newUserId: newUserId
             })
         });
 
         if (!response.ok) {
              const errData = await response.json();
-             throw new Error(errData.message || 'Chyba pri vytváraní organizácie');
+             throw new Error(errData.message || msgFailOrg);
         }
 
-        toast.success('B2B Účet vytvorený! Presmerovávam...', { id: toastId });
+        toast.success(msgSuccess, { id: toastId });
         
         // 3. Redirect to Dashboard
         setTimeout(() => {
@@ -106,7 +121,7 @@ function B2BContent() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-8 font-sans">
-      
+      <Toaster position="top-center" />
       <div className="flex items-center gap-3 mb-10 text-white">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
               <Building2 size={20} />
@@ -117,14 +132,19 @@ function B2BContent() {
       </div>
 
       <div className="w-full max-w-5xl grid md:grid-cols-2 bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-          
+
           {/* Left Panel: Value Prop */}
           <div className="p-8 md:p-12 bg-slate-950/50 border-r border-white/5 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-              
+
               <div className="relative z-10">
                   <h2 className="text-3xl font-bold text-white mb-8 leading-tight">
-                      Transformujte <br/><span className="text-blue-500">produktivitu</span> vášho tímu.
+                      {tr(
+                        <React.Fragment>Transformujte <br/><span className="text-blue-500">produktivitu</span> vášho tímu.</React.Fragment>,
+                        <React.Fragment>Transformujte <br/><span className="text-blue-500">produktivitu</span> vašeho týmu.</React.Fragment>,
+                        <React.Fragment>Transform <br/>your team\'s <span className="text-blue-500">productivity</span>.</React.Fragment>,
+                        lang
+                      )}
                   </h2>
                   <ul className="space-y-6">
                       <li className="flex items-start gap-3 text-slate-300">
@@ -132,8 +152,8 @@ function B2BContent() {
                              <CheckCircle2 size={16} />
                           </div>
                           <div>
-                             <strong className="text-white block mb-1">Denné mentálne cvičenia</strong>
-                             <span className="text-sm text-slate-400">Krátke audio formáty pre lepší fokus a zníženie stresu.</span>
+                             <strong className="text-white block mb-1">{tr('Denné mentálne cvičenia', 'Denní mentální cvičení', 'Daily mental exercises', lang)}</strong>
+                             <span className="text-sm text-slate-400">{tr('Krátke audio formáty pre lepší fokus a zníženie stresu.', 'Krátké audio formáty pro lepší fokus a snížení stresu.', 'Short audio formats for better focus and stress reduction.', lang)}</span>
                           </div>
                       </li>
                       <li className="flex items-start gap-3 text-slate-300">
@@ -141,8 +161,8 @@ function B2BContent() {
                              <CheckCircle2 size={16} />
                           </div>
                           <div>
-                             <strong className="text-white block mb-1">Cielený obsah</strong>
-                             <span className="text-sm text-slate-400">Signály prispôsobené vášmu odvetviu (Tech, Finance, atď.).</span>
+                             <strong className="text-white block mb-1">{tr('Cielený obsah', 'Cílený obsah', 'Targeted content', lang)}</strong>
+                             <span className="text-sm text-slate-400">{tr('Signály prispôsobené vášmu odvetviu.', 'Signály přizpůsobené vašemu odvětví.', 'Signals tailored to your industry.', lang)}</span>
                           </div>
                       </li>
                       <li className="flex items-start gap-3 text-slate-300">
@@ -150,8 +170,8 @@ function B2BContent() {
                              <CheckCircle2 size={16} />
                           </div>
                           <div>
-                             <strong className="text-white block mb-1">Jednoduchá správa</strong>
-                             <span className="text-sm text-slate-400">Prehľadný dashboard, pozvánky a fakturácia na jednom mieste.</span>
+                             <strong className="text-white block mb-1">{tr('Jednoduchá správa', 'Jednoduchá správa', 'Easy management', lang)}</strong>
+                             <span className="text-sm text-slate-400">{tr('Prehľadný dashboard, pozvánky a fakturácia na jednom mieste.', 'Přehledný dashboard, pozvánky a fakturace na jednom místě.', 'Clear dashboard, invitations and billing in one place.', lang)}</span>
                           </div>
                       </li>
                   </ul>
@@ -159,7 +179,7 @@ function B2BContent() {
 
               <div className="mt-12 pt-8 border-t border-white/5 relative z-10">
                   <p className="text-sm text-slate-500 italic">
-                      "Starostlivosť o duševné zdravie zamestnancov nie je benefit, ale investícia s vysokou návratnosťou."
+                      "{tr('Starostlivosť o duševné zdravie zamestnancov nie je benefit, ale investícia s vysokou návratnosťou.', 'Péče o duševní zdraví zaměstnanců není benefit, ale investice s vysokou návratností.', 'Caring for employee mental health is not a benefit, but an investment with high returns.', lang)}"
                   </p>
               </div>
           </div>
@@ -167,18 +187,18 @@ function B2BContent() {
           {/* Right Panel: Form */}
           <div className="p-8 md:p-12 bg-slate-900 relative">
                <form onSubmit={handleRegister} className="space-y-6">
-                   
+
                    <div className="space-y-4">
                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                          <Building2 size={14} /> Informácie o firme
+                          <Building2 size={14} /> {tr('Informácie o firme', 'Informace o firmě', 'Company information', lang)}
                        </h3>
-                       
+
                        <div className="space-y-4">
                            <div className="space-y-1">
-                               <label className="text-sm font-medium text-slate-300">Názov spoločnosti</label>
-                               <input 
+                               <label className="text-sm font-medium text-slate-300">{tr('Názov spoločnosti', 'Název společnosti', 'Company Name', lang)}</label>
+                               <input
                                    required
-                                   type="text" 
+                                   type="text"
                                    name="companyName"
                                    placeholder="Acme Corp, s.r.o."
                                    value={formData.companyName}
@@ -186,21 +206,21 @@ function B2BContent() {
                                    className="w-full bg-slate-950 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors"
                                />
                            </div>
-                           
+
                            <div className="space-y-1">
-                                <label className="text-sm font-medium text-slate-300">Odvetvie</label>
-                                <select 
+                                <label className="text-sm font-medium text-slate-300">{tr('Odvetvie', 'Odvětví', 'Industry', lang)}</label>
+                                <select
                                     name="industry"
                                     value={formData.industry}
                                     onChange={handleChange}
                                     className="w-full bg-slate-950 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
                                 >
-                                    <option value="tech">Technológie & IT</option>
-                                    <option value="finance">Financie & Bankovníctvo</option>
-                                    <option value="retail">Maloobchod & Služby</option>
-                                    <option value="education">Vzdelávanie</option>
-                                    <option value="health">Zdravotníctvo</option>
-                                    <option value="generic">Iné / Všeobecné</option>
+                                    <option value="tech">Tech</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="retail">Retail</option>
+                                    <option value="education">Education</option>
+                                    <option value="health">Healthcare</option>
+                                    <option value="generic">Other / Generic</option>
                                 </select>
                            </div>
                        </div>
@@ -208,29 +228,29 @@ function B2BContent() {
 
                    <div className="pt-6 space-y-4 border-t border-white/5">
                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                          <User size={14} /> Admin účet
+                          <User size={14} /> {tr('Admin účet', 'Admin účet', 'Admin account', lang)}
                        </h3>
-                       
+
                        <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-1">
-                               <label className="text-sm font-medium text-slate-300">Meno</label>
-                               <input 
+                               <label className="text-sm font-medium text-slate-300">{tr('Meno', 'Jméno', 'First Name', lang)}</label>
+                               <input
                                    required
-                                   type="text" 
+                                   type="text"
                                    name="firstName"
-                                   placeholder="Ján"
+                                   placeholder={tr('Ján', 'Jan', 'John', lang) as string}
                                    value={formData.firstName}
                                    onChange={handleChange}
                                    className="w-full bg-slate-950 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
                                />
                            </div>
                            <div className="space-y-1">
-                               <label className="text-sm font-medium text-slate-300">Priezvisko</label>
-                               <input 
+                               <label className="text-sm font-medium text-slate-300">{tr('Priezvisko', 'Příjmení', 'Last Name', lang)}</label>
+                               <input
                                    required
-                                   type="text" 
+                                   type="text"
                                    name="lastName"
-                                   placeholder="Novák"
+                                   placeholder={tr('Novák', 'Novák', 'Doe', lang) as string}
                                    value={formData.lastName}
                                    onChange={handleChange}
                                    className="w-full bg-slate-950 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -239,14 +259,14 @@ function B2BContent() {
                        </div>
 
                        <div className="space-y-1">
-                           <label className="text-sm font-medium text-slate-300">Firemný Email</label>
+                           <label className="text-sm font-medium text-slate-300">{tr('Firemný Email', 'Firemní Email', 'Work Email', lang)}</label>
                            <div className="relative">
                                <Mail className="absolute left-3 top-3 text-slate-500" size={16} />
-                               <input 
+                               <input
                                    required
-                                   type="email" 
+                                   type="email"
                                    name="email"
-                                   placeholder="jan.novak@firma.sk"
+                                   placeholder={tr('jan.novak@firma.sk', 'jan.novak@firma.cz', 'john.doe@company.com', lang) as string}
                                    value={formData.email}
                                    onChange={handleChange}
                                    className="w-full bg-slate-950 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -255,10 +275,10 @@ function B2BContent() {
                        </div>
 
                        <div className="space-y-1">
-                           <label className="text-sm font-medium text-slate-300">Telefónne číslo</label>
-                           <input 
+                           <label className="text-sm font-medium text-slate-300">{tr('Telefónne číslo', 'Telefonní číslo', 'Phone number', lang)}</label>
+                           <input
                                required
-                               type="tel" 
+                               type="tel"
                                name="phone"
                                placeholder="+421 900 000 000"
                                value={formData.phone}
@@ -268,12 +288,12 @@ function B2BContent() {
                        </div>
 
                        <div className="space-y-1">
-                           <label className="text-sm font-medium text-slate-300">Heslo</label>
+                           <label className="text-sm font-medium text-slate-300">{tr('Heslo', 'Heslo', 'Password', lang)}</label>
                            <div className="relative">
                                <Lock className="absolute left-3 top-3 text-slate-500" size={16} />
-                               <input 
+                               <input
                                    required
-                                   type="password" 
+                                   type="password"
                                    name="password"
                                    placeholder="••••••••"
                                    value={formData.password}
@@ -285,15 +305,15 @@ function B2BContent() {
                    </div>
 
                    <div className="pt-6">
-                       <button 
+                       <button
                            type="submit"
                            disabled={loading}
                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 disabled:opacity-50 flex items-center justify-center gap-2 transform active:scale-[0.98]"
                        >
-                           {loading ? <Loader2 className="animate-spin" /> : <>Vytvoriť Dashboard <ArrowRight size={18} /></>}
+                           {loading ? <Loader2 className="animate-spin" /> : <>{tr('Vytvoriť Dashboard', 'Vytvořit Dashboard', 'Create Dashboard', lang)} <ArrowRight size={18} /></>}
                        </button>
                        <p className="text-center text-xs text-slate-500 mt-4">
-                           Kliknutím súhlasíte s podmienkami používania Mindbanger B2B. <br/> Žiadna viazanosť.
+                           {tr('Kliknutím súhlasíte s podmienkami používania Mindbanger B2B.', 'Kliknutím souhlasíte s podmínkami používání Mindbanger B2B.', 'By clicking you agree to the terms of use of Mindbanger B2B.', lang)} <br/> {tr('Žiadna viazanosť.', 'Žádná vázanost.', 'No commitment.', lang)}
                        </p>
                    </div>
 

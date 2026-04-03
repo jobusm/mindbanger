@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 
 export async function POST(req: Request) {
     try {
-        const { companyName, industry, initialSeats, phone, affiliateId } = await req.json();
+        const { companyName, industry, initialSeats, phone, affiliateId, newUserId } = await req.json();
         
         // 1. Validated Authenticated User
         const supabase = await createClient();
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         // For now, if we don't have a userId, we reject.
         if (!userId) {
             // Check if client passed the new user ID explicitly (less secure but required if email confirmation is strictly on without session)
-            const { newUserId } = await req.clone().json().catch(() => ({}));
+
             if (newUserId) {
                 // Verify the user was created very recently (within 5 minutes)
                 const { data: recentUser } = await supabaseAdmin.auth.admin.getUserById(newUserId);

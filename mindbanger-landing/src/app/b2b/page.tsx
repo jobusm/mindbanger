@@ -21,7 +21,11 @@ export default async function B2BPage(props: {
     { icon: Users, title: tr("Podpora lojality a vzťahu k firme", "Podpora loajality a vztahu k firmě", "Support loyalty and culture"), desc: tr("– zamestnanci cítia, že firme záleží aj na ich vnútornom nastavení, nie len výkone", "– zaměstnanci cítí, že firmě záleží i na jejich vnitřním nastavení, nejen na výkonu", "– employees feel the company cares about their mental state, not just performance") },
     { icon: TrendingUp, title: tr("Silný employer branding", "Silný employer branding", "Strong employer branding"), desc: tr("– firma pôsobí moderne, ľudsky a progresívne", "– firma působí moderně, lidsky a progresivně", "– company appears modern, human, and progressive") },
     { icon: CheckCircle2, title: tr("Dostupná a transparentná cena", "Dostupná a transparentní cena", "Accessible pricing"), desc: tr("– od 6,49€ / mesiac / zamestnanca, bez skrytých poplatkov", "– od 6,49€ / měsíc / zaměstnance, bez skrytých poplatků", "– from €6.49 / month / employee, no hidden fees") },
-      
+  ];
+
+  return (
+    <div className="min-h-screen bg-black text-white selection:bg-amber-500/30">
+
       {/* Simple Header */}
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">

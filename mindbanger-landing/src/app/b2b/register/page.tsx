@@ -110,7 +110,7 @@ function B2BContent() {
         
         // 3. Redirect to Dashboard
         setTimeout(() => {
-            router.push('/app/organization'); 
+            window.location.href = '/app/organization'; // Forces a full hard reload with the new session cookie
         }, 1500);
 
     } catch (error: any) {

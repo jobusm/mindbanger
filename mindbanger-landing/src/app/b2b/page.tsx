@@ -101,6 +101,7 @@ export default async function B2BPage(props: {
 
                   <p className="text-amber-500 font-bold text-2xl mb-8 relative z-10">
                      {lang === 'sk' ? 'Od 6,49€/mes/zamestnanca' : 'From €6.49/mo/employee'}
+                  </p>
 
                   <Link 
                      href="/b2b/register" 

@@ -71,6 +71,7 @@ export async function POST(req: Request) {
             .insert({
                 organization_id: org.id,
                 user_id: userId,
+                email: email, // Required column
                 role: 'owner',
                 status: 'active'
             });

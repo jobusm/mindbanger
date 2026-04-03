@@ -12,11 +12,13 @@ export default async function B2BPage(props: {
   const dict = getDictionary(lang);
   const t = dict.b2b;
   
-  // Quick translation helper for features
-  const features = [
-    { icon: BrainCircuit, title: t.features.f1, desc: lang === 'sk' ? "Mentálna jasnosť pre každodenné rozhodovanie." : "Mental clarity for daily decision making." },
-    { icon: TrendingUp, title: t.features.f2, desc: lang === 'sk' ? "Menej vyhorenia, viac kreatívnej energie." : "Less burnout, more creative energy." },
-    { icon: Users, title: t.features.f4, desc: lang === 'sk' ? "Prehľad o tom, ako sa vášmu tímu darí." : "Insights into how your team is thriving." },
+  const businessBenefits = [
+    { icon: BrainCircuit, title: lang === 'sk' ? "Vyššia psychická odolnosť" : "Higher mental resilience", desc: lang === 'sk' ? "– lepšie zvládanie stresu, tlaku a pracovného tempa" : "– better management of stress, pressure, and work pace" },
+    { icon: TrendingUp, title: lang === 'sk' ? "Lepší fokus a výkon" : "Better focus and performance", desc: lang === 'sk' ? "– menej mentálneho chaosu, viac koncentrácie na úlohy" : "– less mental chaos, more concentration on tasks" },
+    { icon: Users, title: lang === 'sk' ? "Prevencia vyčerpania a poklesu motivácie" : "Burnout and motivation drop prevention", desc: lang === 'sk' ? "– pravidelné mentálne nastavenie pomáha udržať energiu" : "– regular mindset tuning helps maintain energy" },
+    { icon: CheckCircle2, title: lang === 'sk' ? "Atraktívny unikátny sociálny benefit" : "Unique attractive social benefit", desc: lang === 'sk' ? "– moderný a hodnotný benefit, ktorý firma poskytuje nad rámec bežných výhod" : "– modern and valuable benefit provided beyond standard perks" },
+    { icon: Users, title: lang === 'sk' ? "Podpora lojality a vzťahu k firme" : "Support loyalty and culture", desc: lang === 'sk' ? "– zamestnanci cítia, že firme záleží aj na ich vnútornom nastavení, nie len výkone" : "– employees feel the company cares about their mental state, not just performance" },
+    { icon: TrendingUp, title: lang === 'sk' ? "Silný employer branding" : "Strong employer branding", desc: lang === 'sk' ? "– firma pôsobí moderne, ľudsky a progresívne" : "– company appears modern, human, and progressive" },
   ];
 
   return (
@@ -49,54 +51,56 @@ export default async function B2BPage(props: {
                </h1>
                
                <p className="text-xl text-slate-400 max-w-lg leading-relaxed">
-                  {t.hero.subtitle}
+                  {t.hero.subtitle.replace(/reset/gi, 'mindset')}
                </p>
 
                <div className="space-y-6 pt-8 border-t border-white/10">
-                  {features.map((f, i) => (
+                  <h3 className="text-3xl font-bold font-serif text-white mb-6">
+                     {lang === 'sk' ? 'Výhody pre biznis:' : 'Business Benefits:'}
+                  </h3>
+                  {businessBenefits.map((f, i) => (
                     <div key={i} className="flex gap-4">
-                       <f.icon className="text-amber-500 shrink-0" />
+                       <f.icon className="text-amber-500 shrink-0 mt-1" />
                        <div>
-                          <h3 className="font-bold text-lg">{f.title}</h3>
-                          <p className="text-slate-500">{f.desc}</p>
+                          <h4 className="font-bold text-lg text-white">{f.title}</h4>
+                          <p className="text-slate-400">{f.desc}</p>
                        </div>
                     </div>
                   ))}
                </div>
 
-               <div className="bg-slate-900/50 p-6 rounded-xl border border-white/5">
-                  <h4 className="text-xs uppercase tracking-widest text-slate-500 mb-4">{t.pricing.title}</h4>
-                   <ul className="space-y-3">
-                      <li className="flex items-center gap-3">
-                         <CheckCircle2 size={16} className="text-amber-500" />
-                         <span>{t.pricing.tier1} – €7.99 / seat {t.pricing.vatExcluded}</span>
-                      </li>
-                      <li className="flex items-center gap-3">
-                         <CheckCircle2 size={16} className="text-green-500" />
-                         <span className="text-green-400 font-bold">{t.pricing.tier2}</span>
-                      </li>
-                      <li className="flex items-center gap-3">
-                         <CheckCircle2 size={16} className="text-amber-500" />
-                         <span className="text-amber-400 font-bold">{t.pricing.tier3}</span>
-                      </li>
-                   </ul>
+               <div className="bg-slate-900/50 p-8 rounded-2xl border border-white/5 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl opacity-50" />
+                  <h3 className="text-2xl font-bold font-serif text-white mb-4 relative z-10">
+                     {lang === 'sk' ? 'Prínos pre zamestnancov:' : 'Employee Benefits:'}
+                  </h3>
+                  <div className="text-slate-300 leading-relaxed space-y-4 relative z-10">
+                     {lang === 'sk' ? (
+                       <>
+                         <p className="font-bold text-white text-lg">Mindbanger pre zamestnanca nie je len ďalší firemný benefit.</p>
+                         <p className="text-lg">Je to pár minút denne, ktoré mu pomôžu lepšie zvládať tlak, pokojnejšie začínať deň, viac sa sústrediť a cítiť sa lepšie nielen v práci, ale aj mimo nej. Je to benefit, ktorý má reálny dopad na mentálnu pohodu, energiu a životnú spokojnosť v práci aj mimo nej.</p>
+                       </>
+                     ) : (
+                       <>
+                         <p className="font-bold text-white text-lg">Mindbanger for an employee is not just another corporate perk.</p>
+                         <p className="text-lg">It's a few minutes a day that help them handle pressure better, start the day more calmly, focus more deeply, and feel better not only at work but also outside of it. It's a benefit with a real impact on mental well-being, energy, and life satisfaction in and out of work.</p>
+                       </>
+                     )}
+                  </div>
                </div>
             </div>
 
             {/* Right Form */}
-            <div className="animate-slideUp delay-200">
+            <div className="animate-slideUp delay-200 lg:sticky lg:top-32">
                <div className="bg-slate-900 border border-amber-500/20 rounded-3xl p-8 relative overflow-hidden group hover:border-amber-500/40 transition-all">
                   <div className="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors" />
-                  
-                  <h3 className="text-2xl font-bold mb-4 relative z-10 text-white">
-                     {lang === 'sk' ? 'Začnite 14-dňovú skúšobnú verziu' : 'Start your 14-day free trial'}
+
+                  <h3 className="text-2xl font-bold mb-2 relative z-10 text-white">
+                     {lang === 'sk' ? 'Získajte prístup pre váš tím' : 'Get access for your team'}
                   </h3>
-                  
-                  <p className="text-slate-400 mb-8 relative z-10 leading-relaxed">
-                     {lang === 'sk' 
-                       ? 'Žiadna kreditná karta. Okamžitý prístup k firemnému dashboardu.' 
-                       : 'No credit card required. Instant access to your company dashboard.'}
-                  </p>
+
+                  <p className="text-amber-500 font-bold text-2xl mb-8 relative z-10">
+                     {lang === 'sk' ? 'Od 6,49€/mes/zamestnanca' : 'From €6.49/mo/employee'}
 
                   <Link 
                      href="/b2b/register" 

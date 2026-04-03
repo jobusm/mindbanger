@@ -232,21 +232,21 @@
       ]
     },
     "aboutPage": {
-    "title": "Mgr. Miroslav Jobus",
-    "introTitle": "Kdo stojí za projektem Mindbanger",
-    "introText": "Za tímto projektem stojí Miroslav Jobus – hypnoterapeut a tvůrce systémů zaměřených na vnitřní změnu člověka.",
-    "role": "Hypnoterapeut & Mentor",
-    "back": "Zpět na Mindbanger",
-    "p1": "Miroslav Jobus je hypnoterapeut, mentor a tvůrce projektů zaměřených na vnitřní transformaci, duševní pohodu a osobní růst. Ve své práci kombinuje citlivý přístup k lidem, hluboký zájem o fungování mysli a praktické vedení ke skutečné změně. Nepracuje pouze s teorií, ale se skutečnou zkušeností, porozuměním emocím, návykům, vnitřním blokům a potenciálu, který v sobě každý člověk nese.",
-    "h1": "Přístup založený na důvěře",
-    "p2": "Jeho přístup stojí na důvěře, lidskosti a přesvědčení, že správně vedené slovo, klid, bezpečný prostor a vědomá práce s podvědomím mohou lidem pomoci měnit jejich život zevnitř.",
-    "h2": "Systémy pro změnu",
-    "p3": "Miroslav vytváří systémy, nahrávky a procesy, které mají lidem pomoci cítit se silnější, klidnější, jistější a více v souladu se sebou samými.",
-    "p4": "Za jeho tvorbou stojí nejen vize, ale i opravdový zájem pomáhat lidem — ať už jde o lepší spánek, větší vnitřní klid, sebevědomí, disciplínu nebo hlubší osobní uvědomění.",
-    "quote": "Mindbanger jsem vytvořil s cílem přinést lidem jednoduché nástroje, které jim pomohou cítit více klidu, síly, odhodlání a vnitřní jistoty na každodenní úrovni. Sám jsem si ověřil, že pokud člověk umí ovládat a směřovat jeden konkrétní den a dělá to pravidelně, dokáže pozitivně ovlivnit celý svůj život.",
-    "p5": "Právě tato originální kombinace lidského přístupu, záměru a autentičnosti je implementována do systému Mindbanger a dává mu jasnou přidanou hodnotu lidskosti a funkčnosti zároveň."
-  },
-  "about": {
+      "title": "Mgr. Miroslav Jobus",
+      "introTitle": "Kdo stojí za projektem Mindbanger",
+      "introText": "Za tímto projektem stojí Miroslav Jobus – hypnoterapeut a tvůrce systémů zaměřených na vnitřní změnu člověka.",
+      "role": "Hypnoterapeut & Mentor",
+      "back": "Zpět na Mindbanger",
+      "p1": "Miroslav Jobus je hypnoterapeut, mentor a tvůrce projektů zaměřených na vnitřní transformaci, duševní pohodu a osobní růst. Ve své práci kombinuje citlivý přístup k lidem, hluboký zájem o fungování mysli a praktické vedení ke skutečné změně. Nepracuje pouze s teorií, ale se skutečnou zkušeností, porozuměním emocím, návykům, vnitřním blokům a potenciálu, který v sobě každý člověk nese.",
+      "h1": "Přístup založený na důvěře",
+      "p2": "Jeho přístup stojí na důvěře, lidskosti a přesvědčení, že správně vedené slovo, klid, bezpečný prostor a vědomá práce s podvědomím mohou lidem pomoci měnit jejich život zevnitř.",
+      "h2": "Systémy pro změnu",
+      "p3": "Miroslav vytváří systémy, nahrávky a procesy, které mají lidem pomoci cítit se silnější, klidnější, jistější a více v souladu se sebou samými.",
+      "p4": "Za jeho tvorbou stojí nejen vize, ale i opravdový zájem pomáhat lidem — ať už jde o lepší spánek, větší vnitřní klid, sebevědomí, disciplínu nebo hlubší osobní uvědomění.",
+      "quote": "Mindbanger jsem vytvořil s cílem přinést lidem jednoduché nástroje, které jim pomohou cítit více klidu, síly, odhodlání a vnitřní jistoty na každodenní úrovni. Sám jsem si ověřil, že pokud člověk umí ovládat a směřovat jeden konkrétní den a dělá to pravidelně, dokáže pozitivně ovlivnit celý svůj život.",
+      "p5": "Právě tato originální kombinace lidského přístupu, záměru a autentičnosti je implementována do systému Mindbanger a dává mu jasnou přidanou hodnotu lidskosti a funkčnosti zároveň."
+    },
+    "about": {
       "badge": "O tvůrci",
       "role": "Životní kouč, hypnoterapeut a průvodce mentálním výkonem.",
       "quote1": "Mindbanger Daily byl vytvořen, aby pomáhal lidem formovat každý svůj den pro životní pohodu, úspěch a radost ze života prostřednictvím ",
@@ -356,5 +356,35 @@
     "history_date": "Datum",
     "history_amount": "Částka",
     "history_status": "Stav"
+  },
+  "b2b": {
+    "hero": {
+      "title": "Mentální Výkonnost pro Váš Tým",
+      "subtitle": "Mindbanger Daily pro Firmy. Denní mentální ladění, které vaši zaměstnanci potřebují pro soustředění, odolnost a kreativitu."
+    },
+    "features": {
+      "title": "Proč Mindbanger pro Firmy?",
+      "f1": "Denní Mentální Mindset",
+      "f2": "Zvýšení Produktivity",
+      "f3": "Redukce Stresu",
+      "f4": "Týmové Statistiky"
+    },
+    "pricing": {
+      "title": "Jednoduché ceny",
+      "tier1": "1-4 Licence",
+      "tier2": "5-25 Licencí (15% SLEVA)",
+      "tier3": "25+ Licencí (25% SLEVA)",
+      "vatExcluded": "(bez DPH)",
+      "cta": "Začať"
+    },
+    "form": {
+      "companyName": "Název firmy",
+      "taxId": "IČO",
+      "vatId": "DIČ",
+      "seats": "Počet licencí (odběratelů)",
+      "contactName": "Kontaktní osoba",
+      "contactEmail": "Kontaktní email",
+      "submit": "Vytvořit Firemní Účet"
+    }
   }
 }

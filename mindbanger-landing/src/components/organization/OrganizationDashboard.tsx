@@ -7,6 +7,7 @@ import { User, UserPlus, X, Shield, ShieldCheck, Mail, CheckCircle, Clock, Trash
 import { useRouter } from 'next/navigation';
 import OrgMessages from '@/components/b2b/OrgMessages';
 import B2BPurchaseModal from '@/components/organization/B2BPurchaseModal';
+import TeamActivityModal from '@/components/organization/TeamActivityModal';
 
 type Member = {
   id: string; // membership id
@@ -50,6 +51,7 @@ export default function OrganizationDashboard({
   const [inviteEmail, setInviteEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const [isActivityModalOpen, setActivityModalOpen] = useState(false);
   const router = useRouter();
 
   const isOwner = userRole === 'owner';
@@ -223,19 +225,25 @@ export default function OrganizationDashboard({
               <p className="text-slate-500 text-sm mt-3">{t.billing}: {organization.billing_email}</p>
           </div>
 
-          <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
-               <h3 className="text-slate-400 text-sm font-medium mb-3">{(lang === 'sk' || lang === 'cs') ? 'Aktivita tímu' : 'Team Activity'}</h3>
-               <div className="grid grid-cols-2 gap-3 text-center">
-                    <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5">
-                        <div className="text-xl font-bold text-white">{stats?.corporate || 0}</div>
-                        <div className="text-[10px] text-blue-400 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Firemné' : 'Corp'}</div>
-                    </div>
-                    <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5">
-                        <div className="text-xl font-bold text-white">{stats?.daily || 0}</div>
-                        <div className="text-[10px] text-amber-500 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Denné' : 'Daily'}</div>
-                    </div>
-               </div>
-          </div>
+          <div 
+                className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center cursor-pointer hover:bg-slate-800 transition-colors group"
+                onClick={() => setActivityModalOpen(true)}
+                title={(lang === 'sk' || lang === 'cs') ? 'Zobraziť detailné štatistiky zamestnancov' : 'View detailed employee statistics'}
+            >
+                <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-slate-400 text-sm font-medium group-hover:text-slate-300 transition-colors">{(lang === 'sk' || lang === 'cs') ? 'Aktivita tímu' : 'Team Activity'}</h3>
+                </div>
+                 <div className="grid grid-cols-2 gap-3 text-center">
+                      <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5 group-hover:border-amber-500/20 transition-colors">
+                          <div className="text-xl font-bold text-white">{stats?.corporate || 0}</div>
+                          <div className="text-[10px] text-amber-500 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Firemné' : 'Corp'}</div>
+                      </div>
+                      <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5 group-hover:border-blue-500/20 transition-colors">
+                          <div className="text-xl font-bold text-white">{stats?.daily || 0}</div>
+                          <div className="text-[10px] text-blue-400 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Denné' : 'Daily'}</div>
+                      </div>
+                 </div>
+            </div>
 
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center items-center">
               {organization.subscription_status === 'registered' ? (

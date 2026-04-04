@@ -125,7 +125,7 @@ export default async function B2BPage(props: {
                   </Link>
 
                   <p className="text-xs text-center text-slate-500 mt-4 relative z-10">
-                     {tr('Už máte účet?', 'Už máte účet?', 'Already have an account?')} <Link href="/login" className="text-amber-500 hover:underline">{tr('Prihlásiť sa', 'Přihlásit se', 'Login')}</Link>
+                     {tr('Už máte účet?', 'Už máte účet?', 'Already have an account?')} <Link href="/login?type=b2b" className="text-amber-500 hover:underline">{tr('Prihlásiť sa', 'Přihlásit se', 'Login')}</Link>
                   </p>
                </div>
             </div>

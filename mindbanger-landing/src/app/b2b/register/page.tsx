@@ -166,7 +166,7 @@ function B2BContent() {
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-white/5 overflow-hidden shadow-2xl relative">
           
           {/* Left Panel: Value Prop */}
-          <div className="p-8 md:p-12 bg-slate-950 lg:border-r border-white/5 flex flex-col justify-between relative overflow-hidden">
+          <div className="p-8 md:p-12 bg-slate-950 lg:border-r border-white/5 flex flex-col relative overflow-hidden">
               <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
               <div className="relative z-10">

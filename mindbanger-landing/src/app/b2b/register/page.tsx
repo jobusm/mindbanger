@@ -218,9 +218,9 @@ function B2BContent() {
                   </ul>
               </div>
 
-              <div className="mt-12 pt-8 border-t border-white/5 relative z-10">
-                  <p className="text-sm text-slate-500 italic">
-                      "{tr('Starostlivosť o duševné zdravie zamestnancov nie je benefit, ale investícia s vysokou návratnosťou.', 'Péče o duševní zdraví zaměstnanců není benefit, ale investice s vysokou návratností.', 'Caring for employee mental health is not a benefit, but an investment with high returns.', lang)}"
+              <div className="mt-8 pt-6 border-t border-white/10 relative z-10">
+                  <p className="text-base text-white italic font-medium">
+                      "{tr('Starostlivosť o duševné zdravie zamestnancov nie je iba benefit, ale investícia s vysokou návratnosťou.', 'Péče o duševní zdraví zaměstnanců není jen benefit, ale investice s vysokou návratností.', 'Caring for employee mental health is not just a benefit, but an investment with high returns.', lang)}"
                   </p>
               </div>
           </div>

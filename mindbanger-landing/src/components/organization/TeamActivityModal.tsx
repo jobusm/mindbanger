@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, Activity, CalendarDays, Calendar } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Activity, CalendarDays, Calendar, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type MemberProgress = {

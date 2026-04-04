@@ -41,20 +41,9 @@ export default async function OrganizationPage() {
   }
 
   if (!membership || !membership.organizations) {
-    console.error("No valid membership or organization:", membership);
-    // User is not an admin of any organization
-    // Redirect to Today or show "No Access"
-    return (
-        <div className="p-20 pt-32 text-yellow-500 bg-slate-900 min-h-screen">
-          <h1 className="text-2xl font-bold mb-4">Debug: Žiadne administrátorské práva organizácie</h1>
-          <p className="mb-4">Záznam o členstve ({session.user.email}):</p>
-          <pre className="bg-black p-4 rounded text-sm overflow-auto text-green-400">
-             {JSON.stringify({ membership, error: membershipError }, null, 2)}
-          </pre>
-          <a href="/app/today" className="mt-8 text-blue-400 underline">Späť na Today</a>
-        </div>
-    );
-    // redirect('/app/today');
+    // User is not an admin or owner of any organization
+    // Redirect them back to their personal space
+    redirect('/app/today');
   }
 
   // Supabase typing for joined tables needs explicit definition

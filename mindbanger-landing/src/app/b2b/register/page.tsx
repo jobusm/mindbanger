@@ -145,19 +145,28 @@ function B2BContent() {
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-8 font-sans">
       <Toaster position="top-center" />
-      <div className="flex items-center gap-3 mb-10 text-white">
+      
+      {/* Header wrapper */}
+      <div className="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-4 mb-10 pt-8 md:pt-0">
+        <div className="flex items-center gap-3 text-white">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
               <Building2 size={20} />
           </div>
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 tracking-tight">
               Mindbanger <span className="text-white">B2B</span>
           </span>
-            <div className="ml-8 bg-slate-900 px-4 py-2 rounded-full border border-white/5">
-                <B2BLanguageSwitcher initialLang={lang} />
-            </div>
+        </div>
+        
+        <div className="bg-slate-900 px-4 py-2 rounded-full border border-white/5">
+            <B2BLanguageSwitcher initialLang={lang} />
+        </div>
+      </div>
 
+      {/* Main card wrapper */}
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-white/5 overflow-hidden shadow-2xl relative">
+          
           {/* Left Panel: Value Prop */}
-          <div className="p-8 md:p-12 bg-slate-950/50 border-r border-white/5 flex flex-col justify-between relative overflow-hidden">
+          <div className="p-8 md:p-12 bg-slate-950 lg:border-r border-white/5 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
               <div className="relative z-10">

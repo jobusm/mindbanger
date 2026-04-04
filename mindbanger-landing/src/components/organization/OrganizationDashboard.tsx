@@ -52,29 +52,29 @@ export default function OrganizationDashboard({
 
   const isOwner = userRole === 'owner';
   const t = {
-      seats: lang === 'sk' ? 'Počet miest' : 'Seats used',
-      taxId: lang === 'sk' ? 'IČO' : 'Tax ID',
-      billing: lang === 'sk' ? 'Fakturačný email' : 'Billing Email',
-      addMember: lang === 'sk' ? 'Pridať člena' : 'Add Member',
-      emailPlaceholder: lang === 'sk' ? 'Email zamestnanca' : 'Employee email',
-      invite: lang === 'sk' ? 'Pozvať' : 'Invite',
-      remove: lang === 'sk' ? 'Odstrániť' : 'Remove',
-      role: lang === 'sk' ? 'Rola' : 'Role',
-      status: lang === 'sk' ? 'Stav' : 'Status',
-      active: lang === 'sk' ? 'Aktívny' : 'Active',
-      invited: lang === 'sk' ? 'Pozvaný' : 'Invited',
-      disabled: lang === 'sk' ? 'Zablokovaný' : 'Disabled',
-      owner: lang === 'sk' ? 'Vlastník' : 'Owner',
-      admin: lang === 'sk' ? 'Admin' : 'Admin',
-      member: lang === 'sk' ? 'Člen' : 'Member',
-      limitReached: lang === 'sk' ? 'Limit miest dosiahnutý' : 'Seat limit reached',
-      alreadyMember: lang === 'sk' ? 'Tento email je už členom' : 'This email is already a member',
-      successInvite: lang === 'sk' ? 'Pozvánka odoslaná' : 'Invitation sent',
-      successRemove: lang === 'sk' ? 'Člen odstránený' : 'Member removed',
-      error: lang === 'sk' ? 'Nastala chyba' : 'An error occurred',
-      confirmRemove: lang === 'sk' ? 'Naozaj chcete odstrániť tohto člena?' : 'Are you sure you want to remove this member?',
-      cannotRemoveSelf: lang === 'sk' ? 'Nemôžete odstrániť sami seba' : 'You cannot remove yourself',
-      upgrade: lang === 'sk' ? 'Navýšiť počet miest' : 'Upgrade seats',
+      seats: (lang === 'sk' || lang === 'cs') ? 'Počet miest' : 'Seats used',
+      taxId: (lang === 'sk' || lang === 'cs') ? 'IČO' : 'Tax ID',
+      billing: (lang === 'sk' || lang === 'cs') ? 'Fakturačný email' : 'Billing Email',
+      addMember: (lang === 'sk' || lang === 'cs') ? 'Pridať člena' : 'Add Member',
+      emailPlaceholder: (lang === 'sk' || lang === 'cs') ? 'Email zamestnanca' : 'Employee email',
+      invite: (lang === 'sk' || lang === 'cs') ? 'Pozvať' : 'Invite',
+      remove: (lang === 'sk' || lang === 'cs') ? 'Odstrániť' : 'Remove',
+      role: (lang === 'sk' || lang === 'cs') ? 'Rola' : 'Role',
+      status: (lang === 'sk' || lang === 'cs') ? 'Stav' : 'Status',
+      active: (lang === 'sk' || lang === 'cs') ? 'Aktívny' : 'Active',
+      invited: (lang === 'sk' || lang === 'cs') ? 'Pozvaný' : 'Invited',
+      disabled: (lang === 'sk' || lang === 'cs') ? 'Zablokovaný' : 'Disabled',
+      owner: (lang === 'sk' || lang === 'cs') ? 'Vlastník' : 'Owner',
+      admin: (lang === 'sk' || lang === 'cs') ? 'Admin' : 'Admin',
+      member: (lang === 'sk' || lang === 'cs') ? 'Člen' : 'Member',
+      limitReached: (lang === 'sk' || lang === 'cs') ? 'Limit miest dosiahnutý' : 'Seat limit reached',
+      alreadyMember: (lang === 'sk' || lang === 'cs') ? 'Tento email je už členom' : 'This email is already a member',
+      successInvite: (lang === 'sk' || lang === 'cs') ? 'Pozvánka odoslaná' : 'Invitation sent',
+      successRemove: (lang === 'sk' || lang === 'cs') ? 'Člen odstránený' : 'Member removed',
+      error: (lang === 'sk' || lang === 'cs') ? 'Nastala chyba' : 'An error occurred',
+      confirmRemove: (lang === 'sk' || lang === 'cs') ? 'Naozaj chcete odstrániť tohto člena?' : 'Are you sure you want to remove this member?',
+      cannotRemoveSelf: (lang === 'sk' || lang === 'cs') ? 'Nemôžete odstrániť sami seba' : 'You cannot remove yourself',
+      upgrade: (lang === 'sk' || lang === 'cs') ? 'Navýšiť počet miest' : 'Upgrade seats',
   };
 
   const activeMembersCount = members.filter(m => m.status === 'active' || m.status === 'invited').length;
@@ -142,7 +142,7 @@ export default function OrganizationDashboard({
         });
       } catch (e) {
          console.error('Failed to send invite email', e);
-         toast.error(lang === 'sk' ? 'Pozvánka vytvorená, ale email zlyhal.' : 'Invite created, but email failed.');
+         toast.error((lang === 'sk' || lang === 'cs') ? 'Pozvánka vytvorená, ale email zlyhal.' : 'Invite created, but email failed.');
       }
 
     } catch (err: any) {
@@ -214,7 +214,7 @@ export default function OrganizationDashboard({
                      </span>
                  ) : (
                      <span className="px-2.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-500 text-sm font-semibold border border-yellow-500/20 capitalize">
-                         {organization.subscription_status === 'registered' ? (lang === 'sk' ? 'Čaká na aktiváciu' : 'Pending Activation') : organization.subscription_status}
+                         {organization.subscription_status === 'registered' ? ((lang === 'sk' || lang === 'cs') ? 'Čaká na aktiváciu' : 'Pending Activation') : organization.subscription_status}
                      </span>
                  )}
               </div>
@@ -222,15 +222,15 @@ export default function OrganizationDashboard({
           </div>
 
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
-               <h3 className="text-slate-400 text-sm font-medium mb-3">{lang === 'sk' ? 'Aktivita tímu' : 'Team Activity'}</h3>
+               <h3 className="text-slate-400 text-sm font-medium mb-3">{(lang === 'sk' || lang === 'cs') ? 'Aktivita tímu' : 'Team Activity'}</h3>
                <div className="grid grid-cols-2 gap-3 text-center">
                     <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5">
                         <div className="text-xl font-bold text-white">{stats?.corporate || 0}</div>
-                        <div className="text-[10px] text-blue-400 uppercase font-bold mt-1 tracking-wide">{lang === 'sk' ? 'Firemné' : 'Corp'}</div>
+                        <div className="text-[10px] text-blue-400 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Firemné' : 'Corp'}</div>
                     </div>
                     <div className="bg-slate-950/50 rounded-xl p-3 border border-white/5">
                         <div className="text-xl font-bold text-white">{stats?.daily || 0}</div>
-                        <div className="text-[10px] text-amber-500 uppercase font-bold mt-1 tracking-wide">{lang === 'sk' ? 'Denné' : 'Daily'}</div>
+                        <div className="text-[10px] text-amber-500 uppercase font-bold mt-1 tracking-wide">{(lang === 'sk' || lang === 'cs') ? 'Denné' : 'Daily'}</div>
                     </div>
                </div>
           </div>
@@ -238,8 +238,8 @@ export default function OrganizationDashboard({
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center items-center">
               {organization.subscription_status === 'registered' ? (
                   <div className="text-center">
-                      <p className="text-amber-500 font-bold text-sm mb-2">{lang === 'sk' ? 'Účet vyžaduje aktiváciu' : 'Account needs activation'}</p>
-                      <p className="text-xs text-slate-400">{lang === 'sk' ? 'Kontaktujte nás pre aktiváciu zamestnaneckých účtov.' : 'Contact us to activate employee seats.'}</p>
+                      <p className="text-amber-500 font-bold text-sm mb-2">{(lang === 'sk' || lang === 'cs') ? 'Účet vyžaduje aktiváciu' : 'Account needs activation'}</p>
+                      <p className="text-xs text-slate-400">{(lang === 'sk' || lang === 'cs') ? 'Kontaktujte nás pre aktiváciu zamestnaneckých účtov.' : 'Contact us to activate employee seats.'}</p>
                   </div>
               ) : (
                   <button disabled className="w-full py-2 px-4 bg-slate-800 text-slate-400 rounded-lg cursor-not-allowed text-sm font-medium">
@@ -346,7 +346,7 @@ export default function OrganizationDashboard({
                                 <button 
                                   onClick={() => handleRemove(member.id)}
                                   className={`transition-colors p-2 rounded-lg ${member.status === 'invited' ? 'text-amber-500 hover:text-amber-400 hover:bg-amber-500/10' : 'text-slate-500 hover:text-red-400 hover:bg-red-500/10'}`}
-                                  title={member.status === 'invited' ? (lang === 'sk' ? "Odvolať pozvánku" : "Revoke Invitation") : t.remove}
+                                  title={member.status === 'invited' ? ((lang === 'sk' || lang === 'cs') ? "Odvolať pozvánku" : "Revoke Invitation") : t.remove}
                                 >
                                    {member.status === 'invited' ? <XCircle size={18} /> : <Trash2 size={18} />}
                                 </button>
@@ -355,7 +355,7 @@ export default function OrganizationDashboard({
                                 <button 
                                   onClick={() => handleRemove(member.id)}
                                   className={`transition-colors p-2 rounded-lg ${member.status === 'invited' ? 'text-amber-500 hover:text-amber-400 hover:bg-amber-500/10' : 'text-slate-500 hover:text-red-400 hover:bg-red-500/10'}`}
-                                  title={member.status === 'invited' ? (lang === 'sk' ? "Odvolať pozvánku" : "Revoke Invitation") : t.remove}
+                                  title={member.status === 'invited' ? ((lang === 'sk' || lang === 'cs') ? "Odvolať pozvánku" : "Revoke Invitation") : t.remove}
                                 >
                                    {member.status === 'invited' ? <XCircle size={18} /> : <Trash2 size={18} />}
                                 </button>

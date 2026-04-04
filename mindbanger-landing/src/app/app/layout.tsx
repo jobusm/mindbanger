@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import MobileNavBar from '@/components/MobileNavBar';
 import PushNotificationBanner from '@/components/push/PushNotificationBanner';
+import LayoutWrapper from '@/components/LayoutWrapper';
 
 // This is a minimal protected layout wrapper
 export default async function AppLayout({
@@ -65,10 +66,10 @@ export default async function AppLayout({
       {/* Push Notification Banner */}
       <PushNotificationBanner />
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-lg mx-auto p-4 md:px-8 md:py-10 animate-in fade-in duration-500">
+      {/* Main Content Area Conditional Layout*/}
+      <LayoutWrapper>
         {children}
-      </main>
+      </LayoutWrapper>
     </div>
   );
 }

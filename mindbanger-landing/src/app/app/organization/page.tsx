@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import { getDictionary } from '@/lib/i18n';
 import OrganizationDashboard from '@/components/organization/OrganizationDashboard';
+import B2BLanguageSwitcher from '@/components/b2b/B2BLanguageSwitcher';
 
 export const revalidate = 0;
 
@@ -85,8 +86,12 @@ export default async function OrganizationPage() {
     .select('preferred_language')
     .eq('id', session.user.id)
     .single();
+
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get('user-lang')?.value;
     
-  const lang = profile?.preferred_language || 'en';
+  const lang = cookieLang || profile?.preferred_language || 'en';
   const dict = getDictionary(lang);
 
   // 4. Analytics (Basic)
@@ -113,11 +118,16 @@ export default async function OrganizationPage() {
 
   return (
     <div className="py-6 space-y-8">
-      <header>
-        <h1 className="text-3xl font-serif text-white mb-2">{organization.name}</h1>
-        <p className="text-slate-400">
-           {lang === 'sk' ? 'Správa organizácie' : 'Organization Management'} • {userRole === 'owner' ? (lang === 'sk' ? 'Vlastník' : 'Owner') : 'Admin'}
-        </p>
+      <header className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-serif text-white mb-2">{organization.name}</h1>
+          <p className="text-slate-400">
+             {(lang === 'sk' || lang === 'cs') ? 'Správa organizácie' : 'Organization Management'} • {userRole === 'owner' ? ((lang === 'sk' || lang === 'cs') ? 'Vlastník' : 'Owner') : 'Admin'}
+          </p>
+        </div>
+        <div className="flex bg-slate-900 rounded-full px-4 py-2 border border-white/5 shadow-inner">
+          <B2BLanguageSwitcher initialLang={((lang === 'sk' || lang === 'cs') || lang === 'cs' || lang === 'en') ? lang : 'en'} />
+        </div>
       </header>
 
       <OrganizationDashboard 

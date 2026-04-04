@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { User, UserPlus, X, Shield, ShieldCheck, Mail, CheckCircle, Clock, Trash2, Edit2, Save, XCircle, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import OrgMessages from '@/components/b2b/OrgMessages';
+import B2BPurchaseModal from '@/components/organization/B2BPurchaseModal';
 
 type Member = {
   id: string; // membership id
@@ -48,6 +49,7 @@ export default function OrganizationDashboard({
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [inviteEmail, setInviteEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const router = useRouter();
 
   const isOwner = userRole === 'owner';
@@ -237,17 +239,32 @@ export default function OrganizationDashboard({
 
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center items-center">
               {organization.subscription_status === 'registered' ? (
-                  <div className="text-center">
+                  <div className="text-center flex flex-col items-center">
                       <p className="text-amber-500 font-bold text-sm mb-2">{(lang === 'sk' || lang === 'cs') ? 'Účet vyžaduje aktiváciu' : 'Account needs activation'}</p>
-                      <p className="text-xs text-slate-400">{(lang === 'sk' || lang === 'cs') ? 'Kontaktujte nás pre aktiváciu zamestnaneckých účtov.' : 'Contact us to activate employee seats.'}</p>
+                      <button 
+                        onClick={() => setPurchaseModalOpen(true)}
+                        className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-lg text-sm font-bold transition-colors"
+                      >
+                          {t.upgrade}
+                      </button>
                   </div>
               ) : (
-                  <button disabled className="w-full py-2 px-4 bg-slate-800 text-slate-400 rounded-lg cursor-not-allowed text-sm font-medium">
-                      {t.upgrade} (Coming Soon)
+                  <button 
+                    onClick={() => setPurchaseModalOpen(true)}
+                    className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  >
+                      {t.upgrade}
                   </button>
               )}
           </div>
        </div>
+
+       <B2BPurchaseModal 
+         isOpen={isPurchaseModalOpen}
+         onClose={() => setPurchaseModalOpen(false)}
+         orgId={organization.id}
+         lang={lang}
+       />
 
        {/* Invite Form */}
        <div className="bg-slate-900 border border-white/5 rounded-2xl p-6">

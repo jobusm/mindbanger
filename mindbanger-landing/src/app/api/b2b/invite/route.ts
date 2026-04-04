@@ -43,7 +43,7 @@ export async function POST(req: Request) {
                 </p>
                 <div style="text-align: center; margin-bottom: 32px;">
                     <a href="${inviteLink}" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                        Prijať pozvánku a začať
+                        Pripojte sa do aplikácie
                     </a>
                 </div>
                 <p style="font-size: 14px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">

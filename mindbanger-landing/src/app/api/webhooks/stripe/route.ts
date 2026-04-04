@@ -88,6 +88,74 @@ export async function POST(req: Request) {
         }
         // --- B2B HANDLING END ---
 
+        // --- B2B UPGRADE HANDLING START ---
+        if (session.metadata?.type === 'b2b_upgrade') {
+           const meta = session.metadata;
+           const orgId = meta.org_id;
+
+           // 1. Get the pending emails from the organization table
+           const { data: orgData } = await supabase.from('organizations').select('pending_invites, seats_limit').eq('id', orgId).single();
+           
+           if (orgData) {
+             const pendingEmails = (orgData.pending_invites as string[]) || [];
+             const newSeatsLimit = orgData.seats_limit + parseInt(meta.seats || '0');
+
+             // 2. Update organization stats and clean pending
+             await supabase.from('organizations').update({
+               seats_limit: newSeatsLimit,
+               subscription_status: 'active',
+               pending_invites: [] // clear them
+             }).eq('id', orgId);
+
+             // 3. Create member records & invite
+             if (pendingEmails.length > 0) {
+               // Get inviter profile name
+               const { data: adminMembers } = await supabase.from('organization_members').select('user_id').eq('organization_id', orgId).in('role', ['owner', 'admin']).limit(1);
+               let inviterName = 'Admin';
+               if (adminMembers && adminMembers.length > 0) {
+                 const { data: invProfile } = await supabase.from('profiles').select('full_name').eq('id', adminMembers[0].user_id).single();
+                 if (invProfile?.full_name) inviterName = invProfile.full_name;
+               }
+
+               for (const email of pendingEmails) {
+                 const em = email.trim().toLowerCase();
+                 // Create invitation via our existing internal invite API mechanism or manually 
+                 // here. We'll do it manually to avoid NEXT_PUBLIC_SITE_URL issues inside webhook
+                 
+                 const { data: existingUser } = await supabase.from('profiles').select('id').eq('email', em).single();
+                 
+                 await supabase.from('organization_members').insert({
+                    organization_id: orgId,
+                    user_id: existingUser?.id || null,
+                    email: em,
+                    role: 'member',
+                    status: 'invited'
+                 });
+
+                 // Send email via b2b/invite endpoint (it can be called serverside if we use internal fetch, but simple is fire & forget to domain)
+                 try {
+                     const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mindbanger.com';
+                     await fetch(`${siteUrl}/api/b2b/invite`, {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({ 
+                             email: em,
+                             orgId: orgId,
+                             inviterName: inviterName,
+                             lang: 'sk' // or fetch from org
+                         })
+                     });
+                 } catch (e) {
+                     console.error('Failed to dispatch invite for', em, e);
+                 }
+               }
+             }
+           }
+           
+           return new NextResponse('B2B Upgrade Processed', { status: 200 });
+        }
+        // --- B2B UPGRADE HANDLING END ---
+
         const userId = session.metadata?.userId;
         const subscriptionId = session.subscription as string;
         const customerId = session.customer as string;

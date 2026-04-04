@@ -3,12 +3,16 @@ import { getDictionary } from '@/lib/i18n';
 import B2BRegistrationForm from '@/components/b2b/B2BRegistrationForm';
 import { CheckCircle2, TrendingUp, Users, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
+import B2BLanguageSwitcher from '@/components/b2b/B2BLanguageSwitcher';
+import { cookies } from 'next/headers';
 
 export default async function B2BPage(props: {
   searchParams: Promise<{ lang?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const lang = (searchParams.lang === 'sk' ? 'sk' : searchParams.lang === 'cs' ? 'cs' : 'en') as 'sk' | 'cs' | 'en';
+  const cookieStore = await cookies();
+  const rawLang = searchParams.lang || cookieStore.get('user-lang')?.value || 'en';
+  const lang = (['sk', 'cs', 'en'].includes(rawLang) ? rawLang : 'en') as 'sk' | 'cs' | 'en';
   const dict = getDictionary(lang);
   const t = dict.b2b;
   const tr = (sk: string, cs: string, en: string) => lang === 'sk' ? sk : lang === 'cs' ? cs : en;
@@ -32,11 +36,7 @@ export default async function B2BPage(props: {
            <Link href="/" className="text-2xl font-serif tracking-tighter hover:opacity-80 transition-opacity">
               Mindbanger<span className="text-amber-500">.</span>
            </Link>
-           <div className="flex gap-4">
-              <Link href="/b2b?lang=en" className={`text-sm font-medium ${lang === 'en' ? 'text-white' : 'text-slate-500'}`}>EN</Link>
-              <Link href="/b2b?lang=sk" className={`text-sm font-medium ${lang === 'sk' ? 'text-white' : 'text-slate-500'}`}>SK</Link>
-              <Link href="/b2b?lang=cs" className={`text-sm font-medium ${lang === 'cs' ? 'text-white' : 'text-slate-500'}`}>CZ</Link>
-           </div>
+           <B2BLanguageSwitcher initialLang={lang} />
         </div>
       </nav>
 
@@ -118,7 +118,7 @@ export default async function B2BPage(props: {
                   </p>
 
                   <Link 
-                     href="/b2b/register" 
+                     href={`/b2b/register?lang=${lang}`} 
                      className="w-full block text-center py-4 px-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold rounded-xl shadow-lg relative z-10 transition-all transform hover:scale-[1.02]"
                   >
                      {tr('Vytvoriť firemný účet', 'Vytvořit firemní účet', 'Create Company Account')}

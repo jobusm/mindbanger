@@ -4,6 +4,7 @@ import React, { useState, Suspense } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Building2, User, Mail, Lock, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import B2BLanguageSwitcher from '@/components/b2b/B2BLanguageSwitcher';
 import toast, { Toaster } from 'react-hot-toast';
 
 function tr(sk: React.ReactNode, cs: React.ReactNode, en: React.ReactNode, lang: string) {
@@ -15,7 +16,28 @@ function tr(sk: React.ReactNode, cs: React.ReactNode, en: React.ReactNode, lang:
 function B2BContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const lang = searchParams?.get('lang') || 'sk';
+  const paramLang = searchParams?.get('lang');
+  
+  const initialLang = (paramLang === 'sk' || paramLang === 'cs' || paramLang === 'en') 
+     ? paramLang 
+     : (typeof document !== 'undefined' ? (document.cookie.split('; ').find(c => c.startsWith('user-lang='))?.split('=')[1] || 'sk') : 'sk');
+     
+  const [lang, setLang] = useState<'sk' | 'cs' | 'en'>(initialLang as any);
+
+  React.useEffect(() => {
+    // If not in URL, make sure state is in sync with cookie after mount
+    if (!paramLang) {
+      const cookies = document.cookie.split('; ');
+      const langCookie = cookies.find(c => c.startsWith('user-lang='));
+      if (langCookie) {
+         const val = langCookie.split('=')[1];
+         if (['sk', 'cs', 'en'].includes(val)) setLang(val as any);
+      }
+    } else {
+        setLang(paramLang as 'sk'|'cs'|'en');
+    }
+  }, [paramLang]);
+
   const [loading, setLoading] = useState(false);
 
   // Affiliate Tracking
@@ -130,9 +152,9 @@ function B2BContent() {
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 tracking-tight">
               Mindbanger <span className="text-white">B2B</span>
           </span>
-      </div>
-
-      <div className="w-full max-w-5xl grid md:grid-cols-2 bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="ml-8 bg-slate-900 px-4 py-2 rounded-full border border-white/5">
+                <B2BLanguageSwitcher initialLang={lang} />
+            </div>
 
           {/* Left Panel: Value Prop */}
           <div className="p-8 md:p-12 bg-slate-950/50 border-r border-white/5 flex flex-col justify-between relative overflow-hidden">

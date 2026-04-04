@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SignalsManager from "./SignalsManager";
 import OnboardingManager from "./OnboardingManager";
 import SubscriptionsManager from "./SubscriptionsManager";
@@ -10,9 +10,37 @@ import B2BManager from "./B2BManager";
 import MessagesManager from "@/components/admin/MessagesManager";
 import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket, Briefcase, MessageSquare } from "lucide-react";
 import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');
+  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');  
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      const { count, error } = await supabase
+        .from('b2b_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_admin_reply', false)
+        .eq('is_read', false);
+      if (!error && count !== null) {
+        setUnreadMsgCount(count);
+      }
+    };
+
+    fetchUnreadCount();
+
+    const channel = supabase
+      .channel('admin-unread-messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'b2b_messages' },
+        () => fetchUnreadCount()
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   return (
     <>
@@ -97,13 +125,20 @@ export default function AdminPanel() {
         </button>
         <button
           onClick={() => setActiveTab('messages')}
-          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap relative ${
             activeTab === 'messages'
               ? 'border-amber-500 text-amber-500'
               : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
-          <MessageSquare size={20} />
+          <div className="relative">
+             <MessageSquare size={20} />
+             {unreadMsgCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10 animate-pulse min-w-[20px] text-center border border-slate-900">
+                  {unreadMsgCount}
+                </span>
+             )}
+          </div>
           <span className="font-medium">Správy</span>
         </button>
       </div>

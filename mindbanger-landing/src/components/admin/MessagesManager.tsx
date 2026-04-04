@@ -40,16 +40,27 @@ export default function MessagesManager() {
             .from('b2b_messages')
             .select(`
                 *,
-                organizations (id, name),
-                sender:sender_id (full_name, email) NOT NULL
-             `) // Assuming relation exists or profiles fetch
+                organizations!inner(id, name)
+             `)
             .order('created_at', { ascending: true });
-            
+
         if (error) console.error(error);
         else {
-             // We need to map sender manually if relation issues, but let's try
-             // @ts-expect-error - Complex joined query type
-             setMessages(data || []);
+             // Získame všetky ID odosielateľov, aby sme získali ich profil (napr. full_name)
+             const senderIds = Array.from(new Set(data.map(m => m.sender_id)));
+             const { data: profilesData } = await supabase
+                 .from('profiles')
+                 .select('id, full_name')
+                 .in('id', senderIds);
+                 
+             const profilesMap = new Map(profilesData?.map(p => [p.id, p]));
+
+             const mappedData = data.map(msg => ({
+                 ...msg,
+                 sender: profilesMap.get(msg.sender_id) || { full_name: 'Klient' }
+             }));
+             
+             setMessages(mappedData as any);
         }
         setLoading(false);
     };

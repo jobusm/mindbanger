@@ -81,19 +81,19 @@ export default async function B2BPage(props: {
                      {lang === 'sk' && (
                        <>
                          <p className="font-bold text-white text-lg">Mindbanger pre zamestnanca nie je len ďalší firemný benefit.</p>
-                         <p className="text-lg">Je to pár minút denne, ktoré mu pomôžu lepšie zvládať tlak, pokojnejšie začínať deň, viac sa sústrediť a cítiť sa lepšie nielen v práci, ale aj mimo nej. Je to benefit, ktorý má reálny dopad na mentálnu pohodu, energiu a životnú spokojnosť v práci aj mimo nej.</p>
+                         <p className="text-lg">Je to pár minút denne, ktoré zamestnancom pomôžu naučiť sa lepšie zvládať tlak, pokojnejšie začínať deň, viac sa sústrediť a cítiť sa lepšie. Je to benefit, ktorý má reálny dopad na mentálnu pohodu, psychické zdravie, energiu a životnú spokojnosť v práci aj mimo nej.</p>
                        </>
                      )}
                      {lang === 'cs' && (
                        <>
                          <p className="font-bold text-white text-lg">Mindbanger pro zaměstnance není jen další firemní benefit.</p>
-                         <p className="text-lg">Je to pár minut denně, které mu pomohou lépe zvládat tlak, klidněji začínat den, víc se soustředit a cítit se lépe nejen v práci, ale i mimo ni. Je to benefit, který má reálný dopad na mentální pohodu, energii a životní spokojenost v práci i mimo ni.</p>
+                         <p className="text-lg">Je to pár minut denně, které zaměstnancům pomohou naučit se lépe zvládat tlak, klidněji začínat den, víc se soustředit a cítit se lépe. Je to benefit, který má reálný dopad na mentální pohodu, psychické zdraví, energii a životní spokojenost v práci i mimo ni.</p>
                        </>
                      )}
                      {lang === 'en' && (
                        <>
                          <p className="font-bold text-white text-lg">Mindbanger for an employee is not just another corporate perk.</p>
-                         <p className="text-lg">It's a few minutes a day that help them handle pressure better, start the day more calmly, focus more deeply, and feel better not only at work but also outside of it. It's a benefit with a real impact on mental well-being, energy, and life satisfaction in and out of work.</p>
+                         <p className="text-lg">It's a few minutes a day that help employees learn to handle pressure better, start the day more calmly, focus more deeply, and feel better. It's a benefit with a real impact on mental well-being, psychological health, energy, and life satisfaction in and out of work.</p>
                        </>
                      )}
                   </div>

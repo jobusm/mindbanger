@@ -41,8 +41,8 @@ export default async function B2BPage(props: {
       </nav>
 
       <main className="pt-32 pb-20 px-6">
-         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            
+         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center lg:items-start">
+
             {/* Left Content */}
             <div className="space-y-10 animate-slideUp">
                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase">

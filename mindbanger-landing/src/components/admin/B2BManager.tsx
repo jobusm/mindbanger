@@ -51,8 +51,7 @@ type SignalDraft = {
 export default function B2BManager() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [signals, setSignals] = useState<CorporateSignal[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<'list' | 'signals-list' | 'create-signal'>('list');
+  const [loading, setLoading] = useState(true);  const [isUploading, setIsUploading] = useState(false);  const [activeView, setActiveView] = useState<'list' | 'signals-list' | 'create-signal'>('list');
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   
   // Search & Filter State
@@ -163,6 +162,45 @@ export default function B2BManager() {
       } else {
           toast.success('Signal deleted');
           fetchSignals();
+      }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'audio_url' | 'spoken_audio_url' | 'meditation_audio_url' = 'audio_url') => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith('.mp3')) {
+        toast.error('Prosím, nahrajte iba .mp3 súbory.');
+        return;
+      }
+
+      setIsUploading(true);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type }),
+        });
+
+        if (!res.ok) throw new Error('Chyba pri získavaní linku');
+
+        const { uploadUrl, publicUrl } = await res.json();
+
+        const uploadRes = await fetch(uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type },
+        });
+
+        if (!uploadRes.ok) throw new Error('Chyba pri nahrávaní súboru');
+
+        setDraft({...draft, [field]: publicUrl});
+        toast.success(`Súbor nahraný!`);
+      } catch (err: any) {
+        toast.error(err.message);
+      } finally {
+        setIsUploading(false);
       }
   };
 
@@ -498,38 +536,61 @@ export default function B2BManager() {
                 </div>
 
                 {/* Audio URLs */}
-                <div className="space-y-4 pt-4 border-t border-white/5">
+                <div className="space-y-4 pt-6 border-t border-white/5">
                     <h4 className="text-sm font-bold text-slate-400 uppercase">Audio Assets (R2 Paths)</h4>
-                    
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-xs text-slate-500">Spoken Audio (Voiceover)</label>
-                            <div className="flex gap-2">
-                                <FileAudio size={16} className="text-slate-500 mt-3" />
-                                <input 
-                                    type="text" 
-                                    value={draft.spoken_audio_url}
-                                    onChange={e => setDraft({...draft, spoken_audio_url: e.target.value})}
-                                    className="flex-1 bg-slate-950 border border-white/10 rounded-lg px-4 py-2 text-white text-sm font-mono"
-                                    placeholder="signals/corporate/voice_date_org.mp3"
-                                />
-                            </div>
-                        </div>
 
-                         <div className="space-y-1">
-                            <label className="text-xs text-slate-500">Meditation Audio (Optional)</label>
-                            <div className="flex gap-2">
-                                <Play size={16} className="text-slate-500 mt-3" />
-                                <input 
-                                    type="text" 
-                                    value={draft.meditation_audio_url}
-                                    onChange={e => setDraft({...draft, meditation_audio_url: e.target.value})}
-                                    className="flex-1 bg-slate-950 border border-white/10 rounded-lg px-4 py-2 text-white text-sm font-mono"
-                                    placeholder="signals/corporate/meditation_..."
-                                />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-950/50 p-6 rounded-xl border border-slate-800">
+                         {/* 1. Spoken Word (Daily Text) */}
+                         <div>
+                            <label className="block text-xs text-amber-500 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                               <FileAudio size={14}/> Text Dňa (Hovorené)
+                            </label>
+                            <input 
+                                type="text" 
+                                value={draft.spoken_audio_url || ''} 
+                                onChange={e => setDraft({...draft, spoken_audio_url: e.target.value})} 
+                                className="w-full font-mono bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-300 text-xs mb-3 shadow-inner" 
+                                placeholder="URL k .mp3" 
+                            />
+                            <div className="relative">
+                                <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 cursor-pointer disabled:opacity-50" />
                             </div>
-                        </div>
-                    </div>
+                         </div>
+
+                         {/* 2. Guided Meditation */}
+                         <div>
+                            <label className="block text-xs text-indigo-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                               <FileAudio size={14}/> Meditácia (Sprievodca)
+                            </label>
+                            <input 
+                                type="text" 
+                                value={draft.meditation_audio_url || ''} 
+                                onChange={e => setDraft({...draft, meditation_audio_url: e.target.value})} 
+                                className="w-full font-mono bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-300 text-xs mb-3 shadow-inner" 
+                                placeholder="URL k .mp3" 
+                            />
+                            <div className="relative">
+                                <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'meditation_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 cursor-pointer disabled:opacity-50" />
+                            </div>
+                         </div>
+
+                         {/* 3. Background Music */}
+                         <div>
+                            <label className="block text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                               <FileAudio size={14}/> Hudba (Pozadie/Ambient)
+                            </label>
+                            <input 
+                                type="text" 
+                                value={draft.audio_url || ''} 
+                                onChange={e => setDraft({...draft, audio_url: e.target.value})} 
+                                className="w-full font-mono bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-300 text-xs mb-3 shadow-inner" 
+                                placeholder="URL k .mp3" 
+                            />
+                            <div className="relative">
+                                <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700/50 file:text-slate-400 hover:file:bg-slate-700 cursor-pointer disabled:opacity-50" />
+                            </div>
+                         </div>
+                      </div>
                 </div>
 
                 <div className="pt-6 border-t border-white/10 flex justify-end">

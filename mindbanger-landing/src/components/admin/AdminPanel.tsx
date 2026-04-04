@@ -58,6 +58,17 @@ export default function AdminPanel() {
           <span className="font-medium">Denné Signály</span>
         </button>
         <button
+          onClick={() => setActiveTab('b2b')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'b2b'
+              ? 'border-amber-500 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Briefcase size={20} />
+          <span className="font-medium">B2B Klienti</span>
+        </button>
+        <button
           onClick={() => setActiveTab('onboarding')}
           className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
             activeTab === 'onboarding' 
@@ -112,17 +123,7 @@ export default function AdminPanel() {
           <DollarSign size={20} />
           <span className="font-medium">Žiadosti o Výplatu</span>
         </button>
-        <button
-          onClick={() => setActiveTab('b2b')}
-          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'b2b'
-              ? 'border-amber-500 text-amber-500'
-              : 'border-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          <Briefcase size={20} />
-          <span className="font-medium">B2B Klienti</span>
-        </button>
+        
         <button
           onClick={() => setActiveTab('messages')}
           className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap relative ${

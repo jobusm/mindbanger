@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import OrgMessages from '@/components/b2b/OrgMessages';
 import B2BPurchaseModal from '@/components/organization/B2BPurchaseModal';
 import TeamActivityModal from '@/components/organization/TeamActivityModal';
+import CompanySettingsModal from '@/components/organization/CompanySettingsModal';
 
 type Member = {
   id: string; // membership id
@@ -26,6 +27,11 @@ type Organization = {
   id: string;
   name: string;
   tax_id: string | null;
+  dic: string | null;
+  address_street: string | null;
+  address_city: string | null;
+  address_zip: string | null;
+  address_country: string | null;
   billing_email: string;
   seats_limit: number;
   subscription_status: string;
@@ -47,14 +53,53 @@ export default function OrganizationDashboard({
   dict: any;
   stats?: { corporate: number; daily: number };
 }) {
+  const [localOrg, setLocalOrg] = useState<Organization>(organization);
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [inviteEmail, setInviteEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const [isActivityModalOpen, setActivityModalOpen] = useState(false);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
   const router = useRouter();
 
+  const handleOpenBillingPortal = async () => {
+    setOpeningPortal(true);
+    try {
+      const res = await fetch('/api/b2b/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orgId: localOrg.id })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Portal failed');
+      window.location.href = data.url;
+    } catch (err: any) {
+      toast.error((lang === 'sk' || lang === 'cs') ? 'Nepodarilo sa otvoriť fakturačný portál: ' + err.message : 'Failed to open billing portal: ' + err.message);
+    } finally {
+      setOpeningPortal(false);
+    }
+  };
+
   const isOwner = userRole === 'owner';
+  const isValidCompanyData = (org: Organization) => !!(
+    org.name?.trim() && 
+    org.address_street?.trim() && 
+    org.address_city?.trim() && 
+    org.address_zip?.trim() && 
+    org.tax_id?.trim() && 
+    org.dic?.trim()
+  );
+
+  const handleUpgradeClick = () => {
+    if (!isValidCompanyData(localOrg)) {
+      toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, najskôr vyplňte všetky firemné údaje.' : 'Please fill out your company details first.');
+      setSettingsModalOpen(true);
+      return;
+    }
+    setPurchaseModalOpen(true);
+  };
+
   const t = {
       seats: (lang === 'sk' || lang === 'cs') ? 'Počet miest' : 'Seats used',
       taxId: (lang === 'sk' || lang === 'cs') ? 'IČO' : 'Tax ID',
@@ -82,13 +127,13 @@ export default function OrganizationDashboard({
   };
 
   const activeMembersCount = members.filter(m => m.status === 'active' || m.status === 'invited').length;
-  const seatsLeft = organization.seats_limit - activeMembersCount;
+  const seatsLeft = localOrg.seats_limit - activeMembersCount;
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail) return;
 
-    if (activeMembersCount >= organization.seats_limit) {
+    if (activeMembersCount >= localOrg.seats_limit) {
       toast.error(t.limitReached);
       return;
     }
@@ -106,7 +151,7 @@ export default function OrganizationDashboard({
       const { data, error } = await supabase
         .from('organization_members')
         .insert({
-          organization_id: organization.id,
+          organization_id: localOrg.id,
           email: inviteEmail.toLowerCase(),
           role: 'member',
           status: 'invited'
@@ -139,7 +184,7 @@ export default function OrganizationDashboard({
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 email: inviteEmail, 
-                orgId: organization.id,
+                orgId: localOrg.id,
                 inviterName: user?.user_metadata?.full_name || 'Admin',
                 lang: lang
             }) 
@@ -193,18 +238,44 @@ export default function OrganizationDashboard({
 
   return (
     <div className="space-y-8">
+       {/* Actions Header */}
+       {isOwner && (
+         <div className="flex justify-end gap-3">
+           <button
+             onClick={handleOpenBillingPortal}
+             disabled={openingPortal}
+             className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors border border-white/5 disabled:opacity-50"
+           >
+             {openingPortal ? (
+               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+             ) : (
+               <Mail className="w-4 h-4" /> 
+             )}
+             {(lang === 'sk' || lang === 'cs') ? 'Správa predplatného a faktúr' : 'Billing & Invoices'}
+           </button>
+
+           <button
+             onClick={() => setSettingsModalOpen(true)}
+             className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors border border-white/5"
+           >
+             <Edit2 className="w-4 h-4" />
+             {(lang === 'sk' || lang === 'cs') ? 'Firemné údaje' : 'Company Settings'}
+           </button>
+         </div>
+       )}
+
        {/* Stats Cards */}
        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6">
               <h3 className="text-slate-400 text-sm font-medium mb-1">{t.seats}</h3>
               <div className="flex items-baseline gap-2">
                  <span className="text-3xl font-bold text-white">{activeMembersCount}</span>
-                 <span className="text-slate-500">/ {organization.seats_limit}</span>
+                 <span className="text-slate-500">/ {localOrg.seats_limit}</span>
               </div>
               <div className="w-full bg-slate-800 h-1.5 mt-4 rounded-full overflow-hidden">
                  <div 
                    className={`h-full ${seatsLeft === 0 ? 'bg-red-500' : 'bg-blue-500'}`} 
-                   style={{ width: `${Math.min((activeMembersCount / organization.seats_limit) * 100, 100)}%` }} 
+                   style={{ width: `${Math.min((activeMembersCount / localOrg.seats_limit) * 100, 100)}%` }} 
                  />
               </div>
           </div>
@@ -212,17 +283,17 @@ export default function OrganizationDashboard({
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6">
               <h3 className="text-slate-400 text-sm font-medium mb-1">{t.status}</h3>
               <div className="flex items-center gap-2 mt-1">
-                 {organization.subscription_status === 'active' ? (
+                 {localOrg.subscription_status === 'active' ? (
                      <span className="px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-sm font-semibold border border-green-500/20">
                          {t.active}
                      </span>
                  ) : (
                      <span className="px-2.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-500 text-sm font-semibold border border-yellow-500/20 capitalize">
-                         {organization.subscription_status === 'registered' ? ((lang === 'sk' || lang === 'cs') ? 'Čaká na aktiváciu' : 'Pending Activation') : organization.subscription_status}
+                         {localOrg.subscription_status === 'registered' ? ((lang === 'sk' || lang === 'cs') ? 'Čaká na aktiváciu' : 'Pending Activation') : localOrg.subscription_status}
                      </span>
                  )}
               </div>
-              <p className="text-slate-500 text-sm mt-3">{t.billing}: {organization.billing_email}</p>
+              <p className="text-slate-500 text-sm mt-3">{t.billing}: {localOrg.billing_email}</p>
           </div>
 
           <div 
@@ -246,11 +317,11 @@ export default function OrganizationDashboard({
             </div>
 
           <div className="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center items-center">
-              {organization.subscription_status === 'registered' ? (
+              {localOrg.subscription_status === 'registered' ? (
                   <div className="text-center flex flex-col items-center">
                       <p className="text-amber-500 font-bold text-sm mb-2">{(lang === 'sk' || lang === 'cs') ? 'Účet vyžaduje aktiváciu' : 'Account needs activation'}</p>
-                      <button 
-                        onClick={() => setPurchaseModalOpen(true)}
+                      <button
+                        onClick={handleUpgradeClick}
                         className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-lg text-sm font-bold transition-colors"
                       >
                           {t.upgrade}
@@ -258,7 +329,7 @@ export default function OrganizationDashboard({
                   </div>
               ) : (
                   <button 
-                    onClick={() => setPurchaseModalOpen(true)}
+                    onClick={handleUpgradeClick}
                     className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
                   >
                       {t.upgrade}
@@ -270,7 +341,7 @@ export default function OrganizationDashboard({
        <B2BPurchaseModal 
          isOpen={isPurchaseModalOpen}
          onClose={() => setPurchaseModalOpen(false)}
-         orgId={organization.id}
+         orgId={localOrg.id}
          lang={lang}
        />
 
@@ -401,7 +472,16 @@ export default function OrganizationDashboard({
        </div>
 
        {/* Support Messages */}
-       <OrgMessages organizationId={organization.id} />
+       <OrgMessages organizationId={localOrg.id} />
+
+       {/* Company Settings Modal */}
+       <CompanySettingsModal
+         isOpen={isSettingsModalOpen}
+         onClose={() => setSettingsModalOpen(false)}
+         organization={localOrg}
+         lang={lang}
+         onUpdate={(updatedOrg) => setLocalOrg(updatedOrg)}
+       />
     </div>
   );
 }

@@ -77,8 +77,8 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: `Mindbanger Daily - B2B License (${finalQuantity} Seats)`,
-              description: `Mesačné predplatné pre ${org.name}. Zahŕňa ${finalQuantity} firemných licencií.`,
+              name: 'Mental coaching Mindbanger',
+              description: `Firemný balík pre ${org.name} (${finalQuantity} aktívnych licencií)`,
             },
             unit_amount: unitAmountCents,
             recurring: {

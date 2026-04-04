@@ -256,12 +256,12 @@ function B2BContent() {
                                     onChange={handleChange}
                                     className="w-full bg-slate-950 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
                                 >
-                                    <option value="tech">Tech</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="retail">Retail</option>
-                                    <option value="education">Education</option>
-                                    <option value="health">Healthcare</option>
-                                    <option value="generic">Other / Generic</option>
+                                    <option value="tech">{tr('Technológie / IT', 'Technologie / IT', 'Tech & IT', lang)}</option>
+                                    <option value="finance">{tr('Financie', 'Finance', 'Finance', lang)}</option>
+                                    <option value="retail">{tr('Obchod a služby', 'Obchod a služby', 'Retail & Services', lang)}</option>
+                                    <option value="education">{tr('Vzdelávanie', 'Vzdělávání', 'Education', lang)}</option>
+                                    <option value="health">{tr('Zdravotníctvo', 'Zdravotnictví', 'Healthcare', lang)}</option>
+                                    <option value="generic">{tr('Iné', 'Jiné', 'Other', lang)}</option>
                                 </select>
                            </div>
                        </div>

@@ -184,8 +184,17 @@ function B2BContent() {
                              <CheckCircle2 size={16} />
                           </div>
                           <div>
+                             <strong className="text-white block mb-1">{tr('Unikátny zamestnanecký benefit.', 'Unikátní zaměstnanecký benefit.', 'Unique employee benefit.', lang)}</strong>
+                             <span className="text-sm text-slate-400">{tr('Efektívna starostlivosť o duševné zdravie zamestnancov zvyšujúca produktivitu a zároveň životnú spokojnosť v práci aj mimo nej.', 'Efektivní péče o duševní zdraví zaměstnanců zvyšující produktivitu a zároveň životní spokojenost v práci i mimo ni.', 'Effective employee mental healthcare increasing productivity and life satisfaction both at work and outside.', lang)}</span>
+                          </div>
+                      </li>
+                      <li className="flex items-start gap-3 text-slate-300">
+                          <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 text-blue-400">
+                             <CheckCircle2 size={16} />
+                          </div>
+                          <div>
                              <strong className="text-white block mb-1">{tr('Denné mentálne cvičenia', 'Denní mentální cvičení', 'Daily mental exercises', lang)}</strong>
-                             <span className="text-sm text-slate-400">{tr('Krátke audio formáty pre lepší fokus a zníženie stresu.', 'Krátké audio formáty pro lepší fokus a snížení stresu.', 'Short audio formats for better focus and stress reduction.', lang)}</span>
+                             <span className="text-sm text-slate-400">{tr('Denné rýchle meditačné audio formáty pre lepší fokus a zníženie stresu.', 'Denní rychlé meditační audio formáty pro lepší fokus a snížení stresu.', 'Daily quick meditation audio formats for better focus and stress reduction.', lang)}</span>
                           </div>
                       </li>
                       <li className="flex items-start gap-3 text-slate-300">
@@ -203,7 +212,7 @@ function B2BContent() {
                           </div>
                           <div>
                              <strong className="text-white block mb-1">{tr('Jednoduchá správa', 'Jednoduchá správa', 'Easy management', lang)}</strong>
-                             <span className="text-sm text-slate-400">{tr('Prehľadný dashboard, pozvánky a fakturácia na jednom mieste.', 'Přehledný dashboard, pozvánky a fakturace na jednom místě.', 'Clear dashboard, invitations and billing in one place.', lang)}</span>
+                             <span className="text-sm text-slate-400">{tr('Prehľadný dashboard, pozvánky, fakturácia a štatistiky na jednom mieste.', 'Přehledný dashboard, pozvánky, fakturace a statistiky na jednom místě.', 'Clear dashboard, invitations, billing, and statistics in one place.', lang)}</span>
                           </div>
                       </li>
                   </ul>

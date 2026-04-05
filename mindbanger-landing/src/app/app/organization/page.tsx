@@ -96,12 +96,17 @@ export default async function OrganizationPage() {
         .select('*', { count: 'exact', head: true })
         .in('user_id', userIds);
       
+      const { count: corpOnboardingCount } = await supabase
+        .from('user_progress_corporate_onboarding')
+        .select('*', { count: 'exact', head: true })
+        .in('user_id', userIds);
+
       const { count: dailyCount } = await supabase
         .from('user_progress') // Correct table for daily signals
         .select('*', { count: 'exact', head: true })
         .in('user_id', userIds);
 
-      stats.corporate = corpCount || 0;
+      stats.corporate = (corpCount || 0) + (corpOnboardingCount || 0);
       stats.daily = dailyCount || 0;
   }
 

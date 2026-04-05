@@ -128,12 +128,15 @@ export default async function TodayPage() {
   // --- CORPORATE LOGIC START ---
   let corporateSignal = null;
   let corporateName = '';
+  let isCorporateOnboardingWait = false;
+  let corporateSignalType: 'corporate' | 'corporate_onboarding' = 'corporate';
 
   // Check if user is member of an organization
   const { data: memberData } = await supabase
     .from('organization_members')
     .select(`
       organization_id,
+      created_at,
       organizations (
         name,
         industry
@@ -146,40 +149,78 @@ export default async function TodayPage() {
   if (memberData && memberData.organizations) {
       if (typeof memberData.organizations === 'object' && 'name' in memberData.organizations) {
         // @ts-expect-error - Type narrowing issue
-         corporateName = memberData.organizations.name; 
+         corporateName = memberData.organizations.name;
       }
-      
-      // Fetch Corporate Signal
-      // Policies handle filtering by org_id or industry match for the user
-      // We prioritize specific Org signal over Industry signal
-      const { data: corpSignals } = await supabase
-        .from('corporate_signals')
-        .select('*')
-        .eq('date', today)
-        .eq('language', userLang)
-        .eq('is_published', true);
 
-      if (corpSignals && corpSignals.length > 0) {
-          // Find best match: specific org > industry > generic (null org, null industry)
-          // 1. Specific Org Match
-          const orgMatch = corpSignals.find((s: any) => s.organization_id === memberData.organization_id);
-          
-          if (orgMatch) {
-              corporateSignal = orgMatch;
+      if (memberData.created_at) {
+          const refDate = new Date(memberData.created_at);
+          const refParts = new Intl.DateTimeFormat('en-CA', optionsForDate).formatToParts(refDate);
+          const refYear = refParts.find(p => p.type === 'year')?.value;
+          const refMonth = refParts.find(p => p.type === 'month')?.value;
+          const refDay = refParts.find(p => p.type === 'day')?.value;
+          const refHour = parseInt(refParts.find(p => p.type === 'hour')?.value || '0');
+
+          const startDayDate = new Date(`${refYear}-${refMonth}-${refDay}T00:00:00`);
+
+          if (refHour >= 14) {
+              startDayDate.setDate(startDayDate.getDate() + 1);
+          }
+
+          const currentDayDate = new Date(`${year}-${month}-${day}T00:00:00`);      
+          const diffTime = currentDayDate.getTime() - startDayDate.getTime();       
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          const dayNumber = diffDays + 1; 
+
+          if (dayNumber < 1) {
+              isCorporateOnboardingWait = true;
           } else {
-              // 2. Industry Match
-             // @ts-expect-error - Type narrowing issue
-              const industry = memberData.organizations.industry;
-               const industryMatch = corpSignals.find((s: any) => !s.organization_id && s.industry === industry);
-               if (industryMatch) {
-                   corporateSignal = industryMatch;
-               } else {
-                   // 3. Generic Global Fallback (no org, no industry)
-                   const globalMatch = corpSignals.find((s: any) => !s.organization_id && !s.industry);
-                   if (globalMatch) {
-                       corporateSignal = globalMatch;
+              const { data: onboardingSignal } = await supabase
+                .from('corporate_onboarding_signals')
+                .select('*')
+                .eq('day_number', dayNumber)
+                .eq('language', userLang)
+                .single();
+
+              if (onboardingSignal) {
+                  corporateSignal = onboardingSignal;
+                  corporateSignalType = 'corporate_onboarding';
+              }
+          }
+      }
+
+      if (!corporateSignal && !isCorporateOnboardingWait) {
+          // Fetch Corporate Signal
+          // Policies handle filtering by org_id or industry match for the user     
+          // We prioritize specific Org signal over Industry signal
+          const { data: corpSignals } = await supabase
+            .from('corporate_signals')
+            .select('*')
+            .eq('date', today)
+            .eq('language', userLang)
+            .eq('is_published', true);
+
+          if (corpSignals && corpSignals.length > 0) {
+              // Find best match: specific org > industry > generic (null org, null industry)
+              // 1. Specific Org Match
+              const orgMatch = corpSignals.find((s: any) => s.organization_id === memberData.organization_id);
+
+              if (orgMatch) {
+                  corporateSignal = orgMatch;
+              } else {
+                  // 2. Industry Match
+                 // @ts-expect-error - Type narrowing issue
+                  const industry = memberData.organizations.industry;
+                   const industryMatch = corpSignals.find((s: any) => !s.organization_id && s.industry === industry);
+                   if (industryMatch) {
+                       corporateSignal = industryMatch;
+                   } else {
+                       // 3. Generic Global Fallback (no org, no industry)
+                       const globalMatch = corpSignals.find((s: any) => !s.organization_id && !s.industry);
+                       if (globalMatch) {
+                           corporateSignal = globalMatch;
+                       }
                    }
-               }
+              }
           }
       }
   }
@@ -223,7 +264,7 @@ export default async function TodayPage() {
       personalSignalWithUrls.type = personalSignalType;
   }
   if (corporateSignalWithUrls) {
-      corporateSignalWithUrls.type = 'corporate';
+      corporateSignalWithUrls.type = corporateSignalType;
   }
 
   // Format date for display

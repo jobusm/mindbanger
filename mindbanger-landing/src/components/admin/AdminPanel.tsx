@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import SignalsManager from "./SignalsManager";
 import OnboardingManager from "./OnboardingManager";
+import B2BOnboardingManager from "./B2BOnboardingManager";
 import SubscriptionsManager from "./SubscriptionsManager";
 import ResetsManager from "@/components/admin/ResetsManager";
 import AffiliateManager from "./AffiliateManager";
@@ -13,7 +14,7 @@ import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');  
+  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'b2bonboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');  
   const [unreadMsgCount, setUnreadMsgCount] = useState(0);
 
   useEffect(() => {
@@ -67,17 +68,27 @@ export default function AdminPanel() {
         >
           <Briefcase size={20} />
           <span className="font-medium">B2B Klienti</span>
-        </button>
-        <button
+        </button>        <button
           onClick={() => setActiveTab('onboarding')}
           className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'onboarding' 
-              ? 'border-amber-500 text-amber-500' 
+            activeTab === 'onboarding'
+              ? 'border-amber-500 text-amber-500'
               : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
           <Rocket size={20} />
-          <span className="font-medium">Onboarding (Prvých 7 dní)</span>
+          <span className="font-medium">OS - Onboarding</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('b2bonboarding')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'b2bonboarding'
+              ? 'border-amber-500 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Rocket size={20} />
+          <span className="font-medium">B2B - Onboarding</span>
         </button>
         <button
           onClick={() => setActiveTab('resets')}
@@ -145,8 +156,7 @@ export default function AdminPanel() {
       </div>
 
       {activeTab === 'signals' && <SignalsManager />}
-      {activeTab === 'onboarding' && <OnboardingManager />}
-      {activeTab === 'resets' && <ResetsManager />}
+      {activeTab === 'onboarding' && <OnboardingManager />}        {activeTab === 'b2bonboarding' && <B2BOnboardingManager />}      {activeTab === 'resets' && <ResetsManager />}
       {activeTab === 'subscriptions' && <SubscriptionsManager />}
       {activeTab === 'affiliate' && <AffiliateManager />}
       {activeTab === 'payouts' && <PayoutsManager />}

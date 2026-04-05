@@ -79,6 +79,16 @@ export async function GET(req: Request) {
 
         if (corpError) throw corpError;
 
+        // Corporate Onboarding progress
+        const { data: corpOnboardingProgress, error: corpOnboardingError } = await supabaseAdmin
+            .from('user_progress_corporate_onboarding')
+            .select('user_id, completed_at')
+            .in('user_id', userIds)
+            .gte('completed_at', start)
+            .lte('completed_at', end);
+
+        if (corpOnboardingError) throw corpOnboardingError;
+
         // 4. Map the data efficiently
         const membersData = orgMembers.map(m => {
             const userId = m.user_id;
@@ -87,11 +97,13 @@ export async function GET(req: Request) {
             const dailyLogs = dailyProgress
                 .filter(p => p.user_id === userId)
                 .map(p => new Date(p.completed_at).toISOString().split('T')[0]);
-                
-            const corpLogs = corpProgress
-                .filter(p => p.user_id === userId)
-                .map(p => new Date(p.completed_at).toISOString().split('T')[0]);
 
+            const corpLogsRaw = [
+                ...corpProgress.filter(p => p.user_id === userId),
+                ...corpOnboardingProgress.filter(p => p.user_id === userId)
+            ];
+            
+            const corpLogs = corpLogsRaw.map(p => new Date(p.completed_at).toISOString().split('T')[0]);
             // Deduplicate per day
             const dailyDates = Array.from(new Set(dailyLogs));
             const corpDates = Array.from(new Set(corpLogs));

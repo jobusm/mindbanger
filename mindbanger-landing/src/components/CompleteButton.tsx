@@ -7,14 +7,14 @@ import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 
 type SignalId = number | string;
-type SignalType = 'daily' | 'onboarding' | 'corporate';
+type SignalType = 'daily' | 'onboarding' | 'corporate' | 'corporate_onboarding';
 
-export default function CompleteButton({ 
-  signalId, 
-  label, 
+export default function CompleteButton({
+  signalId,
+  label,
   completedLabel = 'Completed',
-  type = 'daily' 
-}: { 
+  type = 'daily'
+}: {
   signalId: SignalId; 
   label: string; 
   completedLabel?: string;
@@ -33,6 +33,7 @@ export default function CompleteButton({
       let table = 'user_progress';
       if (type === 'onboarding') table = 'user_progress_onboarding';
       if (type === 'corporate') table = 'user_progress_corporate';
+      if (type === 'corporate_onboarding') table = 'user_progress_corporate_onboarding';
 
       const { data } = await supabase
         .from(table)
@@ -62,6 +63,7 @@ export default function CompleteButton({
     let table = 'user_progress';
     if (type === 'onboarding') table = 'user_progress_onboarding';
     if (type === 'corporate') table = 'user_progress_corporate';
+    if (type === 'corporate_onboarding') table = 'user_progress_corporate_onboarding';
     
     console.log(`🟡 CompleteButton: Attempting insert into table: '${table}'`);
 

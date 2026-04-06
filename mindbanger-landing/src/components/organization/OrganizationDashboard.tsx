@@ -132,6 +132,12 @@ export default function OrganizationDashboard({
       const file = e.target.files?.[0];
       if (!file) return;
 
+      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { duration: 5000 });
+          e.target.value = '';
+          return;
+      }
+
       const reader = new FileReader();
       reader.onload = async (event) => {
           const content = event.target?.result as string;
@@ -441,7 +447,7 @@ export default function OrganizationDashboard({
                 {t.bulkUpload}
                 <input 
                     type="file" 
-                    accept=".csv, .txt, .xlsx" 
+                    accept=".csv, .txt" 
                     onChange={handleBulkUpload} 
                     disabled={loading || seatsLeft <= 0}
                     className="hidden" 

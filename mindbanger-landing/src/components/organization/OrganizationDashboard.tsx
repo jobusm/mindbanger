@@ -126,6 +126,7 @@ export default function OrganizationDashboard({
       upgrade: (lang === 'sk' || lang === 'cs') ? 'Navýšiť počet miest' : 'Upgrade seats',
       bulkUpload: (lang === 'sk' || lang === 'cs') ? 'Hromadný import (CSV/TXT)' : 'Bulk Import (CSV/TXT)',
       bulkUploadTooltip: (lang === 'sk' || lang === 'cs') ? 'Nahrajte súbor so zoznamom emailov (1 email na riadok alebo oddelené čiarkou)' : 'Upload a file with email addresses (1 per line or comma-separated)',
+      bulkUploadInfo: lang === 'sk' ? 'Info k hromadnému importu: Pripravte si zoznam e-mailov v Exceli a pri ukladaní (1. Uložiť ako) zvoľte formát .csv. Prípadne skopírujte e-maily z Excelu, vložte ich do obyčajného textového súboru (NotePad) a ten uložte ako .txt, ktorý následne nahrajte.' : lang === 'cs' ? 'Info k hromadnému importu: Připravte si seznam e-mailů v Exceli a při ukládání (1. Uložit jako) zvolte formát .csv. Případně zkopírujte e-maily z Excelu, vložte je do obyčejného textového souboru (NotePad) a ten uložte jako .txt, který následně nahrajte.' : 'Bulk Import Info: Prepare your email list in Excel and select the .csv format when saving (1. Save As). Alternatively, copy the emails from Excel, paste them into a plain text file (NotePad) and save it as .txt, which you can then upload.',
   };
 
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -471,7 +472,12 @@ export default function OrganizationDashboard({
                   {loading ? <Clock size={18} className="animate-spin" /> : <Mail size={18} />}
                   {t.invite}
               </button>
-          </form> 
+          </form>
+          <div className="mt-4 pt-4 border-t border-white/5">
+              <p className="text-xs text-slate-400 leading-relaxed">
+                  <span className="font-semibold text-slate-300">ℹ️ {t.bulkUploadInfo}</span>
+              </p>
+          </div>
        </div>
 
        {/* Members List */}

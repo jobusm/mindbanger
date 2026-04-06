@@ -131,16 +131,21 @@ export default function OrganizationDashboard({
 
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
+      const inputTarget = e.target;
+      
       if (!file) return;
 
       const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem súbor...' : 'Processing file...');
 
       if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });      
+          inputTarget.value = '';
           return;
       }
       const reader = new FileReader();
       reader.onload = async (event) => {
+          inputTarget.value = '';
+          
           const content = event.target?.result as string;
           if (!content) {
               toast.error((lang === 'sk' || lang === 'cs') ? 'Súbor je prázdny alebo sa nedá prečítať.' : 'File is empty or cannot be read.', { id: loadingToast });
@@ -222,6 +227,7 @@ export default function OrganizationDashboard({
       };
 
       reader.onerror = () => {
+          inputTarget.value = '';
           toast.error((lang === 'sk' || lang === 'cs') ? 'Nepodarilo sa prečítať súbor.' : 'Failed to read file.', { id: loadingToast });
       };
 

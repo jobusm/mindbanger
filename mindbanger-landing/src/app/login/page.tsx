@@ -17,52 +17,52 @@ const getLang = () => {
 
 const translations = {
   sk: {
-    personalTab: 'Osobný úèet',
-    companyTab: 'Firemný úèet',
+    personalTab: 'Osobný účet',
+    companyTab: 'Firemný účet',
     emailSubtitle: 'Prihlásenie emailom',
-    codeSubtitle: 'Zadajte bezpeènostný kód',
+    codeSubtitle: 'Zadajte bezpečnostný kód',
     emailPlaceholder: 'Tvoj email',
     companyEmailPlaceholder: 'Pracovný email',
-    getCodeBtn: 'Získa prístupový kód',
+    getCodeBtn: 'Získať prístupový kód',
     codeSentTo: 'Kód sme odoslali na',
     codePlaceholder: 'Zadaj 6-miestny kód',
-    verifyBtn: 'Overi kód a vstúpi',
-    diffEmailText: 'Zada iný email',
-    backToHome: 'Spä na úvod',
-    codeLenError: 'Kód musí ma presne 6 èíslic.',
-    codeSentSuccess: '6-miestny kód bol odoslaný na vá email.',
+    verifyBtn: 'Overiť kód a vstúpiť',
+    diffEmailText: 'Zadať iný email',
+    backToHome: 'Späť na úvod',
+    codeLenError: 'Kód musí mať presne 6 číslic.',
+    codeSentSuccess: '6-miestny kód bol odoslaný na váš email.',
   },
   cz: {
-    personalTab: 'Osobní úèet',
-    companyTab: 'Firemní úèet',
-    emailSubtitle: 'Pøihláení emailem',
-    codeSubtitle: 'Zadejte bezpeènostní kód',
-    emailPlaceholder: 'Tvùj email',
+    personalTab: 'Osobní účet',
+    companyTab: 'Firemní účet',
+    emailSubtitle: 'Přihlášení emailem',
+    codeSubtitle: 'Zadejte bezpečnostní kód',
+    emailPlaceholder: 'Tvůj email',
     companyEmailPlaceholder: 'Pracovní email',
-    getCodeBtn: 'Získat pøístupový kód',
+    getCodeBtn: 'Získat přístupový kód',
     codeSentTo: 'Kód jsme odeslali na',
     codePlaceholder: 'Zadej 6-místný kód',
-    verifyBtn: 'Ovìøit kód a vstoupit',
+    verifyBtn: 'Ověřit kód a vstoupit',
     diffEmailText: 'Zadat jiný email',
-    backToHome: 'Zpìt na úvod',
-    codeLenError: 'Kód musí mít pøesnì 6 èíslic.',
-    codeSentSuccess: '6-místný kód byl odeslán na vá email.',
+    backToHome: 'Zpět na úvod',
+    codeLenError: 'Kód musí mít přesně 6 číslic.',
+    codeSentSuccess: '6-místný kód byl odeslán na váš email.',
   },
   en: {
     personalTab: 'Personal Account',
     companyTab: 'Company Account',
-    emailSubtitle: 'Email login',
+    emailSubtitle: 'Email Login',
     codeSubtitle: 'Enter security code',
     emailPlaceholder: 'Your email',
     companyEmailPlaceholder: 'Work email',
     getCodeBtn: 'Get access code',
     codeSentTo: 'We sent the code to',
     codePlaceholder: 'Enter 6-digit code',
-    verifyBtn: 'Verify code and enter',
-    diffEmailText: 'Enter a different email',
-    backToHome: 'Back to home',
+    verifyBtn: 'Verify and Enter',
+    diffEmailText: 'Enter different email',
+    backToHome: 'Back to Home',
     codeLenError: 'Code must be exactly 6 digits.',
-    codeSentSuccess: 'A 6-digit code has been sent to your email.',
+    codeSentSuccess: '6-digit code has been sent to your email.',
   }
 };
 
@@ -70,7 +70,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [lang, setLang] = useState<'sk' | 'cz' | 'en'>('sk');
-  
+
   const initialMode = searchParams.get('type') === 'b2b' ? 'b2b' : 'personal';
   const [loginMode, setLoginMode] = useState<'personal' | 'b2b'>(initialMode);
   const [step, setStep] = useState<'email' | 'otp'>('email');

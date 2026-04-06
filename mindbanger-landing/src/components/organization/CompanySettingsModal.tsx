@@ -31,21 +31,21 @@ export default function CompanySettingsModal({
   const [loading, setLoading] = useState(false);
 
   const t = {
-    title: (lang === 'sk' || lang === 'cs') ? 'Firemn� �daje' : 'Company Details',
-    desc: (lang === 'sk' || lang === 'cs') ? 'Tieto �daje bud� pou�it� na faktur�ciu.' : 'These details will be used for billing.',
-    name: (lang === 'sk' || lang === 'cs') ? 'N�zov spolo�nosti' : 'Company Name',
-    tax_id: (lang === 'sk' || lang === 'cs') ? 'I�O' : 'Company ID (I�O)',
-    dic: (lang === 'sk' || lang === 'cs') ? 'DI� / I� DPH' : 'Tax ID (DI� / VAT)',
-    street: (lang === 'sk' || lang === 'cs') ? 'Ulica a ��slo' : 'Street & Number',
+    title: (lang === 'sk' || lang === 'cs') ? 'Firemné údaje' : 'Company Details',
+    desc: (lang === 'sk' || lang === 'cs') ? 'Tieto údaje budú použité na fakturáciu.' : 'These details will be used for billing.',
+    name: (lang === 'sk' || lang === 'cs') ? 'Názov spoločnosti' : 'Company Name',
+    tax_id: (lang === 'sk' || lang === 'cs') ? 'IČO' : 'Company ID (IČO)',
+    dic: (lang === 'sk' || lang === 'cs') ? 'DIČ / IČ DPH' : 'Tax ID (DIČ / VAT)',
+    street: (lang === 'sk' || lang === 'cs') ? 'Ulica a číslo' : 'Street & Number',
     city: (lang === 'sk' || lang === 'cs') ? 'Mesto' : 'City',
-    zip: (lang === 'sk' || lang === 'cs') ? 'PS�' : 'ZIP Code',
+    zip: (lang === 'sk' || lang === 'cs') ? 'PSČ' : 'ZIP Code',
     country: (lang === 'sk' || lang === 'cs') ? 'Krajina' : 'Country',
-    billing_email: (lang === 'sk' || lang === 'cs') ? 'Faktura�n� email' : 'Billing Email',
-    save: (lang === 'sk' || lang === 'cs') ? 'Ulo�i� zmeny' : 'Save Changes',
-    cancel: (lang === 'sk' || lang === 'cs') ? 'Zru�i�' : 'Cancel',
-    success: (lang === 'sk' || lang === 'cs') ? '�daje boli �spe�ne ulo�en�.' : 'Details saved successfully.',
-    error: (lang === 'sk' || lang === 'cs') ? 'Nastala chyba pri ukladan� �dajov.' : 'An error occurred while saving details.',
-    required: (lang === 'sk' || lang === 'cs') ? 'Pros�m vypl�te v�etky povinn� polia.' : 'Please fill all required fields.'
+    billing_email: (lang === 'sk' || lang === 'cs') ? 'Fakturačný email' : 'Billing Email',
+    save: (lang === 'sk' || lang === 'cs') ? 'Uložiť zmeny' : 'Save Changes',
+    cancel: (lang === 'sk' || lang === 'cs') ? 'Zrušiť' : 'Cancel',
+    success: (lang === 'sk' || lang === 'cs') ? 'Údaje boli úspešne uložené.' : 'Details saved successfully.',
+    error: (lang === 'sk' || lang === 'cs') ? 'Nastala chyba pri ukladaní údajov.' : 'An error occurred while saving details.',
+    required: (lang === 'sk' || lang === 'cs') ? 'Prosím vyplňte všetky povinné polia.' : 'Please fill all required fields.'
   };
 
   useEffect(() => {
@@ -172,7 +172,7 @@ export default function CompanySettingsModal({
             </div>
 
             <div className="border-t border-white/5 pt-6 mt-6">
-              <h3 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Adresa s�dla</h3>
+              <h3 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Adresa sídla</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-slate-300">{t.street} *</label>

@@ -4,7 +4,7 @@ require('dotenv').config({ path: '.env.local' });
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 async function check() {
-  const email = "miroslav.jobus@gmail.com";
+  const email = "jobus@seznam.cz";
   console.log(`Checking user: ${email}...`);
   
   const { data: usersData, error: userErr } = await supabase.auth.admin.listUsers();

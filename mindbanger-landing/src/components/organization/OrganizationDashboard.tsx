@@ -464,12 +464,13 @@ export default function OrganizationDashboard({
              <label className="text-sm text-slate-400 hover:text-white cursor-pointer flex items-center gap-2 border border-slate-700 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors group" title={t.bulkUploadTooltip}>
                 <FileUp size={16} className="group-hover:text-blue-400 transition-colors" />
                 {t.bulkUpload}
-                <input 
-                    type="file" 
-                    accept=".csv, .txt" 
-                    onChange={handleBulkUpload} 
-                    disabled={loading || seatsLeft <= 0}
-                    className="hidden" 
+                <input
+                    type="file"
+                    accept=".csv, .txt, .CSV, .TXT"
+                    onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+                    onChange={handleBulkUpload}
+                    disabled={loading}
+                    className="hidden"
                 />
              </label>
           </div>

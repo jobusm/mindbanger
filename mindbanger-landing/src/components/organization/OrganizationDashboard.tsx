@@ -176,7 +176,7 @@ export default function OrganizationDashboard({
                       role: 'member',
                       status: 'invited'
                   })
-                  .select(`id, email, role, status, created_at, user_id, profiles (full_name, avatar_url)`)
+                    .select(`id, email, role, status, created_at, user_id`)
                   .single();
 
               if (error) {
@@ -255,19 +255,18 @@ export default function OrganizationDashboard({
           role,
           status,
           created_at,
-          user_id,
-          profiles (full_name, avatar_url)
+          user_id
         `)
         .single();
-
+        
       if (error) throw error;
 
       // 2. Add to local list
-      // @ts-expect-error - Types might mismatch lightly but safe here
+      // @ts-expect-error - Types might mismatch slightly but safe here
       setMembers([data, ...members]);
       setInviteEmail('');
       toast.success(t.successInvite);
-      
+
       // 3. Send Email Invite
       try {
         const { data: { user } } = await supabase.auth.getUser();

@@ -162,6 +162,7 @@ export default function OrganizationDashboard({
       // Fire invitations in sequence to avoid rate-limits
       for (const email of foundEmails) {
           if (members.some(m => m.email.toLowerCase() === email)) {
+              console.warn('Skipping existing local member:', email);
               failCount++;
               continue; // Skip existing
           }
@@ -178,7 +179,11 @@ export default function OrganizationDashboard({
                   .select(`id, email, role, status, created_at, user_id, profiles (full_name, avatar_url)`)
                   .single();
 
-              if (error) { failCount++; continue; }
+              if (error) {
+                  console.error('Bulk Insert Error:', error);
+                  failCount++;
+                  continue;
+              }
 
               setMembers(prev => [data as any, ...prev]);
               successCount++;
@@ -201,16 +206,17 @@ export default function OrganizationDashboard({
 
       if (successCount > 0 && failCount === 0) {
           toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
+          setBulkInput('');
+          setIsBulkMode(false);
       } else if (successCount > 0 && failCount > 0) {
           toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov. ${failCount} emailov preskočených.` : `Successfully invited ${successCount}. ${failCount} skipped.`, { id: loadingToast, duration: 5000 });
+          setBulkInput('');
+          setIsBulkMode(false);
       } else if (successCount === 0 && failCount > 0) {
-          toast.error((lang === 'sk' || lang === 'cs') ? `Všetkých ${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `All ${failCount} emails skipped (already members or error).`, { id: loadingToast, duration: 5000 });
+          toast.error((lang === 'sk' || lang === 'cs') ? `Všetkých ${failCount} emailov bolo preskočených (už sú v systéme alebo nastala DB chyba). Skontrolujte konzolu prehliadača (F12).` : `All ${failCount} emails skipped (already members or DB error). Check F12 console.`, { id: loadingToast, duration: 10000 });
       } else {
           toast.dismiss(loadingToast);
       }
-      
-      setBulkInput('');
-      setIsBulkMode(false);
   };
 
   const activeMembersCount = members.filter(m => m.status === 'active' || m.status === 'invited').length;

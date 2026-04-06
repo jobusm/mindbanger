@@ -644,9 +644,13 @@ export default function OrganizationDashboard({
                                 <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-medium border border-green-500/20">
                                    <CheckCircle size={10} /> {t.active}
                                 </span>
+                            ) : member.invite_sent_at ? (
+                                <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">
+                                   <Mail size={10} /> {t.invited}
+                                </span>
                             ) : (
                                 <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 text-slate-400 text-xs font-medium border border-slate-500/20">
-                                   <Clock size={10} /> {t.invited}
+                                   <Clock size={10} /> {(lang === 'sk' || lang === 'cs') ? 'Pridaný' : 'Added'}
                                 </span>
                             )}
                          </td>

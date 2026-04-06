@@ -52,23 +52,40 @@ export default async function OrganizationPage() {
   const userRole = membership.role;
 
   // 2. Get All Members of this Organization
-  const { data: members } = await supabase
-    .from('organization_members')
-    .select(`
-      id,
-      email,
-      role,
-      status,
-      created_at,
-      user_id,
-      profiles (
-        full_name,
-        avatar_url
-      )
-    `)
-    .eq('organization_id', organization.id)
-    .order('created_at', { ascending: false });
+    const { data: rawMembers, error: membersError } = await supabase
+      .from('organization_members')
+      .select(`
+        id,
+        email,
+        role,
+        status,
+        created_at,
+        user_id
+      `)
+      .eq('organization_id', organization.id)
+      .order('created_at', { ascending: false });
 
+    if (membersError) {
+        console.error("Fetch members error:", membersError);
+    }
+    
+    let members = rawMembers || [];
+
+    // Manually fetch profiles since joining across schemas without direct FK causes PGRST200
+    const profileUserIds = members.filter(m => m.user_id !== null).map(m => m.user_id);
+    if (profileUserIds.length > 0) {
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url')
+            .in('id', profileUserIds);
+            
+        if (profiles) {
+            members = members.map(m => {
+                const p = profiles.find(pr => pr.id === m.user_id);
+                return { ...m, profiles: p ? { full_name: p.full_name, avatar_url: p.avatar_url } : null };
+            });
+        }
+    }
   // 3. Get Dictionary
   const { data: profile } = await supabase
     .from('profiles')

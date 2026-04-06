@@ -131,22 +131,23 @@ export default function OrganizationDashboard({
 
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
+      
+      // Vyresetujeme hodnotu inputu hneď na začiatku, 
+      // aby React zaregistroval onChange aj pri rovnakom súbore
+      e.target.value = '';
+
       if (!file) return;
 
       const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem súbor...' : 'Processing file...');
 
       if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });
-          e.target.value = '';
-          return;
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });                return;
       }
-
       const reader = new FileReader();
       reader.onload = async (event) => {
           const content = event.target?.result as string;
           if (!content) {
               toast.error((lang === 'sk' || lang === 'cs') ? 'Súbor je prázdny alebo sa nedá prečítať.' : 'File is empty or cannot be read.', { id: loadingToast });
-              e.target.value = '';
               return;
           }
 
@@ -159,13 +160,11 @@ export default function OrganizationDashboard({
 
           if (foundEmails.length === 0) {
               toast.error((lang === 'sk' || lang === 'cs') ? 'V súbore sa nenašli žiadne platné emaily.' : 'No valid emails found in the file.', { id: loadingToast, duration: 4000 });
-              e.target.value = '';
               return;
           }
 
           if (foundEmails.length + activeMembersCount > localOrg.seats_limit) { 
               toast.error(t.limitReached + ` (${foundEmails.length} v súbore, ${seatsLeft} voľných miest)`, { id: loadingToast, duration: 5000 });
-              e.target.value = '';
               return;
           }
 
@@ -214,7 +213,6 @@ export default function OrganizationDashboard({
           }
 
           setLoading(false);
-          e.target.value = '';
 
           if (successCount > 0 && failCount === 0) {
               toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
@@ -229,7 +227,6 @@ export default function OrganizationDashboard({
 
       reader.onerror = () => {
           toast.error((lang === 'sk' || lang === 'cs') ? 'Nepodarilo sa prečítať súbor.' : 'Failed to read file.', { id: loadingToast });
-          e.target.value = '';
       };
 
       reader.readAsText(file);
@@ -467,7 +464,6 @@ export default function OrganizationDashboard({
                 <input
                     type="file"
                     accept=".csv, .txt, .CSV, .TXT"
-                    onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
                     onChange={handleBulkUpload}
                     disabled={loading}
                     className="hidden"

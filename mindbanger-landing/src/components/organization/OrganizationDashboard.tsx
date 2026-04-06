@@ -133,8 +133,10 @@ export default function OrganizationDashboard({
       const file = e.target.files?.[0];
       if (!file) return;
 
-      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { duration: 5000 });
+      const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem súbor...' : 'Processing file...');
+
+      if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });
           e.target.value = '';
           return;
       }
@@ -142,28 +144,36 @@ export default function OrganizationDashboard({
       const reader = new FileReader();
       reader.onload = async (event) => {
           const content = event.target?.result as string;
-          if (!content) return;
+          if (!content) {
+              toast.error((lang === 'sk' || lang === 'cs') ? 'Súbor je prázdny alebo sa nedá prečítať.' : 'File is empty or cannot be read.', { id: loadingToast });
+              e.target.value = '';
+              return;
+          }
 
           // Extract emails using regex
           const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
           const foundEmailsRaw = content.match(emailRegex) || [];
-          
+
           // Deduplicate and clean
-          const foundEmails = Array.from(new Set(foundEmailsRaw.map(e => e.toLowerCase().trim())));
+          const foundEmails = Array.from(new Set(foundEmailsRaw.map(em => em.toLowerCase().trim())));
 
           if (foundEmails.length === 0) {
-              toast.error((lang === 'sk' || lang === 'cs') ? 'V súbore sa nenašli žiadne platné emaily.' : 'No valid emails found in the file.');
+              toast.error((lang === 'sk' || lang === 'cs') ? 'V súbore sa nenašli žiadne platné emaily.' : 'No valid emails found in the file.', { id: loadingToast, duration: 4000 });
+              e.target.value = '';
               return;
           }
 
-          if (foundEmails.length + activeMembersCount > localOrg.seats_limit) {
-              toast.error(t.limitReached + ` (${foundEmails.length} in file, ${seatsLeft} seats left)`);
+          if (foundEmails.length + activeMembersCount > localOrg.seats_limit) { 
+              toast.error(t.limitReached + ` (${foundEmails.length} v súbore, ${seatsLeft} voľných miest)`, { id: loadingToast, duration: 5000 });
+              e.target.value = '';
               return;
           }
 
           setLoading(true);
           let successCount = 0;
           let failCount = 0;
+
+          toast.loading((lang === 'sk' || lang === 'cs') ? `Posielam pozvánky (${foundEmails.length} emailov)...` : `Sending invites (${foundEmails.length} emails)...`, { id: loadingToast });
 
           // Fire invitations in sequence to avoid rate-limits
           for (const email of foundEmails) {
@@ -190,30 +200,38 @@ export default function OrganizationDashboard({
                   successCount++;
 
                   try {
-                      const { data: { user } } = await supabase.auth.getUser();
+                      const { data: { user } } = await supabase.auth.getUser(); 
                       await fetch('/api/b2b/invite', {
                           method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
+                          headers: { 'Content-Type': 'application/json' },      
                           body: JSON.stringify({ email, orgId: localOrg.id, inviterName: user?.user_metadata?.full_name || 'Admin', lang })
                       });
-                  } catch(e) {}
+                  } catch(err) {}
 
-              } catch (e) {
+              } catch (err) {
                   failCount++;
               }
           }
 
           setLoading(false);
-          if (successCount > 0) {
-              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`);
+          e.target.value = '';
+
+          if (successCount > 0 && failCount === 0) {
+              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
+          } else if (successCount > 0 && failCount > 0) {
+              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov. ${failCount} emailov preskočených.` : `Successfully invited ${successCount}. ${failCount} skipped.`, { id: loadingToast, duration: 5000 });
+          } else if (successCount === 0 && failCount > 0) {
+              toast.error((lang === 'sk' || lang === 'cs') ? `Všetkých ${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `All ${failCount} emails skipped (already members or error).`, { id: loadingToast, duration: 5000 });
+          } else {
+              toast.dismiss(loadingToast);
           }
-          if (failCount > 0) {
-              toast.error((lang === 'sk' || lang === 'cs') ? `${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `${failCount} emails skipped (already members or error).`);
-          }
-          
-          // Clear input
+      };
+
+      reader.onerror = () => {
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Nepodarilo sa prečítať súbor.' : 'Failed to read file.', { id: loadingToast });
           e.target.value = '';
       };
+
       reader.readAsText(file);
   };
 

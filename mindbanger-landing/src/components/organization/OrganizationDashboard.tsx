@@ -649,7 +649,7 @@ export default function OrganizationDashboard({
                                    <Mail size={10} /> {t.invited}
                                 </span>
                             ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 text-slate-400 text-xs font-medium border border-slate-500/20">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-medium border border-amber-500/20">
                                    <Clock size={10} /> {(lang === 'sk' || lang === 'cs') ? 'Pridaný' : 'Added'}
                                 </span>
                             )}

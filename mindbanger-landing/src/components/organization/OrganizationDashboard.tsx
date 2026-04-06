@@ -266,24 +266,7 @@ export default function OrganizationDashboard({
       setInviteEmail('');
       toast.success(t.successInvite);
 
-      // 3. Send Email Invite
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        // Fire and forget, or await? Await to ensure delivery.
-        await fetch('/api/b2b/invite', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                email: inviteEmail, 
-                orgId: localOrg.id,
-                inviterName: user?.user_metadata?.full_name || 'Admin',
-                lang: lang
-            }) 
-        });
-      } catch (e) {
-         console.error('Failed to send invite email', e);
-         toast.error((lang === 'sk' || lang === 'cs') ? 'Pozvánka vytvorená, ale email zlyhal.' : 'Invite created, but email failed.');
-      }
+      // Note: Email sending is a manual step now.
 
     } catch (err: any) {
       console.error(err);
@@ -327,7 +310,7 @@ export default function OrganizationDashboard({
       }
   };
 
-  const handleSendSingleInvite = async (email: string) => {
+  const handleSendSingleInvite = async (email: string, memberId: string) => {
       const emailLoading = toast.loading((lang === 'sk' || lang === 'cs') ? 'Odosielam pozvánku...' : 'Sending invite...');
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -341,6 +324,15 @@ export default function OrganizationDashboard({
                 lang: lang
             })
         });
+        
+        const now = new Date().toISOString();
+        await supabase
+          .from('organization_members')
+          .update({ invite_sent_at: now })
+          .eq('id', memberId);
+          
+        setMembers(members => members.map(m => m.id === memberId ? { ...m, invite_sent_at: now } : m));
+        
         toast.success((lang === 'sk' || lang === 'cs') ? 'Pozvánka úspešne odoslaná.' : 'Invite successfully sent.', { id: emailLoading });
       } catch (err) {
          toast.error((lang === 'sk' || lang === 'cs') ? 'Odoslanie zlyhalo.' : 'Sending failed.', { id: emailLoading });
@@ -348,19 +340,22 @@ export default function OrganizationDashboard({
   };
 
   const handleSendAllPending = async () => {
-      const pendingMembers = members.filter(m => m.status === 'invited');
+      const pendingMembers = members.filter(m => m.status === 'invited' && !m.invite_sent_at);
       if (pendingMembers.length === 0) {
-          toast((lang === 'sk' || lang === 'cs') ? 'Žiadne čakajúce pozvánky.' : 'No pending invites found.');
+          toast((lang === 'sk' || lang === 'cs') ? 'Žiadne čakajúce neodoslané pozvánky.' : 'No pending unsent invites found.');
           return;
       }
-      
+
       const bulkLoading = toast.loading((lang === 'sk' || lang === 'cs') ? `Odosielam ${pendingMembers.length} pozvánok...` : `Sending ${pendingMembers.length} invites...`);
-      
+
       let sentCount = 0;
       let failCount = 0;
-      
+      const now = new Date().toISOString();
+
       const { data: { user } } = await supabase.auth.getUser();
       const inviterName = user?.user_metadata?.full_name || 'Admin';
+
+      let successIds: string[] = [];
 
       for (const m of pendingMembers) {
           try {
@@ -375,12 +370,22 @@ export default function OrganizationDashboard({
                   })
               });
               if (!res.ok) throw new Error('API Error');
+              successIds.push(m.id);
               sentCount++;
           } catch(err) {
               failCount++;
           }
       }
-      
+
+      if (successIds.length > 0) {
+        await supabase
+          .from('organization_members')
+          .update({ invite_sent_at: now })
+          .in('id', successIds);
+          
+        setMembers(members => members.map(m => successIds.includes(m.id) ? { ...m, invite_sent_at: now } : m));
+      }
+
       if (failCount === 0) {
           toast.success((lang === 'sk' || lang === 'cs') ? `Všetkých ${sentCount} pozvánok odoslaných na email.` : `All ${sentCount} invites sent via email.`, { id: bulkLoading });
       } else {
@@ -646,6 +651,15 @@ export default function OrganizationDashboard({
                             )}
                          </td>
                          <td className="px-6 py-4 text-right">
+                            {member.status === 'invited' && (userRole === 'owner' || (userRole === 'admin' && member.role === 'member')) && (
+                                <button
+                                  onClick={() => handleSendSingleInvite(member.email, member.id)}
+                                  className="transition-colors p-2 rounded-lg text-blue-500 hover:text-blue-400 hover:bg-blue-500/10 mr-2"
+                                  title={member.invite_sent_at ? ((lang === 'sk' || lang === 'cs') ? "Pozvať znova" : "Resend Invite") : ((lang === 'sk' || lang === 'cs') ? "Odoslať pozvánku" : "Send Invite")}
+                                >
+                                   <Mail size={18} />
+                                </button>
+                            )}
                             {userRole === 'owner' && member.role !== 'owner' && (
                                 <button 
                                   onClick={() => handleRemove(member.id)}

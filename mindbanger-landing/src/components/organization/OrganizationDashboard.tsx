@@ -159,39 +159,39 @@ export default function OrganizationDashboard({
 
       toast.loading((lang === 'sk' || lang === 'cs') ? `Posielam pozvánky (${foundEmails.length} emailov)...` : `Sending invites (${foundEmails.length} emails)...`, { id: loadingToast });
 
-      // Fire invitations in sequence to avoid rate-limits
-      for (const email of foundEmails) {
-          if (members.some(m => m.email.toLowerCase() === email)) {
-              console.warn('Skipping existing local member:', email);
-              failCount++;
-              continue; // Skip existing
-          }
+      // Bulk API call using deduplicated ignore constraints
+      try {
+          const newMembersToInsert = foundEmails
+              .filter(email => !members.some(m => m.email.toLowerCase() === email))
+              .map(email => ({
+                  organization_id: localOrg.id,
+                  email: email,
+                  role: 'member',
+                  status: 'invited'
+              }));
 
-          try {
+          if (newMembersToInsert.length > 0) {
               const { data, error } = await supabase
                   .from('organization_members')
-                  .insert({
-                      organization_id: localOrg.id,
-                      email: email,
-                      role: 'member',
-                      status: 'invited'
-                  })
-                    .select(`id, email, role, status, created_at, user_id`)
-                  .single();
+                  .upsert(newMembersToInsert, { onConflict: 'organization_id,email', ignoreDuplicates: true })
+                  .select(`id, email, role, status, created_at, user_id`);
 
               if (error) {
-                  console.error('Bulk Insert Error:', error);
-                  failCount++;
-                  continue;
+                  console.error('Bulk Upsert Error:', error);
+                  failCount += newMembersToInsert.length;
+              } else if (data && data.length > 0) {
+                  setMembers(prev => [...(data as any), ...prev]);
+                  successCount += data.length;
+                  failCount += newMembersToInsert.length - data.length;
+              } else {
+                  failCount += newMembersToInsert.length;
               }
-
-              setMembers(prev => [data as any, ...prev]);
-              successCount++;
-
-          } catch (err) {
-              console.error('Insert loop error:', err);
-              failCount++;
+          } else {
+              failCount += foundEmails.length;
           }
+      } catch (err) {
+          console.error('Bulk insert error:', err);
+          failCount += foundEmails.length;
       }
 
       setLoading(false);
@@ -232,26 +232,32 @@ export default function OrganizationDashboard({
     setLoading(true);
 
     try {
-      // 1. Create Invite Record
-      const { data, error } = await supabase
-        .from('organization_members')
-        .insert({
-          organization_id: localOrg.id,
-          email: inviteEmail.toLowerCase(),
-          role: 'member',
-          status: 'invited'
-        })
-        .select(`
-          id,
-          email,
-          role,
-          status,
-          created_at,
-          user_id
-        `)
-        .single();
+// 1. Create Invite Record (Using upsert to gracefully handle duplicates)
+        const { data, error } = await supabase
+          .from('organization_members')
+          .upsert({
+            organization_id: localOrg.id,
+            email: inviteEmail.toLowerCase(),
+            role: 'member',
+            status: 'invited'
+          }, { onConflict: 'organization_id,email', ignoreDuplicates: true })
+          .select(`
+            id,
+            email,
+            role,
+            status,
+            created_at,
+            user_id
+          `)
+          .maybeSingle();
+
+        if (error) throw error;
         
-      if (error) throw error;
+        if (!data) {
+            toast.error(t.alreadyMember);
+            setLoading(false);
+            return;
+        }
 
       // 2. Add to local list
       // @ts-expect-error - Types might mismatch slightly but safe here

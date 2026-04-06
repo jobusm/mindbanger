@@ -56,6 +56,8 @@ export default function OrganizationDashboard({
   const [localOrg, setLocalOrg] = useState<Organization>(organization);
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [isBulkMode, setIsBulkMode] = useState(false);
+  const [bulkInput, setBulkInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const [isActivityModalOpen, setActivityModalOpen] = useState(false);
@@ -129,109 +131,86 @@ export default function OrganizationDashboard({
       bulkUploadInfo: lang === 'sk' ? 'Info k hromadnému importu: Pripravte si zoznam e-mailov v Exceli a pri ukladaní (1. Uložiť ako) zvoľte formát .csv. Prípadne skopírujte e-maily z Excelu, vložte ich do obyčajného textového súboru (NotePad) a ten uložte ako .txt, ktorý následne nahrajte.' : lang === 'cs' ? 'Info k hromadnému importu: Připravte si seznam e-mailů v Exceli a při ukládání (1. Uložit jako) zvolte formát .csv. Případně zkopírujte e-maily z Excelu, vložte je do obyčejného textového souboru (NotePad) a ten uložte jako .txt, který následně nahrajte.' : 'Bulk Import Info: Prepare your email list in Excel and select the .csv format when saving (1. Save As). Alternatively, copy the emails from Excel, paste them into a plain text file (NotePad) and save it as .txt, which you can then upload.',
   };
 
-  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      const inputTarget = e.target;
-      
-      if (!file) return;
+  const handleBulkTextSubmit = async () => {
+      if (!bulkInput.trim()) return;
 
-      const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem súbor...' : 'Processing file...');
+      const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem emaily...' : 'Processing emails...');
 
-      if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });      
-          inputTarget.value = '';
+      // Extract emails using regex
+      const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+      const foundEmailsRaw = bulkInput.match(emailRegex) || [];
+
+      // Deduplicate and clean
+      const foundEmails = Array.from(new Set(foundEmailsRaw.map(em => em.toLowerCase().trim())));
+
+      if (foundEmails.length === 0) {
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Nenašli sa žiadne platné platné emaily.' : 'No valid emails found.', { id: loadingToast, duration: 4000 });
           return;
       }
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-          inputTarget.value = '';
-          
-          const content = event.target?.result as string;
-          if (!content) {
-              toast.error((lang === 'sk' || lang === 'cs') ? 'Súbor je prázdny alebo sa nedá prečítať.' : 'File is empty or cannot be read.', { id: loadingToast });
-              return;
+
+      if (foundEmails.length + activeMembersCount > localOrg.seats_limit) { 
+          toast.error(t.limitReached + ` (${foundEmails.length} nažmýkaných, ${seatsLeft} voľných miest)`, { id: loadingToast, duration: 5000 });
+          return;
+      }
+
+      setLoading(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      toast.loading((lang === 'sk' || lang === 'cs') ? `Posielam pozvánky (${foundEmails.length} emailov)...` : `Sending invites (${foundEmails.length} emails)...`, { id: loadingToast });
+
+      // Fire invitations in sequence to avoid rate-limits
+      for (const email of foundEmails) {
+          if (members.some(m => m.email.toLowerCase() === email)) {
+              failCount++;
+              continue; // Skip existing
           }
 
-          // Extract emails using regex
-          const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
-          const foundEmailsRaw = content.match(emailRegex) || [];
+          try {
+              const { data, error } = await supabase
+                  .from('organization_members')
+                  .insert({
+                      organization_id: localOrg.id,
+                      email: email,
+                      role: 'member',
+                      status: 'invited'
+                  })
+                  .select(`id, email, role, status, created_at, user_id, profiles (full_name, avatar_url)`)
+                  .single();
 
-          // Deduplicate and clean
-          const foundEmails = Array.from(new Set(foundEmailsRaw.map(em => em.toLowerCase().trim())));
+              if (error) { failCount++; continue; }
 
-          if (foundEmails.length === 0) {
-              toast.error((lang === 'sk' || lang === 'cs') ? 'V súbore sa nenašli žiadne platné emaily.' : 'No valid emails found in the file.', { id: loadingToast, duration: 4000 });
-              return;
-          }
-
-          if (foundEmails.length + activeMembersCount > localOrg.seats_limit) { 
-              toast.error(t.limitReached + ` (${foundEmails.length} v súbore, ${seatsLeft} voľných miest)`, { id: loadingToast, duration: 5000 });
-              return;
-          }
-
-          setLoading(true);
-          let successCount = 0;
-          let failCount = 0;
-
-          toast.loading((lang === 'sk' || lang === 'cs') ? `Posielam pozvánky (${foundEmails.length} emailov)...` : `Sending invites (${foundEmails.length} emails)...`, { id: loadingToast });
-
-          // Fire invitations in sequence to avoid rate-limits
-          for (const email of foundEmails) {
-              if (members.some(m => m.email.toLowerCase() === email)) {
-                  failCount++;
-                  continue; // Skip existing
-              }
+              setMembers(prev => [data as any, ...prev]);
+              successCount++;
 
               try {
-                  const { data, error } = await supabase
-                      .from('organization_members')
-                      .insert({
-                          organization_id: localOrg.id,
-                          email: email,
-                          role: 'member',
-                          status: 'invited'
-                      })
-                      .select(`id, email, role, status, created_at, user_id, profiles (full_name, avatar_url)`)
-                      .single();
+                  const { data: { user } } = await supabase.auth.getUser(); 
+                  await fetch('/api/b2b/invite', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },      
+                      body: JSON.stringify({ email, orgId: localOrg.id, inviterName: user?.user_metadata?.full_name || 'Admin', lang })
+                  });
+              } catch(err) {}
 
-                  if (error) { failCount++; continue; }
-
-                  setMembers(prev => [data as any, ...prev]);
-                  successCount++;
-
-                  try {
-                      const { data: { user } } = await supabase.auth.getUser(); 
-                      await fetch('/api/b2b/invite', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },      
-                          body: JSON.stringify({ email, orgId: localOrg.id, inviterName: user?.user_metadata?.full_name || 'Admin', lang })
-                      });
-                  } catch(err) {}
-
-              } catch (err) {
-                  failCount++;
-              }
+          } catch (err) {
+              failCount++;
           }
+      }
 
-          setLoading(false);
+      setLoading(false);
 
-          if (successCount > 0 && failCount === 0) {
-              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
-          } else if (successCount > 0 && failCount > 0) {
-              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov. ${failCount} emailov preskočených.` : `Successfully invited ${successCount}. ${failCount} skipped.`, { id: loadingToast, duration: 5000 });
-          } else if (successCount === 0 && failCount > 0) {
-              toast.error((lang === 'sk' || lang === 'cs') ? `Všetkých ${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `All ${failCount} emails skipped (already members or error).`, { id: loadingToast, duration: 5000 });
-          } else {
-              toast.dismiss(loadingToast);
-          }
-      };
-
-      reader.onerror = () => {
-          inputTarget.value = '';
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Nepodarilo sa prečítať súbor.' : 'Failed to read file.', { id: loadingToast });
-      };
-
-      reader.readAsText(file);
+      if (successCount > 0 && failCount === 0) {
+          toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
+      } else if (successCount > 0 && failCount > 0) {
+          toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov. ${failCount} emailov preskočených.` : `Successfully invited ${successCount}. ${failCount} skipped.`, { id: loadingToast, duration: 5000 });
+      } else if (successCount === 0 && failCount > 0) {
+          toast.error((lang === 'sk' || lang === 'cs') ? `Všetkých ${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `All ${failCount} emails skipped (already members or error).`, { id: loadingToast, duration: 5000 });
+      } else {
+          toast.dismiss(loadingToast);
+      }
+      
+      setBulkInput('');
+      setIsBulkMode(false);
   };
 
   const activeMembersCount = members.filter(m => m.status === 'active' || m.status === 'invited').length;
@@ -460,30 +439,50 @@ export default function OrganizationDashboard({
                  <UserPlus size={18} className="text-blue-500" />
                  {t.addMember}
              </h3>
-             <label className="text-sm text-slate-400 hover:text-white cursor-pointer flex items-center gap-2 border border-slate-700 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors group" title={t.bulkUploadTooltip}>
+             <button
+                type="button"
+                onClick={() => setIsBulkMode(!isBulkMode)}
+                className="text-sm text-slate-400 hover:text-white flex items-center gap-2 border border-slate-700 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors group" 
+                title={t.bulkUploadTooltip}
+             >
                 <FileUp size={16} className="group-hover:text-blue-400 transition-colors" />
-                {t.bulkUpload}
-                <input
-                    type="file"
-                    accept=".csv, .txt, .CSV, .TXT"
-                    onClick={(e) => { (e.currentTarget as HTMLInputElement).value = ''; }}
-                    onChange={handleBulkUpload}
-                    disabled={loading}
-                    className="hidden"
-                />
-             </label>
+                {isBulkMode ? "Prepniť na 1 email" : t.bulkUpload}
+             </button>
           </div>
+          
+          {isBulkMode ? (
+             <form onSubmit={(e) => { e.preventDefault(); handleBulkTextSubmit(); }} className="flex flex-col gap-4">
+                 <textarea
+                   value={bulkInput}
+                   onChange={(e) => setBulkInput(e.target.value)}
+                   disabled={loading}
+                   placeholder="Zadajte alebo vložte zoznam emailových adries, oddelené čiarkou, medzerou, alebo na nový riadok..."
+                   className="w-full h-32 bg-slate-950 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors resize-y"
+                   required
+                 />
+                 <div className="flex justify-end">
+                     <button
+                       type="submit"
+                       disabled={loading || seatsLeft <= 0 || !bulkInput.trim()}
+                       className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                     >
+                         {loading ? <Clock size={18} className="animate-spin" /> : <Mail size={18} />}
+                         Hromadný import
+                     </button>
+                 </div>
+             </form>
+          ) : (
           <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-4">
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 placeholder={t.emailPlaceholder}
                 className="flex-1 bg-slate-950 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
                 required
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={loading || seatsLeft <= 0}
                 className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
@@ -491,6 +490,7 @@ export default function OrganizationDashboard({
                   {t.invite}
               </button>
           </form>
+          )}
           <div className="mt-4 pt-4 border-t border-white/5">
               <p className="text-xs text-slate-400 leading-relaxed">
                   <span className="font-semibold text-slate-300">ℹ️ {t.bulkUploadInfo}</span>

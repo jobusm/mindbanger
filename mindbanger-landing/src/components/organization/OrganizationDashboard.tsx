@@ -131,17 +131,13 @@ export default function OrganizationDashboard({
 
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      
-      // Vyresetujeme hodnotu inputu hneď na začiatku, 
-      // aby React zaregistroval onChange aj pri rovnakom súbore
-      e.target.value = '';
-
       if (!file) return;
 
       const loadingToast = toast.loading((lang === 'sk' || lang === 'cs') ? 'Spracujem súbor...' : 'Processing file...');
 
       if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
-          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });                return;
+          toast.error((lang === 'sk' || lang === 'cs') ? 'Prosím, uložte svoj Excel súbor ako .CSV alebo .TXT a nahrajte znova.' : 'Please save your Excel file as .CSV or .TXT and upload again.', { id: loadingToast, duration: 5000 });
+          return;
       }
       const reader = new FileReader();
       reader.onload = async (event) => {
@@ -464,6 +460,7 @@ export default function OrganizationDashboard({
                 <input
                     type="file"
                     accept=".csv, .txt, .CSV, .TXT"
+                    onClick={(e) => { (e.currentTarget as HTMLInputElement).value = ''; }}
                     onChange={handleBulkUpload}
                     disabled={loading}
                     className="hidden"

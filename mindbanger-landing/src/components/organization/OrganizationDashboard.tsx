@@ -16,6 +16,7 @@ type Member = {
   email: string;
   role: 'owner' | 'admin' | 'member';
   status: 'invited' | 'active' | 'disabled';
+  invite_sent_at: string | null;
   created_at: string;
   profiles: {
     full_name: string | null;

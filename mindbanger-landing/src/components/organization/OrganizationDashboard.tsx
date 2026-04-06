@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
-import { User, UserPlus, X, Shield, ShieldCheck, Mail, CheckCircle, Clock, Trash2, Edit2, Save, XCircle, ChevronDown } from 'lucide-react';
+import { User, UserPlus, X, Shield, ShieldCheck, Mail, CheckCircle, Clock, Trash2, Edit2, Save, XCircle, ChevronDown, FileUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import OrgMessages from '@/components/b2b/OrgMessages';
 import B2BPurchaseModal from '@/components/organization/B2BPurchaseModal';
@@ -124,6 +124,90 @@ export default function OrganizationDashboard({
       confirmRemove: (lang === 'sk' || lang === 'cs') ? 'Naozaj chcete odstrániť tohto člena?' : 'Are you sure you want to remove this member?',
       cannotRemoveSelf: (lang === 'sk' || lang === 'cs') ? 'Nemôžete odstrániť sami seba' : 'You cannot remove yourself',
       upgrade: (lang === 'sk' || lang === 'cs') ? 'Navýšiť počet miest' : 'Upgrade seats',
+      bulkUpload: (lang === 'sk' || lang === 'cs') ? 'Hromadný import (CSV/TXT)' : 'Bulk Import (CSV/TXT)',
+      bulkUploadTooltip: (lang === 'sk' || lang === 'cs') ? 'Nahrajte súbor so zoznamom emailov (1 email na riadok alebo oddelené čiarkou)' : 'Upload a file with email addresses (1 per line or comma-separated)',
+  };
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+          const content = event.target?.result as string;
+          if (!content) return;
+
+          // Extract emails using regex
+          const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+          const foundEmailsRaw = content.match(emailRegex) || [];
+          
+          // Deduplicate and clean
+          const foundEmails = Array.from(new Set(foundEmailsRaw.map(e => e.toLowerCase().trim())));
+
+          if (foundEmails.length === 0) {
+              toast.error((lang === 'sk' || lang === 'cs') ? 'V súbore sa nenašli žiadne platné emaily.' : 'No valid emails found in the file.');
+              return;
+          }
+
+          if (foundEmails.length + activeMembersCount > localOrg.seats_limit) {
+              toast.error(t.limitReached + ` (${foundEmails.length} in file, ${seatsLeft} seats left)`);
+              return;
+          }
+
+          setLoading(true);
+          let successCount = 0;
+          let failCount = 0;
+
+          // Fire invitations in sequence to avoid rate-limits
+          for (const email of foundEmails) {
+              if (members.some(m => m.email.toLowerCase() === email)) {
+                  failCount++;
+                  continue; // Skip existing
+              }
+
+              try {
+                  const { data, error } = await supabase
+                      .from('organization_members')
+                      .insert({
+                          organization_id: localOrg.id,
+                          email: email,
+                          role: 'member',
+                          status: 'invited'
+                      })
+                      .select(`id, email, role, status, created_at, user_id, profiles (full_name, avatar_url)`)
+                      .single();
+
+                  if (error) { failCount++; continue; }
+
+                  setMembers(prev => [data as any, ...prev]);
+                  successCount++;
+
+                  try {
+                      const { data: { user } } = await supabase.auth.getUser();
+                      await fetch('/api/b2b/invite', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ email, orgId: localOrg.id, inviterName: user?.user_metadata?.full_name || 'Admin', lang })
+                      });
+                  } catch(e) {}
+
+              } catch (e) {
+                  failCount++;
+              }
+          }
+
+          setLoading(false);
+          if (successCount > 0) {
+              toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`);
+          }
+          if (failCount > 0) {
+              toast.error((lang === 'sk' || lang === 'cs') ? `${failCount} emailov bolo preskočených (už sú členmi alebo nastala chyba).` : `${failCount} emails skipped (already members or error).`);
+          }
+          
+          // Clear input
+          e.target.value = '';
+      };
+      reader.readAsText(file);
   };
 
   const activeMembersCount = members.filter(m => m.status === 'active' || m.status === 'invited').length;
@@ -347,10 +431,23 @@ export default function OrganizationDashboard({
 
        {/* Invite Form */}
        <div className="bg-slate-900 border border-white/5 rounded-2xl p-6">
-          <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
-             <UserPlus size={18} className="text-blue-500" />
-             {t.addMember}
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+             <h3 className="text-lg font-medium text-white flex items-center gap-2">
+                 <UserPlus size={18} className="text-blue-500" />
+                 {t.addMember}
+             </h3>
+             <label className="text-sm text-slate-400 hover:text-white cursor-pointer flex items-center gap-2 border border-slate-700 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors group" title={t.bulkUploadTooltip}>
+                <FileUp size={16} className="group-hover:text-blue-400 transition-colors" />
+                {t.bulkUpload}
+                <input 
+                    type="file" 
+                    accept=".csv, .txt, .xlsx" 
+                    onChange={handleBulkUpload} 
+                    disabled={loading || seatsLeft <= 0}
+                    className="hidden" 
+                />
+             </label>
+          </div>
           <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-4">
               <input 
                 type="email" 

@@ -188,16 +188,8 @@ export default function OrganizationDashboard({
               setMembers(prev => [data as any, ...prev]);
               successCount++;
 
-              try {
-                  const { data: { user } } = await supabase.auth.getUser(); 
-                  await fetch('/api/b2b/invite', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },      
-                      body: JSON.stringify({ email, orgId: localOrg.id, inviterName: user?.user_metadata?.full_name || 'Admin', lang })
-                  });
-              } catch(err) {}
-
           } catch (err) {
+              console.error('Insert loop error:', err);
               failCount++;
           }
       }
@@ -205,11 +197,11 @@ export default function OrganizationDashboard({
       setLoading(false);
 
       if (successCount > 0 && failCount === 0) {
-          toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov.` : `Successfully invited ${successCount} employees.`, { id: loadingToast, duration: 4000 });
+          toast.success((lang === 'sk' || lang === 'cs') ? `Zoznam bol rozšírený o ${successCount} emailov. Ešte je potrené odoslať pozvánky.` : `Added ${successCount} emails. Remember to send the invites!`, { id: loadingToast, duration: 5000 });
           setBulkInput('');
           setIsBulkMode(false);
       } else if (successCount > 0 && failCount > 0) {
-          toast.success((lang === 'sk' || lang === 'cs') ? `Úspešne pozvaných ${successCount} zamestnancov. ${failCount} emailov preskočených.` : `Successfully invited ${successCount}. ${failCount} skipped.`, { id: loadingToast, duration: 5000 });
+          toast.success((lang === 'sk' || lang === 'cs') ? `Pridaných ${successCount}. Preskočených ${failCount} emailov. Ešte nezabudnite odoslať pozvánky!` : `Added ${successCount}. Skipped ${failCount}. Remember to send the invites!`, { id: loadingToast, duration: 6000 });
           setBulkInput('');
           setIsBulkMode(false);
       } else if (successCount === 0 && failCount > 0) {
@@ -318,13 +310,74 @@ export default function OrganizationDashboard({
             .from('organization_members')
             .update({ role: newRole })
             .eq('id', memberId);
-           
+
           if (error) throw error;
-          
+
           setMembers(members.map(m => m.id === memberId ? { ...m, role: newRole as any } : m));
           toast.success(t.successInvite); // Re-using success message for update
       } catch (err) {
           toast.error(t.error);
+      }
+  };
+
+  const handleSendSingleInvite = async (email: string) => {
+      const emailLoading = toast.loading((lang === 'sk' || lang === 'cs') ? 'Odosielam pozvánku...' : 'Sending invite...');
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        await fetch('/api/b2b/invite', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email,
+                orgId: localOrg.id,
+                inviterName: user?.user_metadata?.full_name || 'Admin',
+                lang: lang
+            })
+        });
+        toast.success((lang === 'sk' || lang === 'cs') ? 'Pozvánka úspešne odoslaná.' : 'Invite successfully sent.', { id: emailLoading });
+      } catch (err) {
+         toast.error((lang === 'sk' || lang === 'cs') ? 'Odoslanie zlyhalo.' : 'Sending failed.', { id: emailLoading });
+      }
+  };
+
+  const handleSendAllPending = async () => {
+      const pendingMembers = members.filter(m => m.status === 'invited');
+      if (pendingMembers.length === 0) {
+          toast((lang === 'sk' || lang === 'cs') ? 'Žiadne čakajúce pozvánky.' : 'No pending invites found.');
+          return;
+      }
+      
+      const bulkLoading = toast.loading((lang === 'sk' || lang === 'cs') ? `Odosielam ${pendingMembers.length} pozvánok...` : `Sending ${pendingMembers.length} invites...`);
+      
+      let sentCount = 0;
+      let failCount = 0;
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      const inviterName = user?.user_metadata?.full_name || 'Admin';
+
+      for (const m of pendingMembers) {
+          try {
+              const res = await fetch('/api/b2b/invite', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                      email: m.email,
+                      orgId: localOrg.id,
+                      inviterName,
+                      lang
+                  })
+              });
+              if (!res.ok) throw new Error('API Error');
+              sentCount++;
+          } catch(err) {
+              failCount++;
+          }
+      }
+      
+      if (failCount === 0) {
+          toast.success((lang === 'sk' || lang === 'cs') ? `Všetkých ${sentCount} pozvánok odoslaných na email.` : `All ${sentCount} invites sent via email.`, { id: bulkLoading });
+      } else {
+          toast.success((lang === 'sk' || lang === 'cs') ? `Emailov odoslaných: ${sentCount}. Zlyhalo: ${failCount}.` : `Emails sent: ${sentCount}. Failed: ${failCount}.`, { id: bulkLoading });
       }
   };
 
@@ -505,6 +558,22 @@ export default function OrganizationDashboard({
 
        {/* Members List */}
        <div className="bg-slate-900 border border-white/5 rounded-2xl overflow-hidden">
+          <div className="p-4 border-b border-white/5 bg-slate-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+             <h3 className="text-lg font-medium text-white flex items-center gap-2">
+                <User size={18} className="text-blue-500" />
+                {lang === 'sk' || lang === 'cs' ? 'Zoznam členov' : 'Members List'}
+             </h3>
+             {members.some(m => m.status === 'invited') && (
+                <button
+                   onClick={handleSendAllPending}
+                   disabled={loading}
+                   className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+                >
+                   <Mail size={16} />
+                   {lang === 'sk' || lang === 'cs' ? 'Odoslať čakajúce pozvánky' : 'Send Pending Invites'}
+                </button>
+             )}
+          </div>
           <div className="overflow-x-auto">
              <table className="w-full text-left text-sm">
                 <thead>

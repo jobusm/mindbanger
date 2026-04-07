@@ -25,39 +25,31 @@ export async function POST(request: NextRequest) {
     }
   );
 
-  // Auth check
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user || !ADMIN_EMAILS.includes(user.email || '')) {
-    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); 
   }
 
   try {
     const { sourceId, type, targetLanguages = ['cs', 'en'] } = await request.json();
 
     if (!sourceId || !type) {
-      return NextResponse.json({ error: 'Missing sourceId or type' }, { status: 400 });
+        return NextResponse.json({ error: 'Missing sourceId or type' }, { status: 400 });
     }
 
     const table = type === 'personal' ? 'daily_signals' : type === 'b2b' ? 'corporate_signals' : 'onboarding_signals';
 
-    // 1. Fetch source row
-    const { data: sourceRow, error: fetchErr } = await supabase
-      .from(table)
-      .select('*')
-      .eq('id', sourceId)
-      .single();
+    const { data: sourceRow, error: fetchErr } = await supabase.from(table).select('*').eq('id', sourceId).single();
 
     if (fetchErr || !sourceRow) {
-      return NextResponse.json({ error: 'Source not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Source not found' }, { status: 404 });
     }
 
     const results = [];
 
-    // 2. Loop through target languages
     for (const lang of targetLanguages) {
       if (sourceRow.language === lang) continue;
 
-      // Extract text content for the prompt
       const textContent = {
         theme: sourceRow.theme || sourceRow.title || '',
         focus: sourceRow.focus || sourceRow.focus_text || '',
@@ -67,23 +59,17 @@ export async function POST(request: NextRequest) {
         push_text: sourceRow.push_text || ''
       };
 
-      // Ensure there's something to translate
       if (!textContent.theme && !textContent.script) continue;
 
       try {
-        // 3. Translate and inject SSML via OpenAI
         const translatedContent = await translateMindsetToSSML(textContent, lang);
 
-        // 4. Construct new row
         let newRow: any = { ...sourceRow };
-        // Delete Primary Key & standard metadata so DB generates new ones
         delete newRow.id;
         delete newRow.created_at;
         delete newRow.updated_at;
-        
-        newRow.language = lang;
 
-        // Keep audio_url (Background music) but wipe voice URLs
+        newRow.language = lang;
         newRow.spoken_audio_url = null;
         newRow.meditation_audio_url = null;
 
@@ -95,6 +81,12 @@ export async function POST(request: NextRequest) {
             newRow.meditation_text = translatedContent.meditation_text;
             newRow.push_text = translatedContent.push_text || null;
             newRow.status = 'draft';
+            
+            // Check if existing record for this date and language exists
+            const { data: existing } = await supabase.from('daily_signals').select('id').eq('date', sourceRow.date).eq('language', lang).single();
+            if (existing) {
+                newRow.id = existing.id; // UPDATE existing
+            }
         } else if (type === 'b2b') {
             newRow.theme = translatedContent.theme;
             newRow.title = translatedContent.theme;
@@ -104,6 +96,16 @@ export async function POST(request: NextRequest) {
             newRow.meditation_text = translatedContent.meditation_text;
             newRow.push_text = translatedContent.push_text || null;
             newRow.is_published = false;
+
+            // Check existing for b2b (date, language, organization_id or industry)
+            let q = supabase.from('corporate_signals').select('id').eq('date', sourceRow.date).eq('language', lang);
+            if (sourceRow.organization_id) q = q.eq('organization_id', sourceRow.organization_id);
+            else q = q.is('organization_id', null).eq('industry', sourceRow.industry || '');
+
+            const { data: existing } = await q.limit(1).maybeSingle();
+            if (existing) {
+                newRow.id = existing.id;
+            }
         } else if (type === 'onboarding') {
             newRow.theme = translatedContent.theme;
             newRow.title = translatedContent.theme;
@@ -114,30 +116,47 @@ export async function POST(request: NextRequest) {
             newRow.signal_text = translatedContent.script;
             newRow.meditation_text = translatedContent.meditation_text;
             newRow.push_text = translatedContent.push_text || null;
+            
+            const { data: existing } = await supabase.from('onboarding_signals').select('id').eq('day_number', sourceRow.day_number).eq('language', lang).single();
+            if (existing) {
+                newRow.id = existing.id;
+            }
         }
 
-        // 5. Insert new language variant into DB
-        const { data: inserted, error: insertErr } = await supabase
-          .from(table)
-          .insert(newRow)
-          .select()
-          .single();
+        // Upsert logic based on whether we populated newRow.id
+        let inserted;
+        let insertErr;
+        
+        if (newRow.id) {
+            const res = await supabase.from(table).update(newRow).eq('id', newRow.id).select().single();
+            inserted = res.data;
+            insertErr = res.error;
+        } else {
+            const res = await supabase.from(table).insert(newRow).select().single();
+            inserted = res.data;
+            insertErr = res.error;
+        }
 
         if (insertErr) {
-            console.error(`DB Insert Error for ${lang}:`, insertErr);
-            throw new Error(insertErr.message);
+            console.error(`DB Insert/Update Error for ${lang}:`, insertErr);
+            throw new Error(`DB Error [${lang}]: ${insertErr.message}`);
         }
 
         results.push({ lang, status: 'success', id: inserted.id });
-
       } catch (err: any) {
         console.error(`Translation Error for ${lang}:`, err);
         results.push({ lang, status: 'error', error: err.message });
       }
     }
 
-    return NextResponse.json({ success: true, results });
+    const errors = results.filter(r => r.status === 'error');
+    if (errors.length > 0) {
+        return NextResponse.json(
+            { error: `Translation failed for: ${errors.map(e => e.lang).join(', ')}. Details: ${errors.map(e => e.error).join(' | ')}`, results },
+        );
+    }
 
+    return NextResponse.json({ success: true, results });
   } catch (error: any) {
     console.error('Translation process error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });

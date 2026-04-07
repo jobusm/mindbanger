@@ -5,6 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { enhanceTextWithSSML } from '@/lib/content-engine/openai';
 
+export const maxDuration = 120; // 2 minutes
+
 const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
 // S3 / R2 config

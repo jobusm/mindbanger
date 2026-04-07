@@ -1,0 +1,23 @@
+
+  async function handleGenerateAudio(field: 'spoken_audio_url' | 'meditation_audio_url') {
+      if (!editingSignal?.id) {
+          toast.error('Najprv vytvorte a uloĹľte signĂˇl do databĂˇzy.');
+          return;
+      }
+      
+      // Let's actually check if the text exists locally and maybe warn them?
+      // but the route fetches from DB anyway.
+      const toastId = toast.loading('Generujem audio (ElevenLabs)...');
+      try {
+          const res = await fetch('/api/admin/generate-audio', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sourceId: editingSignal.id, type: 'personal', field })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Generovanie zlyhalo');
+          
+          setEditingSignal(prev => prev ? { ...prev, [field]: data.publicUrl } : null);
+          toast.success('Audio vytvorenĂ© a uloĹľenĂ©!', { id: toastId });
+          // refresh visual state
+          fetchSignals();

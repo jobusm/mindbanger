@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -29,6 +29,7 @@ export default function SignalsManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [generatingAudioField, setGeneratingAudioField] = useState<'spoken_audio_url' | 'meditation_audio_url' | null>(null);
   
   // Master Generator State
   const [generateDate, setGenerateDate] = useState(new Date().toISOString().split('T')[0]);
@@ -64,9 +65,9 @@ export default function SignalsManager() {
   }
 
   async function handleMasterGenerate() {
-    if (!generateDate) return toast.error("Zadajte dátum.");
+    if (!generateDate) return toast.error("Zadajte dĂˇtum.");
     
-    if (!confirm(`Vygenerovať Master Content pre ${generateDate} (EN, SK, CS)?\n\nToto prepíše existujúci obsah pre tento deň vo všetkých jazykoch.`)) return;
+    if (!confirm(`VygenerovaĹĄ Master Content pre ${generateDate} (EN, SK, CS)?\n\nToto prepĂ­Ĺˇe existujĂşci obsah pre tento deĹ vo vĹˇetkĂ˝ch jazykoch.`)) return;
 
     setIsMasterGenerating(true);
     const toastId = toast.loading("Generujem Master Content (EN, SK, CS)...");
@@ -86,7 +87,7 @@ export default function SignalsManager() {
             throw new Error(err.error || 'Generovanie zlyhalo');
         }
         
-        toast.success("Obsah vygenerovaný pre všetky jazyky!", { id: toastId });
+        toast.success("Obsah vygenerovanĂ˝ pre vĹˇetky jazyky!", { id: toastId });
         setGenerateTheme(''); // Clear theme after success
         fetchSignals(); // Refresh list to see new items
     } catch (e: any) {
@@ -98,8 +99,8 @@ export default function SignalsManager() {
   }
 
   async function handleTranslateToOtherLanguages(signal: DailySignal) {
-    if (!confirm(`Naozaj chcete preložiť tento slovenský mindset (Dátum: ${signal.date}) do ďalších jazykov (CS, EN)?`)) return;
-    const toastId = toast.loading(`Prekladám ${signal.date} do iných jazykov...`);
+    if (!confirm(`Naozaj chcete preloĹľiĹĄ tento slovenskĂ˝ mindset (DĂˇtum: ${signal.date}) do ÄŹalĹˇĂ­ch jazykov (CS, EN)?`)) return;
+    const toastId = toast.loading(`PrekladĂˇm ${signal.date} do inĂ˝ch jazykov...`);
     try {
         const res = await fetch('/api/admin/translate-mindset', {
             method: 'POST',
@@ -110,7 +111,7 @@ export default function SignalsManager() {
             const err = await res.json();
             throw new Error(err.error || 'Preklad zlyhal');
         }
-        toast.success('Preklad úspešne dokončený!', { id: toastId });
+        toast.success('Preklad ĂşspeĹˇne dokonÄŤenĂ˝!', { id: toastId });
         fetchSignals();
     } catch (error: any) {
         toast.error(error.message, { id: toastId });
@@ -118,8 +119,8 @@ export default function SignalsManager() {
   }
 
   async function handleQuickGenerate(signal: DailySignal) {
-    if (!signal.date) return toast.error('Signál nemá dátum.');
-    if (!confirm(`Vygenerovať obsah pre ${signal.date} (${signal.language})?\nPrepíše existujúci text.`)) return;
+    if (!signal.date) return toast.error('SignĂˇl nemĂˇ dĂˇtum.');
+    if (!confirm(`VygenerovaĹĄ obsah pre ${signal.date} (${signal.language})?\nPrepĂ­Ĺˇe existujĂşci text.`)) return;
 
     setGeneratingId(signal.id);
     const toastId = toast.loading('Generujem obsah... (cca 15s)');
@@ -175,7 +176,7 @@ export default function SignalsManager() {
 
         // Update UI
         setSignals(prev => prev.map(s => s.id === signal.id ? updatedSignal : s));
-        toast.success('Obsah vygenerovaný a uložený!', { id: toastId });
+        toast.success('Obsah vygenerovanĂ˝ a uloĹľenĂ˝!', { id: toastId });
 
     } catch (err: any) {
         console.error(err);
@@ -186,8 +187,8 @@ export default function SignalsManager() {
   }
 
   async function handleGenerateAI() {
-    if (!editingSignal?.date) return toast.error('Zadajte najprv dátum');
-    if (!confirm(`Vygenerovať obsah pre ${editingSignal.date} (${editingSignal.language})?\nPozor: Toto prepíše polia Téma, Fokus, Skript a Afirmácia.`)) return;
+    if (!editingSignal?.date) return toast.error('Zadajte najprv dĂˇtum');
+    if (!confirm(`VygenerovaĹĄ obsah pre ${editingSignal.date} (${editingSignal.language})?\nPozor: Toto prepĂ­Ĺˇe polia TĂ©ma, Fokus, Skript a AfirmĂˇcia.`)) return;
 
     setIsGenerating(true);
     const toastId = toast.loading('Generujem obsah s AI... (cca 15s)');
@@ -220,7 +221,7 @@ export default function SignalsManager() {
             generation_metadata: data.generation_metadata
         }) : null);
 
-        toast.success('Obsah úspešne vygenerovaný!', { id: toastId });
+        toast.success('Obsah ĂşspeĹˇne vygenerovanĂ˝!', { id: toastId });
     } catch (err: any) {
         console.error(err);
         toast.error(err.message || 'Chyba AI', { id: toastId });
@@ -253,13 +254,13 @@ export default function SignalsManager() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Naozaj vymazať?')) return;
+    if (!confirm('Naozaj vymazaĹĄ?')) return;
     const { error } = await supabase.from('daily_signals').delete().eq('id', id);
     if (!error) {
-       toast.success('Zmazané');
+       toast.success('ZmazanĂ©');
        fetchSignals();
     } else {
-       toast.error('Chyba pri mazaní');
+       toast.error('Chyba pri mazanĂ­');
     }
   }
 
@@ -308,7 +309,7 @@ export default function SignalsManager() {
           
           setIsFormOpen(false);
           fetchSignals();
-          toast.success('Vytvorené!');
+          toast.success('VytvorenĂ©!');
         } else {
           // UPDATE
           const { error } = await supabase.from('daily_signals')
@@ -319,23 +320,24 @@ export default function SignalsManager() {
 
           setIsFormOpen(false);
           fetchSignals();
-          toast.success('Uložené!');
+          toast.success('UloĹľenĂ©!');
         }
     } catch (error: any) {
         console.error('Save Error:', error);
-        toast.error('Chyba: ' + (error.message || 'Nepodarilo sa uložiť'));
+        toast.error('Chyba: ' + (error.message || 'Nepodarilo sa uloĹľiĹĄ'));
     }
   }
 
   async function handleGenerateAudio(field: 'spoken_audio_url' | 'meditation_audio_url') {
       if (!editingSignal?.id) {
-          toast.error('Najprv vytvorte a uložte signál do databázy.');
+          toast.error('Najprv vytvorte a uloĹľte signĂˇl do databĂˇzy.');
           return;
       }
       
       // Let's actually check if the text exists locally and maybe warn them?
       // but the route fetches from DB anyway.
-      const toastId = toast.loading('Generujem audio (ElevenLabs)...');
+      setGeneratingAudioField(field);
+      const toastId = toast.loading('Generujem AI Hlas (ElevenLabs)...');
       try {
           const res = await fetch('/api/admin/generate-audio', {
               method: 'POST',
@@ -351,6 +353,8 @@ export default function SignalsManager() {
           fetchSignals();
       } catch (e: any) {
           toast.error(e.message, { id: toastId });
+      } finally {
+          setGeneratingAudioField(null);
       }
   }
 
@@ -359,7 +363,7 @@ export default function SignalsManager() {
     if (!file || !editingSignal) return;
 
     if (!file.name.toLowerCase().endsWith('.mp3')) {
-      toast.error('Prosím, nahrajte iba .mp3 súbory.');
+      toast.error('ProsĂ­m, nahrajte iba .mp3 sĂşbory.');
       return;
     }
 
@@ -373,7 +377,7 @@ export default function SignalsManager() {
         body: JSON.stringify({ filename: file.name, contentType: file.type }),
       });
 
-      if (!res.ok) throw new Error('Chyba pri získavaní linku');
+      if (!res.ok) throw new Error('Chyba pri zĂ­skavanĂ­ linku');
 
       const { uploadUrl, publicUrl } = await res.json();
 
@@ -384,11 +388,11 @@ export default function SignalsManager() {
         body: file,
       });
 
-      if (!uploadRes.ok) throw new Error('Chyba pri nahrávaní súboru');
+      if (!uploadRes.ok) throw new Error('Chyba pri nahrĂˇvanĂ­ sĂşboru');
 
       // 3. Update state
       setEditingSignal(prev => prev ? ({ ...prev, [field]: publicUrl }) : null);
-      toast.success('Súbor nahratý!');
+      toast.success('SĂşbor nahratĂ˝!');
     } catch (error: any) {
       console.error(error);
       toast.error(error.message);
@@ -397,20 +401,20 @@ export default function SignalsManager() {
     }
   }
 
-  if (loading && signals.length === 0) return <div className="p-10 text-slate-400">Načítavam admin panel...</div>;
+  if (loading && signals.length === 0) return <div className="p-10 text-slate-400">NaÄŤĂ­tavam admin panel...</div>;
 
   return (
     <div className="py-6 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-2xl font-serif text-white mb-2">Editor obsahu</h2>
-          <p className="text-slate-400">Správa denných signálov a obsahu (Mindbanger Daily)</p>
+          <p className="text-slate-400">SprĂˇva dennĂ˝ch signĂˇlov a obsahu (Mindbanger Daily)</p>
         </div>
         <button
           onClick={handleNew}
           className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-3 rounded-xl font-bold flex items-center transition-colors"
         >
-          <Plus size={20} className="mr-2" /> Pridať Signál
+          <Plus size={20} className="mr-2" /> PridaĹĄ SignĂˇl
         </button>
       </div>
 
@@ -422,7 +426,7 @@ export default function SignalsManager() {
             
             <div className="flex-1 w-full relative z-10">
                 <label className="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex items-center gap-2">
-                    <Calendar size={14} className="text-indigo-500" /> Dátum (Master Origin)
+                    <Calendar size={14} className="text-indigo-500" /> DĂˇtum (Master Origin)
                 </label>
                 <input 
                     type="date" 
@@ -434,13 +438,13 @@ export default function SignalsManager() {
             
             <div className="flex-[2] w-full relative z-10">
                  <label className="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex items-center gap-2">
-                    <Sparkles size={14} className="text-amber-500" /> Téma (Hint pre AI - Voliteľné)
+                    <Sparkles size={14} className="text-amber-500" /> TĂ©ma (Hint pre AI - VoliteÄľnĂ©)
                 </label>
                 <input 
                     type="text" 
                     value={generateTheme} 
                     onChange={e => setGenerateTheme(e.target.value)} 
-                    placeholder="Napr. Odpustenie, Stratégia, Nové začiatky..."
+                    placeholder="Napr. Odpustenie, StratĂ©gia, NovĂ© zaÄŤiatky..."
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-slate-600 shadow-inner"
                 />
             </div>
@@ -451,7 +455,7 @@ export default function SignalsManager() {
                 className="relative z-10 w-full md:w-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-wait whitespace-nowrap bg-[length:200%_auto] hover:bg-right duration-500"
             >
                 {isMasterGenerating ? (
-                    <> <span className="animate-spin mr-2">⏳</span> Generujem (3x LANG)... </>
+                    <> <span className="animate-spin mr-2">âŹł</span> Generujem (3x LANG)... </>
                 ) : (
                     <> <Sparkles size={18} className="animate-pulse" /> GENERATE ALL (En/Sk/Cs) </>
                 )}
@@ -476,7 +480,7 @@ export default function SignalsManager() {
                          {s.language === 'sk' && (
                             <button
                                 onClick={() => handleTranslateToOtherLanguages(s)}
-                                title="Preniesť do ostatných jazykov"
+                                title="PreniesĹĄ do ostatnĂ˝ch jazykov"
                                 className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition-colors"
                             >
                                 <Languages size={18} />
@@ -486,7 +490,7 @@ export default function SignalsManager() {
                          <button 
                             onClick={() => handleQuickGenerate(s)}
                             disabled={!!generatingId}
-                            title="Vygenerovať s AI"
+                            title="VygenerovaĹĄ s AI"
                             className="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white rounded-lg transition-colors"
                          >
                             <Sparkles size={18} className={generatingId === s.id ? "animate-spin" : ""} />
@@ -502,9 +506,9 @@ export default function SignalsManager() {
         <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 md:p-8 mb-10 relative">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl text-white font-bold">
-                {editingSignal.id ? 'Upraviť signál' : 'Nový signál'}
+                {editingSignal.id ? 'UpraviĹĄ signĂˇl' : 'NovĂ˝ signĂˇl'}
             </h2>
-            <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-white">Zavrieť</button>
+            <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-white">ZavrieĹĄ</button>
           </div>
           
           <form onSubmit={saveSignal} className="space-y-6">
@@ -513,21 +517,21 @@ export default function SignalsManager() {
               <div>
                 <label className="block text-sm text-slate-400 mb-2">Jazyk</label>
                 <select value={editingSignal.language} onChange={e => setEditingSignal({...editingSignal, language: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required>
-                  <option value="sk">Slovenčina (sk)</option>
+                  <option value="sk">SlovenÄŤina (sk)</option>
                   <option value="en">English (en)</option>
-                  <option value="cs">Čeština (cs)</option>
+                  <option value="cs">ÄŚeĹˇtina (cs)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Dátum</label>
+                <label className="block text-sm text-slate-400 mb-2">DĂˇtum</label>
                 <input type="date" value={editingSignal.date} onChange={e => setEditingSignal({...editingSignal, date: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required />
               </div>
               <div>
                  <label className="block text-sm text-slate-400 mb-2">Status</label>
                  <select value={editingSignal.status} onChange={e => setEditingSignal({...editingSignal, status: e.target.value as any})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500">
                     <option value="draft">Draft (Koncept)</option>
-                    <option value="generated">Generated (Vygenerované)</option>
-                    <option value="published">Published (Zverejnené)</option>
+                    <option value="generated">Generated (VygenerovanĂ©)</option>
+                    <option value="published">Published (ZverejnenĂ©)</option>
                  </select>
               </div>
             </div>
@@ -536,28 +540,28 @@ export default function SignalsManager() {
             <div className="grid md:grid-cols-2 gap-6">
                  <div>
                     <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm text-slate-400">Téma (Theme)</label>
+                        <label className="block text-sm text-slate-400">TĂ©ma (Theme)</label>
                         <button 
                           type="button" 
                           onClick={handleGenerateAI} 
                           disabled={isGenerating || !editingSignal.date} 
                           className="bg-purple-900/50 hover:bg-purple-800 text-purple-300 text-xs px-3 py-1 rounded-full flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-purple-500/30"
                         >
-                           {isGenerating ? 'Generujem...' : <><Sparkles size={14} className="mr-1" /> Generovať obsah</>}
+                           {isGenerating ? 'Generujem...' : <><Sparkles size={14} className="mr-1" /> GenerovaĹĄ obsah</>}
                         </button>
                     </div>
-                    <input type="text" value={editingSignal.theme} onChange={e => setEditingSignal({...editingSignal, theme: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required placeholder="Napr. OCHRANA / STRATÉGIA" />
-                    <p className="text-xs text-slate-500 mt-1">Zadajte tému ako hint pre AI, alebo nechajte prázdne pre auto-výber.</p>
+                    <input type="text" value={editingSignal.theme} onChange={e => setEditingSignal({...editingSignal, theme: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" required placeholder="Napr. OCHRANA / STRATĂ‰GIA" />
+                    <p className="text-xs text-slate-500 mt-1">Zadajte tĂ©mu ako hint pre AI, alebo nechajte prĂˇzdne pre auto-vĂ˝ber.</p>
                  </div>
                  <div>
-                    <label className="block text-sm text-slate-400 mb-2">Fokus dňa (Short Focus)</label>
-                    <input type="text" value={editingSignal.focus || ''} onChange={e => setEditingSignal({...editingSignal, focus: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Krátka veta pre UI..." />
+                    <label className="block text-sm text-slate-400 mb-2">Fokus dĹa (Short Focus)</label>
+                    <input type="text" value={editingSignal.focus || ''} onChange={e => setEditingSignal({...editingSignal, focus: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="KrĂˇtka veta pre UI..." />
                  </div>
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Hlavný Skript (Script)</label>
-              <p className="text-xs text-slate-500 mb-2">Toto je text, ktorý bude čítať AI (TTS) a zobrazí sa v detaile.</p>
+              <label className="block text-sm text-slate-400 mb-2">HlavnĂ˝ Skript (Script)</label>
+              <p className="text-xs text-slate-500 mb-2">Toto je text, ktorĂ˝ bude ÄŤĂ­taĹĄ AI (TTS) a zobrazĂ­ sa v detaile.</p>
               <textarea 
                 value={editingSignal.script || ''} 
                 onChange={e => setEditingSignal({...editingSignal, script: e.target.value})} 
@@ -566,22 +570,22 @@ export default function SignalsManager() {
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Afirmácia</label>
+              <label className="block text-sm text-slate-400 mb-2">AfirmĂˇcia</label>
               <textarea value={editingSignal.affirmation || ''} onChange={e => setEditingSignal({...editingSignal, affirmation: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500 mb-4" rows={2} />
               
-              <label className="block text-sm text-indigo-400 mb-2 font-bold">Meditácia (Text/Script)</label>
+              <label className="block text-sm text-indigo-400 mb-2 font-bold">MeditĂˇcia (Text/Script)</label>
               <textarea 
                 value={editingSignal.meditation_text || ''} 
                 onChange={e => setEditingSignal({...editingSignal, meditation_text: e.target.value})} 
                 className="w-full bg-slate-950/50 border border-indigo-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-slate-600" 
-                placeholder="Text pre riadenú meditáciu..." 
+                placeholder="Text pre riadenĂş meditĂˇciu..." 
                 rows={4} 
               />
             </div>
 
              <div>
-                <label className="block text-sm text-slate-400 mb-2">Push Notifikácia</label>
-                <input type="text" value={editingSignal.push_text || ''} onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Text pre notifikáciu..." />
+                <label className="block text-sm text-slate-400 mb-2">Push NotifikĂˇcia</label>
+                <input type="text" value={editingSignal.push_text || ''} onChange={e => setEditingSignal({...editingSignal, push_text: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-amber-500" placeholder="Text pre notifikĂˇciu..." />
              </div>
 
             {/* Audio Files */}
@@ -590,10 +594,10 @@ export default function SignalsManager() {
                <div>
                   <div className="flex justify-between items-center mb-2">
                      <label className="text-xs text-amber-500 font-bold uppercase tracking-wider flex items-center gap-2">
-                        <FileAudio size={14}/> Text Dňa (Hovorené)
+                        <FileAudio size={14}/> Text DĹa (HovorenĂ©)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} className="bg-amber-900/50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        <Sparkles size={12}/> AI Hlas
+                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField !== null} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                        {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
                      </button>
                   </div>
                   <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
@@ -604,10 +608,10 @@ export default function SignalsManager() {
                <div>
                   <div className="flex justify-between items-center mb-2">
                      <label className="text-xs text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-2">
-                        <FileAudio size={14}/> Meditácia (Sprievodca)
+                        <FileAudio size={14}/> MeditĂˇcia (Sprievodca)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} className="bg-indigo-900/50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        <Sparkles size={12}/> AI Hlas
+                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField !== null} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                        {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
                      </button>
                   </div>
                   <input type="text" value={editingSignal.meditation_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, meditation_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
@@ -665,7 +669,7 @@ export default function SignalsManager() {
                                     type="button"
                                     onClick={() => {
                                         navigator.clipboard.writeText(editingSignal.generation_metadata.meditation);
-                                        toast.success('Skopírované do schránky');
+                                        toast.success('SkopĂ­rovanĂ© do schrĂˇnky');
                                     }}
                                     className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                                 >
@@ -693,7 +697,7 @@ export default function SignalsManager() {
 
                         <details className="group">
                             <summary className="cursor-pointer text-xs text-slate-600 hover:text-slate-400 transition-colors list-none flex items-center gap-2">
-                                <span className="group-open:rotate-90 transition-transform">▸</span> Raw JSON Payload
+                                <span className="group-open:rotate-90 transition-transform">â–¸</span> Raw JSON Payload
                             </summary>
                             <pre className="mt-2 bg-slate-950 p-3 rounded-lg overflow-x-auto text-[10px] text-green-500/80 font-mono border border-slate-800">
                                 {JSON.stringify(editingSignal.generation_metadata, null, 2)}
@@ -705,10 +709,10 @@ export default function SignalsManager() {
 
             <div className="flex justify-end space-x-4 pt-4 border-t border-slate-800">
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2 rounded-lg text-slate-400 hover:text-white transition-colors">
-                Zrušiť
+                ZruĹˇiĹĄ
               </button>
               <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-2 rounded-lg font-bold transition-colors">
-                Uložiť Signál
+                UloĹľiĹĄ SignĂˇl
               </button>
             </div>
           </form>

@@ -1,0 +1,12 @@
+               {/* 1. Spoken Word (Daily Text) */}
+               <div>
+                  <div className="flex justify-between items-center mb-2">
+                     <label className="text-xs text-amber-500 font-bold uppercase tracking-wider flex items-center gap-2">
+                        <FileAudio size={14}/> Text Dòa (Hovorené)
+                     </label>
+                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField !== null} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                        {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
+                     </button>
+                  </div>
+                  <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />

@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       try {
         const translatedContent = await translateMindset(textContent, lang);
 
-        let newRow: any = { ...sourceRow };
+        const newRow: any = { ...sourceRow };
         delete newRow.id;
         delete newRow.created_at;
         delete newRow.updated_at;

@@ -1,0 +1,6 @@
+               {/* 2. Guided Meditation */}
+               <div>
+                  <label className="block text-xs text-indigo-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                     <FileAudio size={14}/> MeditĂˇcia (Sprievodca)
+                  </label>
+                  <input type="text" value={editingSignal.meditation_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, meditation_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />

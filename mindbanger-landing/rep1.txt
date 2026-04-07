@@ -1,0 +1,7 @@
+               {/* 1. Spoken Word (Daily Text) */}
+               <div>
+                  <label className="block text-xs text-amber-500 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                     <FileAudio size={14}/> Text DĹa (HovorenĂ©)
+                  </label>
+                  <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
+                  <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />

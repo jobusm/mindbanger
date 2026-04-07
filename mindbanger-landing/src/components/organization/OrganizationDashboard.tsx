@@ -355,7 +355,7 @@ export default function OrganizationDashboard({
       const { data: { user } } = await supabase.auth.getUser();
       const inviterName = user?.user_metadata?.full_name || 'Admin';
 
-      let successIds: string[] = [];
+      const successIds: string[] = [];
 
       for (const m of pendingMembers) {
           try {

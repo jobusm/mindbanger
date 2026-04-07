@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     // 4. Update the DB
     const publicUrl = uniqueFilename;
     
-    let updatePayload: any = { [field]: publicUrl };
+    const updatePayload: any = { [field]: publicUrl };
     
     // Ensure we also populate legacy columns just in case
     if (field === 'spoken_audio_url') {

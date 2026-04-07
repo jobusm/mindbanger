@@ -146,13 +146,13 @@ export async function POST(request: NextRequest) {
         }
 
         if (insertErr) {
-            console.error(DB Insert/Update Error for :, insertErr);
-            throw new Error(DB Error []: );
+            console.error(`DB Insert/Update Error for ${lang}:`, insertErr);
+            throw new Error(`DB Error [${lang}]: ${insertErr.message}`);
         }
 
         results.push({ lang, status: 'success', id: inserted.id });
       } catch (err: any) {
-        console.error(Translation Error for :, err);
+        console.error(`Translation Error for ${lang}:`, err);
         results.push({ lang, status: 'error', error: err.message });
       }
     }
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
     const errors = results.filter(r => r.status === 'error');
     if (errors.length > 0) {
         return NextResponse.json(
-            { error: Translation failed for: . Details: , results },
+            { error: `Translation failed for: ${errors.map(e => e.lang).join(', ')}. Details: ${errors.map(e => e.error).join(' | ')}`, results },
             { status: 500 }
         );
     }

@@ -83,9 +83,12 @@ export async function POST(request: NextRequest) {
 
         if (type === 'personal') {
             newRow.theme = translatedContent.theme;
+            newRow.title = translatedContent.theme; // legacy field
             newRow.focus = translatedContent.focus;
+            newRow.focus_text = translatedContent.focus; // legacy field
             newRow.affirmation = translatedContent.affirmation;
             newRow.script = translatedContent.script;
+            newRow.signal_text = translatedContent.script; // legacy field
             newRow.meditation_text = translatedContent.meditation_text;
             newRow.push_text = translatedContent.push_text || null;
             newRow.status = 'draft';

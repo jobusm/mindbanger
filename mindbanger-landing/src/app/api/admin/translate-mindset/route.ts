@@ -138,22 +138,21 @@ export async function POST(request: NextRequest) {
         if (newRow.id) {
             const res = await supabaseAdmin.from(table).update(newRow).eq('id', newRow.id).select().single();
             inserted = res.data;
-            insertErr = res.error;
-        } else {
-            const res = await supabaseAdmin.from(table).insert(newRow).select().single();
-            inserted = res.data;
-            insertErr = res.error;
-        }
-
-        if (insertErr) {
-            console.error(\DB Insert/Update Error for \:\, insertErr);
-            throw new Error(\DB Error [\]: \\);
+            console.error(`DB Insert/Update Error for ${lang}:`, insertErr);
+            throw new Error(`DB Error [${lang}]: ${insertErr.message}`);
         }
 
         results.push({ lang, status: 'success', id: inserted.id });
       } catch (err: any) {
-        console.error(\Translation Error for \:\, err);
+        console.error(`Translation Error for ${lang}:`, err);
         results.push({ lang, status: 'error', error: err.message });
+      }
+    }
+
+    const errors = results.filter(r => r.status === 'error');
+    if (errors.length > 0) {
+        return NextResponse.json(
+            { error: `Translation failed for: ${errors.map(e => e.lang).join(', ')}. Details: ${errors.map(e => e.error).join(' | ')}`, results },, status: 'error', error: err.message });
       }
     }
 

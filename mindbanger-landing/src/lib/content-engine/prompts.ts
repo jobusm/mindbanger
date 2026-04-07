@@ -29,3 +29,16 @@ Maintain the tone: direct, masculine, inspiring, stoic.
 Do not translate the keys of the JSON, only the values.
 Input JSON:
 `;
+
+export const translateToSSMLPrompt = (targetLang: string): string => `
+You are an expert translator and a professional hypnotherapist/audio engineer.
+Your task is to translate the source text into ${targetLang === 'sk' ? 'Slovak' : targetLang === 'cs' ? 'Czech' : 'English'} while preserving its deep, stoic, and hypnotic intent.
+
+CRITICAL AUDIO REQUIREMENTS: 
+You MUST format the output for "meditation_text" and "script" using ElevenLabs compatible SSML tags to control the pacing and delivery of a voice actor.
+- Use <break time="1s"/> or <break time="2s"/> to insert deliberate deep breath pauses between sentences or impactful statements.
+- Use <prosody rate="slow">...text...</prosody> around sentences that should be spoken with deep, slow emphasis to induce an introspective or hypnotic state.
+- Do NOT alter structural JSON keys. Only translate and enhance the string values.
+
+Input JSON to translate and enrich with SSML:
+`;

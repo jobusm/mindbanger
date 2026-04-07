@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Building2, Plus, Users, Search, Play, FileAudio, Check, X, Loader2, Save, Trash, Edit, Calendar } from 'lucide-react';
+import { Building2, Plus, Users, Search, Play, FileAudio, Check, X, Loader2, Save, Trash, Edit, Edit2, Languages, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type Organization = {
@@ -147,6 +147,26 @@ export default function B2BManager() {
        // The 'count' will be returned inside nested array
        setSignals(data as any as CorporateSignal[] || []);
     }
+  };
+
+  const handleTranslateToOtherLanguages = async (signal: CorporateSignal) => {
+      if (!confirm(`Naozaj chcete preložiť tento slovenský B2B mindset (Dátum: ${signal.date}) do ďalších jazykov (CS, EN)?`)) return;
+      const toastId = toast.loading(`Prekladám ${signal.date} do iných jazykov...`);
+      try {
+          const res = await fetch('/api/admin/translate-mindset', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sourceId: signal.id, type: 'b2b', targetLanguages: ['cs', 'en'] })
+          });
+          if (!res.ok) {
+              const err = await res.json();
+              throw new Error(err.error || 'Preklad zlyhal');
+          }
+          toast.success('Preklad úspešne dokončený!', { id: toastId });
+          fetchSignals();
+      } catch (error: any) {
+          toast.error(error.message, { id: toastId });
+      }
   };
 
   const deleteSignal = async (id: string) => {
@@ -403,7 +423,16 @@ export default function B2BManager() {
                                         {signal.user_progress_corporate?.[0]?.count || 0}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button 
+                                        {signal.language === 'sk' && (
+                                            <button
+                                                onClick={() => handleTranslateToOtherLanguages(signal)}
+                                                className="p-2 hover:bg-blue-500/10 text-slate-500 hover:text-blue-500 rounded transition-colors mr-2"
+                                                title="Preniesť do ostatných jazykov"
+                                            >
+                                                <Languages size={16} />
+                                            </button>
+                                        )}
+                                        <button
                                             onClick={() => deleteSignal(signal.id)}
                                             className="p-2 hover:bg-red-500/10 text-slate-500 hover:text-red-500 rounded transition-colors"
                                             title="Delete"

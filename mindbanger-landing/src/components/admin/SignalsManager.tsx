@@ -97,6 +97,26 @@ export default function SignalsManager() {
     }
   }
 
+  async function handleTranslateToOtherLanguages(signal: DailySignal) {
+    if (!confirm(`Naozaj chcete preložiť tento slovenský mindset (Dátum: ${signal.date}) do ďalších jazykov (CS, EN)?`)) return;
+    const toastId = toast.loading(`Prekladám ${signal.date} do iných jazykov...`);
+    try {
+        const res = await fetch('/api/admin/translate-mindset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sourceId: signal.id, type: 'personal', targetLanguages: ['cs', 'en'] })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Preklad zlyhal');
+        }
+        toast.success('Preklad úspešne dokončený!', { id: toastId });
+        fetchSignals();
+    } catch (error: any) {
+        toast.error(error.message, { id: toastId });
+    }
+  }
+
   async function handleQuickGenerate(signal: DailySignal) {
     if (!signal.date) return toast.error('Signál nemá dátum.');
     if (!confirm(`Vygenerovať obsah pre ${signal.date} (${signal.language})?\nPrepíše existujúci text.`)) return;
@@ -426,6 +446,15 @@ export default function SignalsManager() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                         {s.language === 'sk' && (
+                            <button
+                                onClick={() => handleTranslateToOtherLanguages(s)}
+                                title="Preniesť do ostatných jazykov"
+                                className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition-colors"
+                            >
+                                <Languages size={18} />
+                            </button>
+                         )}
                          {/* MOVED GENERATE BUTTON HERE */}
                          <button 
                             onClick={() => handleQuickGenerate(s)}

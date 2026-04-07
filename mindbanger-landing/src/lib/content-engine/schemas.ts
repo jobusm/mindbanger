@@ -59,8 +59,8 @@ export const MindsetTranslationSchema = z.object({
   focus: z.string().describe("Translated 2-3 sentence explanation of the focus or daily text."),
   affirmation: z.string().describe("Translated powerful affirmation."),
   script: z.string().describe("Translated spoken word script expanding on the theme. Do NOT add SSML tags or generate new content, just translate."),
-  meditation_text: z.string().optional().describe("Translated guided meditation script. Leave exactly empty if the source is empty!"),
-  push_text: z.string().optional().describe("Translated short prompt or push notification text. Leave exactly empty if the source is empty!")   
+  meditation_text: z.string().nullable().describe("Translated guided meditation script. Send null if the source is empty!"),
+  push_text: z.string().nullable().describe("Translated short prompt or push notification text. Send null if the source is empty!")   
 });
 
 export type MindsetTranslation = z.infer<typeof MindsetTranslationSchema>;

@@ -88,7 +88,7 @@ if ('theme' in sourceRow) newRow.theme = translatedContent.theme;
         if ('affirmation' in sourceRow) newRow.affirmation = translatedContent.affirmation;
         if ('script' in sourceRow) newRow.script = translatedContent.script;
         if ('signal_text' in sourceRow) newRow.signal_text = translatedContent.script; // legacy field
-        if ('meditation_text' in sourceRow) newRow.meditation_text = translatedContent.meditation_text;
+        if ('meditation_text' in sourceRow) newRow.meditation_text = translatedContent.meditation_text || '';
         if ('push_text' in sourceRow) newRow.push_text = translatedContent.push_text || null;
 
         if (type === 'personal') {

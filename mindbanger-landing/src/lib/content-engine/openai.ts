@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { buildDailyContext, formatContextForPrompt } from './context';
-import { generateThemePrompt, translatePrompt, translateMindsetPrompt } from './prompts';
+import { generateThemePrompt, translatePrompt, translateMindsetPrompt, enhanceTextWithSSMLPrompt } from './prompts';
 import { MASTER_SYSTEM_PROMPT } from './master-prompt';
 import { DailyContentSchema, DailyContent, MasterContentSchema, MasterContent, MindsetTranslationSchema, MindsetTranslation } from './schemas';
 
@@ -146,6 +146,31 @@ export async function translateMindset(content: Record<string, any>, targetLang:
     if (!translated) throw new Error('No translation generated');
     return JSON.parse(translated) as MindsetTranslation;
   } catch (error) {
+    throw error;
+  }
+}
+
+export async function enhanceTextWithSSML(text: string): Promise<string> {
+  const prompt = enhanceTextWithSSMLPrompt + "\n\n" + text;
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.2, // precise
+    });
+    
+    let enhanced = completion.choices[0].message.content || '';
+    
+    // Cleanup if model prepended <speak> by mistake
+    if (enhanced.startsWith('<speak>')) {
+      enhanced = enhanced.replace(/^<speak>/, '').replace(/<\/speak>$/, '');
+    }
+    
+    return enhanced.trim();
+  } catch (error) {
+    console.error('Error enhancing SSML:', error);
     throw error;
   }
 }

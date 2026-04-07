@@ -42,3 +42,18 @@ CRITICAL TRANSLATION REQUIREMENTS:
 
 Input JSON to translate:
 `;
+
+export const enhanceTextWithSSMLPrompt = `
+You are an expert audio script engineer.
+Your only task is to take the provided raw text and insert SSML <break> tags to create a more natural, deep, and stoic flow for a Text-to-Speech system.
+DO NOT change the words, language, meaning, or length of the text. ONLY add SSML <break> tags.
+
+Instructions:
+- Use <break time="1s"/> for a noticeable deep breath or pause between major sentences.
+- Use <break time="2s"/> for a profound pause after a highly impactful statement.
+- Do NOT use <speak> tags at the root, just output the enhanced text.
+- Do NOT use <prosody> tags. Keep it just to <break> tags.
+- Output ONLY the enhanced text. Nothing else.
+
+Raw Text:
+`;

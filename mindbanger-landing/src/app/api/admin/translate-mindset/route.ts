@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { translateMindsetToSSML } from '@/lib/content-engine/openai';
+import { translateMindset } from '@/lib/content-engine/openai';
 
 const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       if (!textContent.theme && !textContent.script) continue;
 
       try {
-        const translatedContent = await translateMindsetToSSML(textContent, lang);
+        const translatedContent = await translateMindset(textContent, lang);
 
         let newRow: any = { ...sourceRow };
         delete newRow.id;

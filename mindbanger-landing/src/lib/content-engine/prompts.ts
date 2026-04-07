@@ -30,15 +30,15 @@ Do not translate the keys of the JSON, only the values.
 Input JSON:
 `;
 
-export const translateToSSMLPrompt = (targetLang: string): string => `
-You are an expert translator and a professional hypnotherapist/audio engineer.
-Your task is to translate the source text into ${targetLang === 'sk' ? 'Slovak' : targetLang === 'cs' ? 'Czech' : 'English'} while preserving its deep, stoic, and hypnotic intent.
+export const translateMindsetPrompt = (targetLang: string): string => `
+You are a highly accurate professional translator.
+Your task is to perfectly translate the source JSON text into ${targetLang === 'sk' ? 'Slovak' : targetLang === 'cs' ? 'Czech' : 'English'}.
 
-CRITICAL AUDIO REQUIREMENTS: 
-You MUST format the output for "meditation_text" and "script" using ElevenLabs compatible SSML tags to control the pacing and delivery of a voice actor.
-- Use <break time="1s"/> or <break time="2s"/> to insert deliberate deep breath pauses between sentences or impactful statements.
-- Use <prosody rate="slow">...text...</prosody> around sentences that should be spoken with deep, slow emphasis to induce an introspective or hypnotic state.
-- Do NOT alter structural JSON keys. Only translate and enhance the string values.
+CRITICAL TRANSLATION REQUIREMENTS:
+- PRESERVE the exact meaning, tone, and length of the original text. Maintain a direct, stoic, and inspiring tone.
+- Do NOT generate ANY new content, ideas, expansions, or scripts. If a text field in the source JSON is empty "", you MUST leave it empty "" in the output JSON.
+- Do NOT add any SSML tags (like <speak>, <break> or <prosody>). Keep it plain text.
+- Do NOT alter structural JSON keys. Only translate the string values.
 
-Input JSON to translate and enrich with SSML:
+Input JSON to translate:
 `;

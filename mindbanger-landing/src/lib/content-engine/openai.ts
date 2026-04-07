@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { buildDailyContext, formatContextForPrompt } from './context';
-import { generateThemePrompt, translatePrompt, translateToSSMLPrompt } from './prompts';
+import { generateThemePrompt, translatePrompt, translateMindsetPrompt } from './prompts';
 import { MASTER_SYSTEM_PROMPT } from './master-prompt';
 import { DailyContentSchema, DailyContent, MasterContentSchema, MasterContent, MindsetTranslationSchema, MindsetTranslation } from './schemas';
 
@@ -130,20 +130,20 @@ export async function translateDailyContent(
   }
 }
 
-export async function translateMindsetToSSML(content: Record<string, any>, targetLang: string): Promise<MindsetTranslation> {
-  const prompt = translateToSSMLPrompt(targetLang) + JSON.stringify(content, null, 2);
+export async function translateMindset(content: Record<string, any>, targetLang: string): Promise<MindsetTranslation> {
+  const prompt = translateMindsetPrompt(targetLang) + JSON.stringify(content, null, 2);
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
-        { role: 'system', content: 'You are an expert translator and audio script engineer.' },
+        { role: 'system', content: 'You are an incredibly accurate and succinct professional translator.' },
         { role: 'user', content: prompt }
       ],
       response_format: zodResponseFormat(MindsetTranslationSchema, 'mindset_translation'),
-      temperature: 0.4,
+      temperature: 0.2, // lower temperature for translation fidelity
     });
     const translated = completion.choices[0].message.content;
-    if (!translated) throw new Error('No SSML translation generated');
+    if (!translated) throw new Error('No translation generated');
     return JSON.parse(translated) as MindsetTranslation;
   } catch (error) {
     throw error;

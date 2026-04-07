@@ -55,12 +55,12 @@ export const DailyContentSchema = z.object({
 export type DailyContent = z.infer<typeof DailyContentSchema>;
 
 export const MindsetTranslationSchema = z.object({
-  theme: z.string().describe("Short punchy theme/title"),
-  focus: z.string().describe("A 2-3 sentence explanation of the focus or daily text."),
-  affirmation: z.string().describe("A powerful affirmation."),
-  script: z.string().describe("Spoken word script expanding on the theme. Include SSML tags like <break time='1s'/> and <prosody rate='slow'> where pausing and slowing down is impactful."),
-  meditation_text: z.string().describe("Guided meditation script formatted with SSML tags like <break time='2s'/> and <prosody rate='x-slow'> to ensure a deeply slow, hypnotic effect for ElevenLabs. MUST include SSML."),
-  push_text: z.string().describe("A short prompt or push notification text.")   
+  theme: z.string().describe("Translated short punchy theme/title"),
+  focus: z.string().describe("Translated 2-3 sentence explanation of the focus or daily text."),
+  affirmation: z.string().describe("Translated powerful affirmation."),
+  script: z.string().describe("Translated spoken word script expanding on the theme. Do NOT add SSML tags or generate new content, just translate."),
+  meditation_text: z.string().optional().describe("Translated guided meditation script. Leave exactly empty if the source is empty!"),
+  push_text: z.string().optional().describe("Translated short prompt or push notification text. Leave exactly empty if the source is empty!")   
 });
 
 export type MindsetTranslation = z.infer<typeof MindsetTranslationSchema>;

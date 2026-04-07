@@ -81,16 +81,17 @@ export async function POST(request: NextRequest) {
         newRow.spoken_audio_url = null;
         newRow.meditation_audio_url = null;
 
+if ('theme' in sourceRow) newRow.theme = translatedContent.theme;
+        if ('title' in sourceRow) newRow.title = translatedContent.theme; // legacy field
+        if ('focus' in sourceRow) newRow.focus = translatedContent.focus;
+        if ('focus_text' in sourceRow) newRow.focus_text = translatedContent.focus; // legacy field
+        if ('affirmation' in sourceRow) newRow.affirmation = translatedContent.affirmation;
+        if ('script' in sourceRow) newRow.script = translatedContent.script;
+        if ('signal_text' in sourceRow) newRow.signal_text = translatedContent.script; // legacy field
+        if ('meditation_text' in sourceRow) newRow.meditation_text = translatedContent.meditation_text;
+        if ('push_text' in sourceRow) newRow.push_text = translatedContent.push_text || null;
+
         if (type === 'personal') {
-            newRow.theme = translatedContent.theme;
-            newRow.title = translatedContent.theme; // legacy field
-            newRow.focus = translatedContent.focus;
-            newRow.focus_text = translatedContent.focus; // legacy field
-            newRow.affirmation = translatedContent.affirmation;
-            newRow.script = translatedContent.script;
-            newRow.signal_text = translatedContent.script; // legacy field
-            newRow.meditation_text = translatedContent.meditation_text;
-            newRow.push_text = translatedContent.push_text || null;
             newRow.status = 'draft';
 
             // Check if existing record for this date and language exists
@@ -99,13 +100,6 @@ export async function POST(request: NextRequest) {
                 newRow.id = existing.id; // UPDATE existing
             }
         } else if (type === 'b2b') {
-            newRow.theme = translatedContent.theme;
-            newRow.title = translatedContent.theme;
-            newRow.focus_text = translatedContent.focus;
-            newRow.affirmation = translatedContent.affirmation;
-            newRow.signal_text = translatedContent.script;
-            newRow.meditation_text = translatedContent.meditation_text;
-            newRow.push_text = translatedContent.push_text || null;
             newRow.is_published = false;
 
             // Check existing for b2b (date, language, organization_id or industry)
@@ -118,16 +112,6 @@ export async function POST(request: NextRequest) {
                 newRow.id = existing.id;
             }
         } else if (type === 'onboarding') {
-            newRow.theme = translatedContent.theme;
-            newRow.title = translatedContent.theme;
-            newRow.focus = translatedContent.focus;
-            newRow.focus_text = translatedContent.focus;
-            newRow.affirmation = translatedContent.affirmation;
-            newRow.script = translatedContent.script;
-            newRow.signal_text = translatedContent.script;
-            newRow.meditation_text = translatedContent.meditation_text;
-            newRow.push_text = translatedContent.push_text || null;
-
             const { data: existing } = await supabaseAdmin.from('onboarding_signals').select('id').eq('day_number', sourceRow.day_number).eq('language', lang).single();
             if (existing) {
                 newRow.id = existing.id;

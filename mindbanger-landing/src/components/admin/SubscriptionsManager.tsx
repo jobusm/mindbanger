@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Calendar, User, Globe } from "lucide-react";
+import { Calendar, User, Globe, Search } from "lucide-react";
 
 type Subscription = {
   id: string;
@@ -25,18 +25,32 @@ type JoinedSubscription = Subscription & {
 };
 
 export default function SubscriptionsManager() {
-  const [subscriptions, setSubscriptions] = useState<JoinedSubscription[]>([]);
-  const [loading, setLoading] = useState(true);
+    const [subscriptions, setSubscriptions] = useState<JoinedSubscription[]>([]);
+    const [filteredSubscriptions, setFilteredSubscriptions] = useState<JoinedSubscription[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(true);
 
-  // Calculate total revenue
-  const revenueByCurrency = subscriptions.reduce((acc, sub) => {
-    if (sub.amount_total && sub.currency && (sub.status === 'active' || sub.status === 'trialing' || sub.status === 'completed' || sub.status === 'succeeded')) {
-      const curr = sub.currency.toUpperCase();
-      acc[curr] = (acc[curr] || 0) + (sub.amount_total / 100);
-    }
-    return acc;
-  }, {} as Record<string, number>);
+    // Calculate total revenue
+    const revenueByCurrency = subscriptions.reduce((acc, sub) => {
+      if (sub.amount_total && sub.currency && (sub.status === 'active' || sub.status === 'trialing' || sub.status === 'completed' || sub.status === 'succeeded')) {
+        const curr = sub.currency.toUpperCase();
+        acc[curr] = (acc[curr] || 0) + (sub.amount_total / 100);
+      }
+      return acc;
+    }, {} as Record<string, number>);
 
+    useEffect(() => {
+      if (!searchTerm) {
+        setFilteredSubscriptions(subscriptions);
+        return;
+      }
+      const lower = searchTerm.toLowerCase();
+      const filtered = subscriptions.filter(sub => {
+        return (sub.profiles?.full_name?.toLowerCase().includes(lower)) ||
+               (sub.display_email?.toLowerCase().includes(lower));
+      });
+      setFilteredSubscriptions(filtered);
+    }, [searchTerm, subscriptions]);
   async function fetchSubscriptions() {
     setLoading(true);
     
@@ -104,6 +118,16 @@ export default function SubscriptionsManager() {
         <div>
           <h2 className="text-2xl font-serif text-white mb-2">Správa predplatného</h2>
           <p className="text-slate-400">Zoznam aktuálnych odberateľov</p>
+          <div className="mt-4 relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <input
+              type="text"
+              placeholder="Hľadať odberateľa podľa mena alebo emailu..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-white/5 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/20"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
         <div className="flex gap-4">
           <div className="bg-slate-900/50 border border-white/5 rounded-xl p-4 flex flex-col items-center justify-center">
@@ -136,7 +160,7 @@ export default function SubscriptionsManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {subscriptions.map(sub => (
+              {filteredSubscriptions.map(sub => (
                 <tr key={sub.id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="p-4">
                     {sub.status === 'active' || sub.status === 'trialing' ? (
@@ -177,7 +201,7 @@ export default function SubscriptionsManager() {
                   </td>
                 </tr>
               ))}
-              {subscriptions.length === 0 && (
+              {filteredSubscriptions.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-slate-500">
                     Nenašli sa žiadne odbery.

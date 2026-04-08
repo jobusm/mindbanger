@@ -113,15 +113,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         text: `<speak>${ssmlText}</speak>`,
-        model_id: "eleven_multilingual_v3"
-      })
-    });
-
-    if (!elevenRes.ok) {
-        const errText = await elevenRes.text();
-        console.error('ElevenLabs Error:', elevenRes.status, errText);
-        return NextResponse.json({ error: `ElevenLabs API Error: ${elevenRes.status} ${errText}` }, { status: 500 });
-    }
+          model_id: "eleven_multilingual_v2"
 
     const arrayBuffer = await elevenRes.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

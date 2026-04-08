@@ -113,7 +113,9 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         text: `<speak>${ssmlText}</speak>`,
-          model_id: "eleven_multilingual_v2"
+        model_id: "eleven_multilingual_v2"
+      })
+    });
 
     const arrayBuffer = await elevenRes.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

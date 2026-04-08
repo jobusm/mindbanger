@@ -30,7 +30,7 @@ export default function SignalsManager() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [generatingAudioField, setGeneratingAudioField] = useState<'spoken_audio_url' | 'meditation_audio_url' | null>(null);
-
+  
   // Master Generator State
   const [generateDate, setGenerateDate] = useState(new Date().toISOString().split('T')[0]);
   const [generateTheme, setGenerateTheme] = useState('');
@@ -334,6 +334,8 @@ export default function SignalsManager() {
           return;
       }
       
+      // Let's actually check if the text exists locally and maybe warn them?
+      // but the route fetches from DB anyway.
       setGeneratingAudioField(field);
       const toastId = toast.loading('Generujem AI Hlas (ElevenLabs)...');
       try {
@@ -347,6 +349,7 @@ export default function SignalsManager() {
           
           setEditingSignal(prev => prev ? { ...prev, [field]: data.publicUrl } : null);
           toast.success('Audio vytvorené a uložené!', { id: toastId });
+          // refresh visual state
           fetchSignals();
       } catch (e: any) {
           toast.error(e.message, { id: toastId });
@@ -589,18 +592,28 @@ export default function SignalsManager() {
             <div className="grid md:grid-cols-3 gap-4 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
                {/* 1. Spoken Word (Daily Text) */}
                <div>
-                  <label className="block text-xs text-amber-500 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
-                     <FileAudio size={14}/> Text Dňa (Hovorené)
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                     <label className="text-xs text-amber-500 font-bold uppercase tracking-wider flex items-center gap-2">
+                        <FileAudio size={14}/> Text Dňa (Hovorené)
+                     </label>
+                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField !== null} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                        {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
+                     </button>
+                  </div>
                   <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
                   <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
                </div>
 
                {/* 2. Guided Meditation */}
                <div>
-                  <label className="block text-xs text-indigo-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
-                     <FileAudio size={14}/> Meditácia (Sprievodca)
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                     <label className="text-xs text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                        <FileAudio size={14}/> Meditácia (Sprievodca)
+                     </label>
+                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField !== null} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                        {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
+                     </button>
+                  </div>
                   <input type="text" value={editingSignal.meditation_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, meditation_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
                   <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'meditation_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
                </div>

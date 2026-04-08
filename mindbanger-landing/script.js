@@ -1,56 +1,39 @@
-﻿const fs = require('fs');
-let code = fs.readFileSync('src/components/admin/SignalsManager.tsx', 'utf8');
+const fs = require('fs');
+let c = fs.readFileSync('src/components/admin/IndividualRecordingsManager.tsx', 'utf8');
 
-// Match label and following button EXACTLY using wildcards to cross newlines and existing dom nodes
-const r1 = /(<label[^>]*>(?:[\s\S]*?)Text D[^a-z]+a \(Hovoren.\)(?:[\s\S]*?)<\/label>)\s*<button[\s\S]*?<\/button>/i;
-const m1 = code.match(r1);
-if (m1) {
-    const wrappedStr = \<div className="flex justify-between items-center mb-2">
-                     \
-                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField !== null} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
-                     </button>
-                  </div>\;
-    code = code.replace(r1, wrappedStr);
-    console.log('Replaced r1');
-} else { console.log('Failed to match r1'); }
+const p = c.split('const formData = new FormData();');
+const p2 = p[1].split('body: formData');
+const p3 = p2[1].split('});');
 
-const r2 = /(<label[^>]*>(?:[\s\S]*?)Medit[^a-z]+cia \(Sprievodca\)(?:[\s\S]*?)<\/label>)\s*<button[\s\S]*?<\/button>/i;
-const m2 = code.match(r2);
-if(m2) {
-    const wrappedStr2 = \<div className="flex justify-between items-center mb-2">
-                     \
-                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField !== null} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
-                     </button>
-                  </div>\;
-    code = code.replace(r2, wrappedStr2);
-    console.log('Replaced r2');
-} else { console.log('Failed to match r2'); }
+const r = "            const s3Req = await fetch('/api/upload', { " +
+"                method: 'POST', " +
+"                headers: { 'Content-Type': 'application/json' }, " +
+"                body: JSON.stringify({ filename: file.name, contentType: file.type || 'audio/mpeg' }) " +
+"            }); " +
+"            const s3Data = await s3Req.json(); " +
+"            if (!s3Req.ok) throw new Error(s3Data.error || 'Nepodarilo sa vytvorit upload URL'); " +
+"            const { uploadUrl, publicUrl } = s3Data; " +
+" " +
+"            toast.loading('Nahravam subor do R2...', { id: toastId }); " +
+"            const uploadReq = await fetch(uploadUrl, { " +
+"                method: 'PUT', " +
+"                headers: { 'Content-Type': file.type || 'audio/mpeg' }, " +
+"                body: file " +
+"            }); " +
+"            if (!uploadReq.ok) throw new Error('Zlyhal upload na R2'); " +
+" " +
+"            toast.loading('Pripravujem notifikacie...', { id: toastId }); " +
+"            const res = await fetch('/api/admin/upload-individual', { " +
+"                method: 'POST', " +
+"                headers: { 'Content-Type': 'application/json' }, " +
+"                body: JSON.stringify({ " +
+"                    publicUrl, " +
+"                    title, " +
+"                    userId: selectedUser.id, " +
+"                    userEmail: selectedUser.email, " +
+"                    userName: selectedUser.full_name || 'Odberatel' " +
+"                }) " +
+"            });";
 
-// Fix 1: State
-if (!code.includes('const [generatingAudioField, setGeneratingAudioField]')) {
-  code = code.replace(
-    'const [generatingId, setGeneratingId] = useState<string | null>(null);',
-    'const [generatingId, setGeneratingId] = useState<string | null>(null);\r\n  const [generatingAudioField, setGeneratingAudioField] = useState<\'spoken_audio_url\' | \'meditation_audio_url\' | null>(null);'
-  );
-}
-
-// Fix 2: Logic
-if (!code.includes('setGeneratingAudioField(field)')) {
-  code = code.replace(
-    /const toastId = toast\.loading\([^\)]+\);/,
-    'setGeneratingAudioField(field);\r\n      const toastId = toast.loading(\'Generujem AI Hlas...\');'
-  );
-  code = code.replace(
-    /catch \(e: any\) \{\r?\n\s*toast\.error\(e\.message, \{ id: toastId \}\);\r?\n\s*\}/,
-    'catch (e: any) {\r\n          toast.error(e.message, { id: toastId });\r\n      } finally {\r\n          setGeneratingAudioField(null);\r\n      }'
-  );
-}
-
-if (!code.includes('Sparkles')) {
-  code = code.replace('{ FileAudio, Headphones', '{ FileAudio, Headphones, Sparkles');
-}
-
-fs.writeFileSync('src/components/admin/SignalsManager.tsx', code, 'utf8');
-
+c = p[0] + r + p3.slice(1).join('});');
+fs.writeFileSync('src/components/admin/IndividualRecordingsManager.tsx', c);

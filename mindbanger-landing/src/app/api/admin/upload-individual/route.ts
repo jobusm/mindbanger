@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/email';
 import webpush from 'web-push';
 
 const supabaseAdmin = createClient(
@@ -14,7 +14,7 @@ const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
 
 if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
     webpush.setVapidDetails(
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         const { publicUrl, title, userId, userEmail, userName } = body;
 
         if (!publicUrl || !title || !userId) {
-            return NextResponse.json({ error: 'Chýbajú parametre formulára' }, { status: 400 });
+            return NextResponse.json({ error: 'ChĂ˝bajĂş parametre formulĂˇra' }, { status: 400 });
         }
 
         const uniqueFilename = publicUrl;
@@ -55,16 +55,16 @@ export async function POST(request: Request) {
         if (dbErr) throw dbErr;
 
         // Send Email
-        if (userEmail && resend) {
+        if (userEmail) {
             try {
-                await resend.emails.send({
-                    from: 'Mindbanger <noreply@mindbanger.com>',
+                await sendEmail({
+                    from: "Mindbanger <noreply@mindbanger.com>",
                     to: userEmail,
-                    subject: 'Máte novú individuálnu nahrávku!',
+                    subject: "Máte novú individuálnu nahrávku!",
                     html: `
                         <div style="font-family: sans-serif; padding: 20px; color: #333;">
                             <h2>Získali ste novú nahrávku!</h2>
-                            <p>Ahoj ${userName || ''},</p>
+                            <p>Ahoj ${userName || ""},</p>
                             <p>Do vášho profilu v aplikácii Mindbanger bola pridaná nová súkromná nahrávka s názvom: <strong>${title}</strong>.</p>
                             <p><a href="https://mindbanger.com/app/my-audio" style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">Prehrať nahrávku v appke</a></p>
                             <p style="margin-top: 30px; font-size: 12px; color: #666;">Táto nahrávka je dostupná len pre váš profil.</p>
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
                     `
                 });
             } catch(e) {
-                console.error("Resend error:", e);
+                console.error("Email send error:", e);
             }
         }
 
@@ -82,8 +82,8 @@ export async function POST(request: Request) {
             
             if (subs && subs.length > 0) {
                 const payload = JSON.stringify({
-                    title: 'Nová osobná nahrávka!',
-                    body: `Práve pre vás bola nahratá nová nahrávka: ${title}`,
+                    title: 'NovĂˇ osobnĂˇ nahrĂˇvka!',
+                    body: `PrĂˇve pre vĂˇs bola nahratĂˇ novĂˇ nahrĂˇvka: ${title}`,
                     url: '/app/my-audio'
                 });
 
@@ -103,6 +103,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, recording: insertedRec });
     } catch (e: any) {
         console.error(e);
-        return NextResponse.json({ error: e.message || 'Nastala neočakávaná chyba.' }, { status: 500 });
+        return NextResponse.json({ error: e.message || 'Nastala neoÄŤakĂˇvanĂˇ chyba.' }, { status: 500 });
     }
 }

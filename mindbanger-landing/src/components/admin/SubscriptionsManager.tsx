@@ -53,55 +53,15 @@ export default function SubscriptionsManager() {
     }, [searchTerm, subscriptions]);
   async function fetchSubscriptions() {
     setLoading(true);
-    
-    // 1. Fetch raw subscriptions
-    const { data: subs, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .order('created_at', { ascending: false });
 
-    if (error) {
-       console.error("Error fetching subscriptions:", error);
-       setLoading(false);
-       return;
-    }
+    try {
+      const res = await fetch("/api/admin/subscriptions");
+      if (!res.ok) throw new Error("Chyba pri načítavaní odberov");
 
-    if (subs) {
-       // 2. Extract user IDs
-       const userIds = subs.map((s: any) => s.user_id).filter(Boolean);
-       
-       // 3. Manually fetch profiles
-       let profiles: any[] = [];
-       if (userIds.length > 0) {
-           const { data } = await supabase
-              .from('profiles')
-              .select('id, full_name') // Removed non-existent email column
-              .in('id', userIds);
-           if (data) profiles = data;
-       }
-
-       // Create a map for quick profile lookup
-       const profileMap = new Map();
-       profiles.forEach((p: any) => {
-          profileMap.set(p.id, p);
-       });
-
-       // 4. Merge data
-       // Prepare joined objects
-       const joinedList: any[] = [];
-       
-       for (const s of subs) {
-          const profile = profileMap.get(s.user_id);
-          
-          joinedList.push({
-             ...s,
-             profiles: profile || null,
-             // Use customer_email from subscription table as primary source
-             display_email: s.customer_email || "N/A"
-          });
-       }
-
-       setSubscriptions(joinedList);
+      const joinedList = await res.json();
+      setSubscriptions(joinedList || []);
+    } catch (err) {
+      console.error(err);
     }
     setLoading(false);
   }

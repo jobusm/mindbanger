@@ -52,65 +52,13 @@ export default function IndividualRecordingsManager() {
         setSearching(true);
         
         try {
-            // 1. Hľadáme v profiloch podľa full_name
-            const { data: profs } = await supabase
-                .from('profiles')
-                .select('id, full_name')
-                .ilike('full_name', `%${searchTerm}%`)
-                .limit(10);
-            
-            // 2. Hľadáme v subscriptions podľa customer_email (lebo v profiles email nie je)
-            const { data: subs } = await supabase
-                .from('subscriptions')
-                .select('user_id, customer_email')
-                .ilike('customer_email', `%${searchTerm}%`)
-                .limit(10);
-
-            // Spojíme výsledky
-            const usersMap = new Map<string, Profile>();
-            
-            if (profs) {
-                // Pre profily potrebujeme zistiť email z nejakej subscription (ak majú)
-                const profIds = profs.map(p => p.id);
-                if (profIds.length > 0) {
-                    const { data: profSubs } = await supabase
-                        .from('subscriptions')
-                        .select('user_id, customer_email')
-                        .in('user_id', profIds);
-                        
-                    profs.forEach(p => {
-                        const sub = profSubs?.find(s => s.user_id === p.id);
-                        usersMap.set(p.id, {
-                            id: p.id,
-                            full_name: p.full_name,
-                            email: sub?.customer_email || 'Neznámy email'
-                        });
-                    });
-                }
+            const res = await fetch(`/api/admin/users/search?q=${encodeURIComponent(searchTerm)}`);
+            if (res.ok) {
+                const results = await res.json();
+                setProfiles(results || []);
+            } else {
+                toast.error("Chyba pri hľadaní užívateľov");
             }
-
-            if (subs) {
-                const subUserIds = subs.map(s => s.user_id).filter(Boolean);
-                if (subUserIds.length > 0) {
-                    const { data: subProfs } = await supabase
-                        .from('profiles')
-                        .select('id, full_name')
-                        .in('id', subUserIds);
-                        
-                    subs.forEach(s => {
-                        if (s.user_id && !usersMap.has(s.user_id)) {
-                            const p = subProfs?.find(px => px.id === s.user_id);
-                            usersMap.set(s.user_id, {
-                                id: s.user_id,
-                                full_name: p?.full_name || s.customer_email || null,
-                                email: s.customer_email
-                            });
-                        }
-                    });
-                }
-            }
-
-            setProfiles(Array.from(usersMap.values()));
         } catch (err) {
             console.error("Search error:", err);
             toast.error("Chyba pri hľadaní");

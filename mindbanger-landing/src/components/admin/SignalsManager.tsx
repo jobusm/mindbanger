@@ -2,7 +2,7 @@
 import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Edit2, Trash2, Calendar, CheckCircle2, Languages, FileAudio, Sparkles } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, CheckCircle2, Languages, FileAudio, Sparkles, Play } from "lucide-react";
 
 type DailySignal = {
   id: string;
@@ -358,6 +358,28 @@ export default function SignalsManager() {
       }
   }
 
+  async function handlePlayAudio(fileName: string | null | undefined) {
+      if (!fileName) {
+          toast.error('Žiadny súbor na prehratie.');
+          return;
+      }
+      
+      const toastId = toast.loading('Pripravujem prehrávač...');
+      try {
+          const res = await fetch(`/api/admin/get-audio-url?fileKey=${encodeURIComponent(fileName)}`);
+          if (!res.ok) throw new Error('Chyba pri získavaní URL');
+          
+          const data = await res.json();
+          toast.success('Spúšťam', { id: toastId });
+          
+          // Open in a new tab to play natively
+          window.open(data.signedUrl, '_blank');
+      } catch (err: any) {
+          console.error(err);
+          toast.error(err.message || 'Chyba prehrávania', { id: toastId });
+      }
+  }
+
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>, field: 'audio_url' | 'spoken_audio_url' | 'meditation_audio_url' = 'audio_url') {
     const file = e.target.files?.[0];
     if (!file || !editingSignal) return;
@@ -596,9 +618,16 @@ export default function SignalsManager() {
                      <label className="text-xs text-amber-500 font-bold uppercase tracking-wider flex items-center gap-2">
                         <FileAudio size={14}/> Text Dňa (Hovorené)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField === 'spoken_audio_url'} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
-                     </button>
+                     <div className="flex items-center gap-2">
+                        {editingSignal.spoken_audio_url && (
+                           <button type="button" onClick={() => handlePlayAudio(editingSignal.spoken_audio_url)} className="bg-amber-900/50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                              <Play size={12}/> Prehrať
+                           </button>
+                        )}
+                        <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField === 'spoken_audio_url'} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                           {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
+                        </button>
+                     </div>
                   </div>
                   <input type="text" value={editingSignal.spoken_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, spoken_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
                   <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'spoken_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
@@ -610,9 +639,16 @@ export default function SignalsManager() {
                      <label className="text-xs text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-2">
                         <FileAudio size={14}/> Meditácia (Sprievodca)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField === 'meditation_audio_url'} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
-                        {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
-                     </button>
+                     <div className="flex items-center gap-2">
+                        {editingSignal.meditation_audio_url && (
+                           <button type="button" onClick={() => handlePlayAudio(editingSignal.meditation_audio_url)} className="bg-indigo-900/50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                              <Play size={12}/> Prehrať
+                           </button>
+                        )}
+                        <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField === 'meditation_audio_url'} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                           {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
+                        </button>
+                     </div>
                   </div>
                   <input type="text" value={editingSignal.meditation_audio_url || ''} onChange={e => setEditingSignal({...editingSignal, meditation_audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
                   <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'meditation_audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
@@ -620,9 +656,18 @@ export default function SignalsManager() {
 
                {/* 3. Background Music */}
                <div>
-                  <label className="block text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
-                     <FileAudio size={14}/> Hudba (Pozadie/Ambient)
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                     <label className="text-xs text-slate-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                        <FileAudio size={14}/> Hudba (Pozadie/Ambient)
+                     </label>
+                     <div className="flex items-center gap-2">
+                        {editingSignal.audio_url && (
+                           <button type="button" onClick={() => handlePlayAudio(editingSignal.audio_url)} className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                              <Play size={12}/> Prehrať
+                           </button>
+                        )}
+                     </div>
+                  </div>
                   <input type="text" value={editingSignal.audio_url || ''} onChange={e => setEditingSignal({...editingSignal, audio_url: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs mb-2" placeholder="URL k .mp3" />
                   <input type="file" accept=".mp3" onChange={e => handleFileUpload(e, 'audio_url')} disabled={isUploading} className="text-xs text-slate-500 w-full" />
                </div>

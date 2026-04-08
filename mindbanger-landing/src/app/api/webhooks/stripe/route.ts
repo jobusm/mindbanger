@@ -175,10 +175,24 @@ export async function POST(req: Request) {
             customer_email: session.customer_details?.email || ''
           });
 
-          if (customerId) {
-            await supabase.from('profiles').update({ stripe_customer_id: customerId, subscription_status: 'premium' }).eq('id', userId);
-          } else {
-            await supabase.from('profiles').update({ subscription_status: 'premium' }).eq('id', userId);
+try {
+              const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', userId).single();
+              let updatePayload: any = { subscription_status: 'premium' };
+              if (customerId) {
+                updatePayload.stripe_customer_id = customerId;
+              }
+              
+              const stripeName = session.customer_details?.name;
+              if (stripeName) {
+                const currentName = prof?.full_name;
+                if (!currentName || currentName.includes('@') || currentName.trim() === '') {
+                  updatePayload.full_name = stripeName;
+                }
+              }
+              
+              await supabase.from('profiles').update(updatePayload).eq('id', userId);
+            } catch (e) {
+              console.error('Error updating profile with Stripe data:', e);
           }
 
           // Send welcome email via Resend

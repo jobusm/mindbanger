@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Calendar, User, Globe, Search } from "lucide-react";
+import { Calendar, User, Globe, Search, Edit2, Check, X, Loader2 } from "lucide-react";
 
 type Subscription = {
   id: string;
@@ -29,6 +29,11 @@ export default function SubscriptionsManager() {
     const [filteredSubscriptions, setFilteredSubscriptions] = useState<JoinedSubscription[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
+    
+    // Inline state for title edit
+    const [editingUserId, setEditingUserId] = useState<string | null>(null);
+    const [editNameValue, setEditNameValue] = useState("");
+    const [isSavingName, setIsSavingName] = useState(false);
 
     // Calculate total revenue
     const revenueByCurrency = subscriptions.reduce((acc, sub) => {
@@ -51,6 +56,42 @@ export default function SubscriptionsManager() {
       });
       setFilteredSubscriptions(filtered);
     }, [searchTerm, subscriptions]);
+  async function handleSaveName(userId: string) {
+    if (!editNameValue.trim()) return;
+    setIsSavingName(true);
+    
+    try {
+        const res = await fetch("/api/admin/users/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, fullName: editNameValue.trim() })
+        });
+        
+        if (!res.ok) throw new Error("Chyba pri ukladaní mena");
+        
+        // Optimistic UI update
+        const updatedSubs = subscriptions.map(s => {
+            if (s.user_id === userId) {
+                return {
+                    ...s,
+                    profiles: {
+                        ...s.profiles,
+                        full_name: editNameValue.trim()
+                    }
+                };
+            }
+            return s;
+        });
+        setSubscriptions(updatedSubs as any);
+        setEditingUserId(null);
+    } catch (err) {
+        console.error(err);
+        alert("Nepodarilo sa upraviť meno odberateľa.");
+    } finally {
+        setIsSavingName(false);
+    }
+  }
+
   async function fetchSubscriptions() {
     setLoading(true);
 
@@ -134,10 +175,51 @@ export default function SubscriptionsManager() {
                     )}
                   </td>
                   <td className="p-4">
-                    <div className="font-medium text-white flex items-center gap-2">
-                      <User size={14} className="text-slate-500" />
-                      <div>
-                          <div>{sub.profiles?.full_name || "Unknown User"}</div>
+                    <div className="font-medium text-white flex items-start gap-2">
+                      <User size={14} className="text-slate-500 mt-1" />
+                      <div className="flex-1">
+                          {editingUserId === sub.user_id ? (
+                            <div className="flex items-center gap-2 mb-1">
+                              <input 
+                                type="text"
+                                className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-amber-500"
+                                value={editNameValue}
+                                onChange={(e) => setEditNameValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveName(sub.user_id);
+                                  if (e.key === 'Escape') setEditingUserId(null);
+                                }}
+                                autoFocus
+                              />
+                              <button 
+                                onClick={() => handleSaveName(sub.user_id)}
+                                disabled={isSavingName}
+                                className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/30 transition-colors"
+                              >
+                                {isSavingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                              </button>
+                              <button 
+                                onClick={() => setEditingUserId(null)}
+                                className="p-1.5 bg-slate-500/20 text-slate-400 rounded hover:bg-slate-500/30 transition-colors"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span>{sub.profiles?.full_name || "Unknown User"}</span>
+                              <button 
+                                onClick={() => {
+                                  setEditingUserId(sub.user_id);
+                                  setEditNameValue(sub.profiles?.full_name || "");
+                                }}
+                                className="text-slate-500 hover:text-amber-500 transition-colors p-1"
+                                title="Upraviť meno"
+                              >
+                                <Edit2 size={12} />
+                              </button>
+                            </div>
+                          )}
                           <div className="text-xs text-slate-500">{sub.display_email}</div>
                       </div>
                     </div>

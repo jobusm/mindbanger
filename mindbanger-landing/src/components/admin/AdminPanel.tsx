@@ -9,12 +9,13 @@ import AffiliateManager from "./AffiliateManager";
 import PayoutsManager from "./PayoutsManager";
 import B2BManager from "./B2BManager";
 import MessagesManager from "@/components/admin/MessagesManager";
-import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket, Briefcase, MessageSquare } from "lucide-react";
+import IndividualRecordingsManager from "@/components/admin/IndividualRecordingsManager";
+import { Radio, Users, RefreshCw, Megaphone, DollarSign, Rocket, Briefcase, MessageSquare, Headphones } from "lucide-react";
 import HealthCheckWidget from "@/components/admin/HealthCheckWidget";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'b2bonboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages'>('signals');  
+  const [activeTab, setActiveTab] = useState<'signals' | 'onboarding' | 'b2bonboarding' | 'subscriptions' | 'resets' | 'affiliate' | 'payouts' | 'b2b' | 'messages' | 'individual'>('signals');
   const [unreadMsgCount, setUnreadMsgCount] = useState(0);
 
   useEffect(() => {
@@ -153,6 +154,17 @@ export default function AdminPanel() {
           </div>
           <span className="font-medium">Správy</span>
         </button>
+        <button
+          onClick={() => setActiveTab('individual')}
+          className={`pb-4 flex items-center space-x-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'individual'
+              ? 'border-amber-500 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Headphones size={20} />
+          <span className="font-medium">Individuálne Nahrávky</span>
+        </button>
       </div>
 
       {activeTab === 'signals' && <SignalsManager />}
@@ -162,6 +174,7 @@ export default function AdminPanel() {
       {activeTab === 'payouts' && <PayoutsManager />}
       {activeTab === 'b2b' && <B2BManager />}
       {activeTab === 'messages' && <MessagesManager />}
+      {activeTab === 'individual' && <IndividualRecordingsManager />}
     </>
   );
 }

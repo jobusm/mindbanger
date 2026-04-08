@@ -168,13 +168,15 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
   };
 
   return (
-    <div className={`w-full bg-slate-900/80 border border-white/10 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden relative group ${compact ? 'p-3' : 'p-4'}`}>
+    <div 
+      onContextMenu={(e) => e.preventDefault()}
+      className={`w-full bg-slate-900/80 border border-white/10 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden relative group ${compact ? 'p-3' : 'p-4'}`}>
       {/* Decorative ambient gradient behind the player (simulating glow based on cover art vibes) */}
       <div className="absolute top-0 right-0 -m-20 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl opacity-50 pointer-events-none group-hover:opacity-70 transition-opacity duration-700"></div>
 
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio ref={audioRef} src={src} preload="metadata" controlsList="nodownload" />
       {/* Background Music Audio Element */}
-      {backgroundSrc && <audio ref={bgAudioRef} src={backgroundSrc} loop preload="auto" />}
+      {backgroundSrc && <audio ref={bgAudioRef} src={backgroundSrc} loop preload="auto" controlsList="nodownload" />}
       
       <div className="flex flex-col gap-4 relative z-10 w-full">
         

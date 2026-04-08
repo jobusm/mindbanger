@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Library, Headphones, Settings, Link as LinkIcon, Building2 } from 'lucide-react';
+import { Home, Library, Headphones, Settings, Link as LinkIcon, Building2, MicVocal } from 'lucide-react';
 import { useDictionary } from '@/lib/i18n-client';
 import { supabase } from '@/lib/supabase';
 
@@ -39,6 +39,7 @@ export default function MobileNavBar() {
     { name: t.today, icon: Home, href: '/app/today' },
     { name: t.archive, icon: Library, href: '/app/archive' },
     { name: t.resets, icon: Headphones, href: '/app/resets' },
+    { name: 'Moje audio', icon: MicVocal, href: '/app/my-audio' },
   ];
 
   // Insert B2B Dashboard if admin

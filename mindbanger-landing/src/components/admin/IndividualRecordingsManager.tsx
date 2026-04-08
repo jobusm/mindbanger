@@ -18,6 +18,7 @@ type Recording = {
     title: string;
     audio_url: string;
     created_at: string;
+    play_count?: number;
 }
 
 export default function IndividualRecordingsManager() {
@@ -268,6 +269,7 @@ export default function IndividualRecordingsManager() {
                                                 <div className="font-semibold text-white text-sm">{rec.title}</div>
                                                 <div className="text-[10px] text-slate-400">
                                                     {format(new Date(rec.created_at), "d. MMMM yyyy HH:mm", { locale: sk })}
+                                                    <span className="text-indigo-400 font-medium ml-2">&#8226; Prehraté: {rec.play_count || 0}x</span>
                                                 </div>
                                             </div>
                                             <button 

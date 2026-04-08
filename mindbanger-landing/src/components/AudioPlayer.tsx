@@ -11,9 +11,10 @@ interface AudioPlayerProps {
   coverArt?: string;
   author?: string;
   compact?: boolean;
+  recordingId?: string;
 }
 
-export default function AudioPlayer({ src, backgroundSrc, title, coverArt, author = "Mindbanger", compact = false }: AudioPlayerProps) {
+export default function AudioPlayer({ src, backgroundSrc, title, coverArt, author = "Mindbanger", compact = false, recordingId }: AudioPlayerProps) {
   const { dict } = useDictionary();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -27,6 +28,8 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
+  const playedOnceRef = useRef(false);
+  
 
   // Refs for fade timers
   const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -145,6 +148,14 @@ export default function AudioPlayer({ src, backgroundSrc, title, coverArt, autho
             bgAudioRef.current.play().catch(e => console.error("Background audio play failed:", e));
         }
         audioRef.current.play();
+        if (recordingId && !playedOnceRef.current) {
+            playedOnceRef.current = true;
+            fetch('/api/user/recordings/track-play', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recordingId }) }).catch(console.error);
+        }
+        if (recordingId && !playedOnceRef.current) {
+            playedOnceRef.current = true;
+            fetch('/api/user/recordings/track-play', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recordingId }) }).catch(console.error);
+        }
       }
       setIsPlaying(!isPlaying);
     }

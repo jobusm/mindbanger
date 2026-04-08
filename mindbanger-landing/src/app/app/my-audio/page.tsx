@@ -100,10 +100,11 @@ export default async function MyAudioPage() {
                             </div>
                             
                             {rec.secureUrl ? (
-                                <AudioPlayer 
-                                   src={rec.secureUrl} 
+                                <AudioPlayer
+                                   src={rec.secureUrl}
                                    title={rec.title}
-                                   author="Mindbanger Osobné Audio"
+                                   author="Mindbanger Osobn� Audio"
+                                   recordingId={rec.id}
                                 />
                             ) : (
                                 <div className="text-center p-8 bg-slate-900/50 border border-slate-800 rounded-2xl text-slate-500">

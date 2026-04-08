@@ -35,29 +35,15 @@ const s3Client = new S3Client({
 
 export async function POST(request: Request) {
     try {
-        const formData = await request.formData();
-        const file = formData.get('file') as File | null;
-        const title = formData.get('title') as string | null;
-        const userId = formData.get('userId') as string | null;
-        const userEmail = formData.get('userEmail') as string | null;
-        const userName = formData.get('userName') as string | null;
+        const body = await request.json();
+        const { publicUrl, title, userId, userEmail, userName } = body;
 
-        if (!file || !title || !userId) {
+        if (!publicUrl || !title || !userId) {
             return NextResponse.json({ error: 'Chýbajú parametre formulára' }, { status: 400 });
         }
 
-        // Upload to R2
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const uniqueFilename = `individual-${userId}-${Date.now()}.mp3`;
+        const uniqueFilename = publicUrl;
 
-        const command = new PutObjectCommand({
-            Bucket: R2_BUCKET_NAME,
-            Key: uniqueFilename,
-            Body: buffer,
-            ContentType: file.type || 'audio/mpeg',
-        });
-
-        await s3Client.send(command);
 
         // Save DB Record
         const { data: insertedRec, error: dbErr } = await supabaseAdmin.from('individual_recordings').insert({

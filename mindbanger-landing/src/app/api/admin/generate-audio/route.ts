@@ -10,14 +10,19 @@ export const maxDuration = 120; // 2 minutes
 const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
 // S3 / R2 config
-const s3Client = new S3Client({
-  region: 'auto',
-  endpoint: process.env.R2_ENDPOINT || '',
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-  },
-});
+let s3Client: S3Client | null = null;
+try {
+  if (process.env.R2_ENDPOINT && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY) {
+      s3Client = new S3Client({
+          region: 'auto',
+          endpoint: process.env.R2_ENDPOINT,
+          credentials: {
+              accessKeyId: process.env.R2_ACCESS_KEY_ID,
+              secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+          },
+      });
+  }
+} catch(e) { console.error('R2 init error:', e); }
 
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
 
@@ -87,7 +92,12 @@ export async function POST(request: NextRequest) {
 
     // 1. OpenAI SSML Enhancement
     console.log('Enhancing text with SSML...');
-    const ssmlText = await enhanceTextWithSSML(rawText);
+    let ssmlText = rawText;
+    try {
+        ssmlText = await enhanceTextWithSSML(rawText);
+    } catch(e: any) {
+        console.error('Enhance SSML error:', e);
+    }
 
     // 2. ElevenLabs API Call
     console.log('Calling ElevenLabs API for Voice eGbMQjHtPyAT1vmmz4ux ...');
@@ -109,8 +119,8 @@ export async function POST(request: NextRequest) {
 
     if (!elevenRes.ok) {
         const errText = await elevenRes.text();
-        console.error('ElevenLabs Error:', errText);
-        return NextResponse.json({ error: `ElevenLabs API Error: ${errText}` }, { status: 500 });
+        console.error('ElevenLabs Error:', elevenRes.status, errText);
+        return NextResponse.json({ error: `ElevenLabs API Error: ${elevenRes.status} ${errText}` }, { status: 500 });
     }
 
     const arrayBuffer = await elevenRes.arrayBuffer();
@@ -124,14 +134,24 @@ export async function POST(request: NextRequest) {
     const uniqueFilename = `${lang}-${prefix}-${dateStr}-${Date.now()}.mp3`;
     console.log('Uploading to R2 as', uniqueFilename);
 
-    const command = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME || '',
-      Key: uniqueFilename,
-      Body: buffer,
-      ContentType: 'audio/mpeg'
-    });
+    if (!s3Client || !R2_BUCKET_NAME) {
+        console.error('R2 not configured properly. Cannot upload.');
+        return NextResponse.json({ error: 'Storage (R2) is not configured properly' }, { status: 500 });
+    }
 
-    await s3Client.send(command);
+    try {
+        const command = new PutObjectCommand({
+            Bucket: R2_BUCKET_NAME,
+            Key: uniqueFilename,
+            Body: buffer,
+            ContentType: 'audio/mpeg'
+        });
+
+        await s3Client.send(command);
+    } catch(err: any) {
+        console.error('R2 Upload error:', err);
+        return NextResponse.json({ error: `R2 S3 Upload failed: ${err.message}` }, { status: 500 });
+    }
 
     // 4. Update the DB
     const publicUrl = uniqueFilename;

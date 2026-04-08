@@ -596,7 +596,7 @@ export default function SignalsManager() {
                      <label className="text-xs text-amber-500 font-bold uppercase tracking-wider flex items-center gap-2">
                         <FileAudio size={14}/> Text Dňa (Hovorené)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField !== null} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                     <button type="button" onClick={() => handleGenerateAudio('spoken_audio_url')} disabled={generatingAudioField === 'spoken_audio_url'} className="bg-amber-900/50 disabled:opacity-50 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
                         {generatingAudioField === 'spoken_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
                      </button>
                   </div>
@@ -610,7 +610,7 @@ export default function SignalsManager() {
                      <label className="text-xs text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-2">
                         <FileAudio size={14}/> Meditácia (Sprievodca)
                      </label>
-                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField !== null} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
+                     <button type="button" onClick={() => handleGenerateAudio('meditation_audio_url')} disabled={generatingAudioField === 'meditation_audio_url'} className="bg-indigo-900/50 disabled:opacity-50 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-[10px] flex items-center gap-1 transition">
                         {generatingAudioField === 'meditation_audio_url' ? <span className="animate-pulse flex items-center gap-1"><Sparkles size={12}/> Generujem...</span> : <><Sparkles size={12}/> AI Hlas</>}
                      </button>
                   </div>

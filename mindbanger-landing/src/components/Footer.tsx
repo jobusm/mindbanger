@@ -27,7 +27,7 @@ export default function Footer() {
         <div className="flex flex-wrap justify-center md:items-center space-x-6 text-sm text-slate-400 gap-y-2">
           <Link href="/b2b" className="hover:text-white transition-colors">{dict?.landing?.footer?.b2b || 'For Teams'}</Link>
           <Link href="/login" className="hover:text-white transition-colors">{dict?.landing?.footer?.login || 'Login'}</Link>
-          <Link href="/join" className="hover:text-white transition-colors">{dict?.landing?.footer?.join || 'Join'}</Link>
+          <Link href="/join" className="hover:text-white transition-colors">{dict?.landing?.navbar?.join || 'Start Membership'}</Link>
           <Link href="/privacy" className="hover:text-white transition-colors">{dict?.landing?.footer?.privacy || 'Privacy'}</Link>
           <Link href="/terms" className="hover:text-white transition-colors">{dict?.landing?.footer?.terms || 'Terms'}</Link>
           <Link href="/affiliate-terms" className="hover:text-white transition-colors">{dict?.landing?.footer?.affiliateTerms || 'Affiliate Terms'}</Link>

@@ -117,117 +117,119 @@
       "features": "Funkce",
       "howItWorks": "Jak to funguje",
       "faq": "Časté dotazy",
-      "joinSub": "Přidat se",
+      "joinSub": "Začít členství",
       "login": "Přihlásit",
-      "b2b": "Pro firmy"
+      "b2b": "Pro firmy",
+      "join": "Začít členství"
     },
     "hero": {
       "badge": "Mindbanger Daily",
-      "titlePart1": "Nastavte svou mysl na ",
-      "titleHighlight": "úspěch",
-      "titlePart2": " každý den",
-      "subtitle": "Denní nastavení mysli pro intuici, klid a soustředění.<br className=\"hidden md:block\" />Vytvořeno životním koučem a hypnoterapeutem.",
-      "quote": "Způsob, jakým je vaše mysl nastavena, začíná formovat vaši realitu.",
+      "titlePart1": "Pokud si nenastavíte ",
+      "titleHighlight": "mysl,",
+      "titlePart2": " svět to udělá za vás.",
+      "subtitle": "Mindbanger Daily vám pomůže začít den s jasností, emoční stabilitou a vědomým zaměřením.",
+      "quote": "\"Způsob, jakým je vaše mysl nastavena, začíná formovat vaši realitu.\"",
       "widgetTitle": "Dnešní Signál",
-      "widgetBadge": "Intuice",
-      "widgetHeadline": "Zjednodušte si dnes jednu věc",
-      "widgetQuote": "„Návratem k sobě se vracím k intuici.“",
-      "widgetBtn": "Přehrát dnešní audio",
-      "widgetFooter": "Nový signál každý den. <br/> Silnější vnitřní směřování postupem času.",
-      "subtitleDesc": "Denní nastavení mysli pro intuici, klid a soustředění.",
-      "subtitleAuthor": "Vytvořeno životním koučem a hypnoterapeutem.",
-      "cta": "Začít Mindbanger Daily"
+      "widgetBadge": "Jasnost",
+      "widgetHeadline": "Zjednodušte si dnes jednu věc.",
+      "widgetQuote": "\"Nepotřebujete vyřešit vše. Potřebujete jeden jasný další krok.\"",
+      "widgetBtn": "Přehrát dnešní audio (ukázka)",
+      "widgetFooter": "Nový denní signál. Klidnější a silnější vnitřní směřování.",
+      "subtitleDesc": "Mindbanger Daily vám pomůže začít den s jasností, emoční stabilitou a vědomým zaměřením.",
+      "subtitleAuthor": "Vytvořeno hypnoterapeutem a životním koučem Miroslavem Jobusem.",
+      "cta": "Začít členství"
     },
     "dailyRitual": {
-      "title": "Každý den v Mindbanger Daily:",
+      "title": "Co získáte každý den v Mindbanger Daily",
       "features": [
         {
           "title": "Téma dne",
-          "desc": "Určete si své denní směřování."
+          "desc": "Jasné emoční a mentální směřování pro následující den."
         },
         {
-          "title": "Denní Mind Signál",
-          "desc": "Vedená zpráva pro vaše nastavení mysli."
+          "title": "Denní signál pro mysl",
+          "desc": "Krátká vedená zpráva, která pomůže resetovat vaše nastavení zevnitř."
         },
         {
           "title": "Dnešní zaměření",
-          "desc": "Jeden praktický posun pro tento den."
+          "desc": "Jeden jednoduchý posun, který si odnesete do reálného dne."
         },
         {
-          "title": "Afirmace",
-          "desc": "Silné posilující prohlášení."
+          "title": "Denní afirmace",
+          "desc": "Posilující prohlášení, které pomáhá ukotvit váš vnitřní stav."
         },
         {
-          "title": "Audio Reset",
-          "desc": "Krátký uklidňující hlasový reset."
+          "title": "Audio reset",
+          "desc": "Krátký hlasem vedený reset pro klid, soustředění a spojení se sebou."
         }
       ]
     },
     "howItWorks": {
-      "title": "Jak to funguje",
+      "title": "Jak Mindbanger Daily funguje",
       "steps": [
         {
-          "title": "Přidat se",
-          "desc": "Začněte své členství za necelou minutu."
+          "title": "1. Začněte své členství",
+          "desc": "Přidejte se za necelou minutu a získejte okamžitý přístup k vašemu dennímu rituálu."
         },
         {
-          "title": "Přijměte svůj denní signál",
-          "desc": "Získejte čerstvou zprávu, zaměření, afirmaci a audio reset."
+          "title": "2. Přijměte svůj denní signál",
+          "desc": "Každý den přináší novou tématu, krátký signál pro nastavení mysli, zaměření, afirmaci a audio reset."
         },
         {
-          "title": "Zlepšujte svou mysl denně",
-          "desc": "Postupem času si vytvoříte více intuice, emocionální stability a směřování ke každodenní pohodě a úspěchu v práci a ve vztazích."
+          "title": "3. Budujte si vnitřní směřování",
+          "desc": "S důsledným každodenním používáním se vaše mysl stane klidnější, jasnější a silnější."
         }
       ]
     },
     "interactivePreview": {
-      "title": "Vyberte si slovo, které vás jako první přitáhne",
+      "title": "Co dnes potřebujete nejvíce?",
       "options": [
         {
-          "keyword": "Intuice",
-          "desc": "Potřebujete méně hluku a jeden skutečný směr."
+          "keyword": "Jasnost",
+          "desc": "Méně mentálního hluku. Jeden skutečný směr."
         },
         {
           "keyword": "Odvaha",
-          "desc": "Malý upřímný krok dokáže změnit více než přemýšlení."
+          "desc": "Jeden upřímný krok dokáže změnit víc než nekonečné přemýšlení."
         },
         {
           "keyword": "Reset",
-          "desc": "Dnes máte šanci uvolnit včerejší zátěž."
+          "desc": "Dnes je šance zahodit tíhu včerejška."
         }
       ],
-      "buttonActive": "Odemknout celý denní signál pro {active}",
-      "buttonInactive": "Odemknout celý denní signál"
+      "buttonActive": "Začít váš denní reset",
+      "buttonInactive": "Začít váš denní reset",
+      "footerLine": "Cokoliv vás přitáhne jako první, přesně tam vaše mysl často nejvíc potřebuje podporu."
     },
     "benefits": {
       "title": "Mindbanger Daily je pro vás, pokud chcete…",
       "items": [
-        "Začít svá rána s větší intuicí",
-        "Snížit vnitřní hluk a nadměrné přemýšlení",
-        "Cítit se klidněji a soustředěněji",
-        "Denně posilovat své nastavení mysli",
-        "Znovu se spojit sami se sebou",
-        "Procházet dnem s jasnějším směřováním"
+        "Začít den s větší jasností namísto chaosu",
+        "Utišit přemýšlení a vnitřní tlak",
+        "Cítit se klidněji, soustředěněji a uzemněněji",
+        "Posílit si nastavení mysli jednoduchým denním způsobem",
+        "Spojit se opět se sebou dřív, než vás strhne den",
+        "Kráčet životem s jasnějším vnitřním směřováním"
       ]
     },
     "vipZone": {
-      "title": "Uvnitř VIP Zóny",
+      "title": "Uvnitř Členské Zóny",
       "cards": [
         {
           "title": "Dnes",
-          "desc": "Váš denní signál, zaměření, afirmace a audio."
+          "desc": "Váš denní signál, zaměření, afirmace a audio reset na jednom místě."
         },
         {
           "title": "Archiv",
-          "desc": "Přístup k předchozím denním signálům kdykoliv."
+          "desc": "Vraťte se k minulým signálům kdykoli je potřebujete."
         },
         {
           "title": "Rychlé resety",
-          "desc": "Klidný reset, Reset soustředění, Spánkový reset a další."
+          "desc": "Krátké vedené resety pro klid, soustředění, spánek a emoční reset."
         },
         {
-          "title": "Začněte tady",
-          "desc": "Jednoduchý návod jak rituál používat pro nejlepší výsledky."
+          "title": "Začněte zde",
+          "desc": "Jednoduchý návod, jak získat z rituálu od prvního dne to nejlepší."
         }
       ]
     },
@@ -247,74 +249,87 @@
       "p5": "Právě tato originální kombinace lidského přístupu, záměru a autentičnosti je implementována do systému Mindbanger a dává mu jasnou přidanou hodnotu lidskosti a funkčnosti zároveň."
     },
     "about": {
-      "badge": "O tvůrci",
-      "role": "Životní kouč, hypnoterapeut a průvodce mentálním výkonem.",
-      "quote1": "Mindbanger Daily byl vytvořen, aby pomáhal lidem formovat každý svůj den pro životní pohodu, úspěch a radost ze života prostřednictvím ",
-      "span1": "intuice",
-      "quote2": ", ",
-      "span2": "klidu",
+      "badge": "Vytvořil Miroslav Jobus",
+      "role": "Hypnoterapeut, životní kouč a průvodce mentálním výkonem",
+      "quote1": "„Mindbanger Daily byl vytvořen pro lidi, kteří se nechtějí po dni jen tak nevědomě vlečt.",
+      "span1": "",
+      "quote2": "Je to jednoduchý denní rituál navržený tak, aby vám pomohl vrátit se k sobě, ustálit mysl a postupovat s větším záměrem.“",
+      "span2": "",
       "quote3": ", ",
-      "span3": "přirozeného soustředění",
+      "span3": "",
       "quote4": ", ",
-      "span4": "cíleného mentálního směřování a nastavení mysli",
+      "span4": "",
       "quote5": "."
     },
     "pricing": {
-      "title1": "Jednoduchá denní podpora.",
-      "title2": "Jeden měsíční plán.",
+      "title1": "Jedno jednoduché členství.",
+      "title2": "Jeden silný denní rituál.",
       "planName": "Mindbanger Daily",
-      "price": "7,99€",
-      "period": "/ měsíc",
-      "vatExcluded": "Cena je bez DPH",
-      "subtitle": "Méně než jedna káva týdně.",
+      "price": "€7.99",
+      "period": " / měsíc",
+      "vatExcluded": "DPH může být účtována na základě vaší země.",
+      "subtitle": "Nízké měsíční náklady pro silnější mysl každý den.",
       "features": [
-        "Denní mind signál",
+        "Denní signál pro mysl",
         "Denní zaměření",
         "Denní afirmace",
-        "Denní audio mentální nastavení",
+        "Denní audio reset",
         "Přístup do archivu",
-        "Bonusové resety"
+        "Bonusové rychlé resety"
       ],
-      "cancelText": "Zrušení kdykoliv. Žádné otázky.",
+      "cancelText": "Zrušte kdykoli. Žádné dlouhodobé závazky.",
       "priceNote": "cca 199 CZK",
-      "cta": "Začít Mindbanger Daily"
+      "cta": "Začít členství"
     },
     "b2bCta": {
-      "title": "Chcete přinést mentální jasnost a klid do vašeho týmu?",
-      "desc": "Snižte stres na pracovišti, podpořte soustředění a formujte odolnější tým s naším speciálním programem pro firmy.",
-      "btn": "Poznejte Mindbanger pro týmy"
+      "title": "Přineste do svého týmu klid, soustředění a mentální odolnost",
+      "desc": "Mindbanger for Teams pomáhá firmám podpořit duševní pohodu zaměstnanců pomocí moderního denního resetu mysli navrženého ke snížení stresu, zlepšení soustředění a posílení odolnosti.",
+      "btn": "Objevte Mindbanger pro firmy"
     },
     "faq": {
-      "title": "Dotazy",
+      "title": "Otázky",
       "faqs": [
         {
-          "q": "Co získám každý den?",
-          "a": "Denní téma, krátký signál, zaměření, afirmaci a audio reset."
+          "q": "Co přesně dostanu každý den?",
+          "a": "Každý den dostanete téma, krátký signál k nastavení mysli, jedno praktické zaměření, posilující afirmaci a krátký audio reset."
         },
         {
-          "q": "Je toto meditační aplikace?",
-          "a": "Ne, jde o denní rituál mysli, který je určený pro získání intuice, klidu a pozitivního denního směřování. Součástí tohoto rituálu je ale také i krátká denní meditace."
+          "q": "Jedná se o meditační aplikaci?",
+          "a": "Ne. Mindbanger Daily je doprovázený denní mentální rituál pro jasnost, klid a vnitřní směřování."
         },
         {
-          "q": "Mohu to kdykoliv zrušit?",
-          "a": "Ano."
+          "q": "Jak dlouho trvá denní rituál?",
+          "a": "Jen několik minut. Je navržen tak, aby zapadl do skutečného každodenního života."
         },
         {
-          "q": "Je obsah ve slovenštině/češtině?",
-          "a": "Ano. Aplikace se přizpůsobí vašemu jazyku."
+          "q": "Mohu to kdykoli zrušit?",
+          "a": "Ano. Své členství můžete kdykoli zrušit."
         },
         {
           "q": "Mám přístup k předchozím dnům?",
-          "a": "Ano, prostřednictvím archivu."
+          "a": "Ano. Členové se mohou přes archiv kdykoli vrátit k předešlým signálům."
+        },
+        {
+          "q": "Je obsah v angličtině?",
+          "a": "Ano. Angličtina je momentálně hlavní verze. Ve vašem profilu si však můžete zvolit rodný jazyk textů i audia."
+        },
+        {
+          "q": "Pro koho je Mindbanger Daily určen?",
+          "a": "Je pro lidi, kteří chtějí méně mentálního chaosu, více jasnosti a silnější vnitřní směřování v běžném životě."
+        },
+        {
+          "q": "Jedná se o terapii nebo lékařskou léčbu?",
+          "a": "Ne. Mindbanger Daily je nástroj osobního rozvoje a duševní psychohygieny. Není to náhrada terapie, diagnózy ani odborné péče."
         }
       ]
     },
     "finalCta": {
-      "badge": "Začněte svůj denní reset",
+      "badge": "Nastavte svou mysl. Formujte svůj den.",
       "title1": "Nastavte svou mysl.",
       "title2": "Formujte svůj den.",
-      "quote": "Způsob, jakým je vaše mysl nastavena, začíná formovat vaši realitu.",
-      "footer": "Přidejte se na čekací listinu Mindbanger Daily"
+      "quote": "„Několik minut denně může změnit způsob, jakým procházíte vším ostatním.“",
+      "footer": "Začít Mindbanger Daily",
+      "cta": "Začít členství"
     },
     "footer": {
       "tagline": "Denní nastavení mysli pro intuici, klid a soustředění.",
@@ -359,8 +374,8 @@
   },
   "b2b": {
     "hero": {
-      "title": "Mentální Výkonnost pro Váš Tým",
-      "subtitle": "Mindbanger Daily pro Firmy. Denní mentální ladění, které vaši zaměstnanci potřebují pro soustředění, odolnost a kreativitu."
+      "title": "Denní mentální reset pro silnější, klidnější a soustředěnější týmy",
+      "subtitle": "Mindbanger for Teams pomáhá zaměstnancům lépe zvládat stres, zlepšit soustředění a budovat mentální odolnost díky jednoduchému dennímu rituálu."
     },
     "features": {
       "title": "Proč Mindbanger pro Firmy?",

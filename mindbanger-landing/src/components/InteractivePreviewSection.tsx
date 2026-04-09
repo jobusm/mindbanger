@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useDictionary } from './LanguageProvider';
 import { Focus, Zap, RefreshCw } from 'lucide-react';
-import WaitlistForm from './WaitlistForm';
+import Link from 'next/link';
 
 const options = [
   {
@@ -72,13 +72,20 @@ export default function InteractivePreviewSection() {
         </div>
 
 <div className={`pt-8 max-w-lg mx-auto transition-all duration-500 transform ${active ? 'opacity-100 translate-y-0' : 'opacity-80 translate-y-2'}`}>
-          <WaitlistForm 
-            alignCenter={true}
-            buttonText={active !== null
-              ? (dict?.landing?.interactivePreview?.buttonActive?.replace('{active}', dict?.landing?.interactivePreview?.options?.[active]?.keyword || options[active].keyword) || `Unlock the full daily signal for ${options[active].keyword}`)
-              : (dict?.landing?.interactivePreview?.buttonInactive || 'Unlock the full daily signal')
-            }
-          />
+          <div className="flex flex-col items-center">
+            <Link 
+              href="/join" 
+              className="py-4 px-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg flex items-center justify-center transition-all hover:scale-105 shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)]"
+            >
+              {active !== null
+                ? (dict?.landing?.interactivePreview?.buttonActive?.replace('{active}', dict?.landing?.interactivePreview?.options?.[active]?.keyword || options[active].keyword) || `Start Your Daily Reset (${options[active].keyword})`)
+                : (dict?.landing?.interactivePreview?.buttonInactive || 'Start Your Daily Reset')
+              }
+            </Link>
+            <p className="mt-6 text-sm text-slate-400 italic">
+              {dict?.landing?.interactivePreview?.footerLine || 'Whatever pulls you in first, that is often where your mind needs support most.'}
+            </p>
+          </div>
         </div>
       </div>
     </section>

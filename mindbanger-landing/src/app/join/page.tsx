@@ -114,13 +114,18 @@ export default function JoinPage() {
           <Link href="/" className="inline-block text-2xl font-serif font-bold text-white hover:text-amber-400 transition-colors">
             Mindbanger Daily
           </Link>
-          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold">Free Signup</p>
+          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold">Start Membership</p>
         </div>
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-2xl text-white font-serif mb-6 text-center">
-            {step === 'email' ? 'Create Your Account' : 'Verify Your Email'}
+          <h1 className="text-2xl text-white font-serif mb-2 text-center">
+            {step === 'email' ? 'Start your Mindbanger Daily membership' : 'Verify Your Email'}
           </h1>
+          {step === 'email' && (
+            <p className="text-center text-slate-400 text-sm mb-6">
+              Create your account to begin your daily mental ritual.
+            </p>
+          )}
           
           {message && (
             <div className={`p-4 rounded-lg mb-6 text-sm ${message.type === 'error' ? 'bg-red-500/10 text-red-200 border border-red-500/20' : 'bg-green-500/10 text-green-200 border border-green-500/20'}`}>
@@ -151,14 +156,17 @@ export default function JoinPage() {
                 className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group"
               >
                 {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (
-                   <>
-                     Start Free
+                 <>
+                     Continue to Membership
                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                    </>
                 )}
               </button>
+              <p className="text-center text-xs text-slate-500 pt-2">
+                €7.99 / month. VAT may apply. Cancel anytime.
+              </p>
 
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-4 border-t border-white/10 mt-4">
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <div className="flex items-center h-5 mt-0.5">
                     <input

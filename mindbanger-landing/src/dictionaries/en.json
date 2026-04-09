@@ -25,49 +25,49 @@
     "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service."
   },
   "b2b": {
-     "hero": {
-        "title": "Unlock Peak Mental Performance for Your Team",
-        "subtitle": "Mindbanger Daily for Business. The daily mental reset your employees need to stay focused, resilient, and creative."
-     },
-     "features": {
-        "title": "Why Mindbanger for Business?",
-        "f1": "Daily Mental Reset",
-        "f2": "Productivity Boost",
-        "f3": "Stress Reduction",
-        "f4": "Team Analytics"
-     },
-     "pricing": {
-        "title": "Simple Transparent Pricing",
-        "tier1": "1-4 Seats",
-        "tier2": "5-25 Seats (15% OFF)",
-        "tier3": "25+ Seats (25% OFF)",
-        "vatExcluded": "(excl. VAT)",
-        "cta": "Get Started"
-     },
-     "form": {
-        "companyName": "Company Name",
-        "taxId": "Tax ID (ICO)",
-        "vatId": "VAT ID (DIC/VAT)",
-        "seats": "Number of Seats",
-        "contactName": "Contact Person",
-        "contactEmail": "Contact Email",
-        "submit": "Create Company Account"
-     }
-  },
-    "password": "Create Password",
-    "passwordPlaceholder": "••••••••",
-    "submit": "Order with obligation to pay",
-    "processing": "Processing...",
-    "cancelAnytime": "Cancel anytime. Managed securely by Stripe.",
-    "alreadyHaveAccount": "Already have an account? Log in first",
-    "digitalConsent": "I explicitly consent to the immediate delivery of digital content and acknowledge that I thereby lose my right of withdrawal within 14 days.",
-    "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service.",
-    "errors": {
-      "default": "An unknown error occurred. Please check your details and try again.",
-      "rateLimit": "You have exceeded the request limit. Please wait a moment and try again.",
-      "wrongPassword": "An account with this email exists but with a different password. Please log in first.",
-      "missingData": "Missing email or user ID. Please try again."
+    "hero": {
+      "title": "A daily mental reset for stronger, calmer, more focused teams",
+      "subtitle": "Mindbanger for Teams helps employees handle stress better, improve focus, and build mental resilience through a simple daily ritual."
     },
+    "features": {
+      "title": "Why Mindbanger for Business?",
+      "f1": "Daily Mental Reset",
+      "f2": "Productivity Boost",
+      "f3": "Stress Reduction",
+      "f4": "Team Analytics"
+    },
+    "pricing": {
+      "title": "Simple Transparent Pricing",
+      "tier1": "1-4 Seats",
+      "tier2": "5-25 Seats (15% OFF)",
+      "tier3": "25+ Seats (25% OFF)",
+      "vatExcluded": "(excl. VAT)",
+      "cta": "Get Started"
+    },
+    "form": {
+      "companyName": "Company Name",
+      "taxId": "Tax ID (ICO)",
+      "vatId": "VAT ID (DIC/VAT)",
+      "seats": "Number of Seats",
+      "contactName": "Contact Person",
+      "contactEmail": "Contact Email",
+      "submit": "Create Company Account"
+    }
+  },
+  "password": "Create Password",
+  "passwordPlaceholder": "••••••••",
+  "submit": "Order with obligation to pay",
+  "processing": "Processing...",
+  "cancelAnytime": "Cancel anytime. Managed securely by Stripe.",
+  "alreadyHaveAccount": "Already have an account? Log in first",
+  "digitalConsent": "I explicitly consent to the immediate delivery of digital content and acknowledge that I thereby lose my right of withdrawal within 14 days.",
+  "ageConsent": "I confirm that I am over 18 years old to make a purchase, or 16+ years old to use the service.",
+  "errors": {
+    "default": "An unknown error occurred. Please check your details and try again.",
+    "rateLimit": "You have exceeded the request limit. Please wait a moment and try again.",
+    "wrongPassword": "An account with this email exists but with a different password. Please log in first.",
+    "missingData": "Missing email or user ID. Please try again."
+  },
   "nav": {
     "today": "Today",
     "archive": "Archive",
@@ -78,7 +78,9 @@
   "today": {
     "goodMorning": "Good morning",
     "todaysSignal": "Todays Signal",
-    "dailyReset": "Daily Reset",    "listenToText": "Listen to the text",    "todaysFocus": "Todays Focus",
+    "dailyReset": "Daily Reset",
+    "listenToText": "Listen to the text",
+    "todaysFocus": "Todays Focus",
     "affirmation": "Affirmation",
     "tuning": "Tuning the frequency...",
     "notBroadcasted": "Todays signal hasn\t been broadcasted yet. Check back a little later for your daily reset.",
@@ -147,203 +149,218 @@
       "features": "Features",
       "howItWorks": "How it works",
       "faq": "FAQ",
-      "joinSub": "Join Waitlist",
+      "joinSub": "Start Membership",
       "login": "Login",
-      "b2b": "For Teams"
+      "b2b": "For Teams",
+      "join": "Start Membership"
     },
     "hero": {
       "badge": "Mindbanger Daily",
-      "titlePart1": "Set yourself up for ",
-      "titleHighlight": "success",
-      "titlePart2": " every day",
-      "subtitle": "Daily mind signals for clarity, calm & focus.<br className=\"hidden md:block\" />Created by a Life Coach & Hypnotherapist.",
+      "titlePart1": "If you do not set your ",
+      "titleHighlight": "mind,",
+      "titlePart2": " the world will do it for you.",
+      "subtitle": "Mindbanger Daily helps you begin the day with clarity, emotional steadiness, and intentional direction.",
       "quote": "\"The way your mind is set begins to shape your reality.\"",
       "widgetTitle": "Today's Signal",
       "widgetBadge": "Clarity",
-      "widgetHeadline": "Simplify one thing today",
-      "widgetQuote": "\"I return to clarity by returning to myself.\"",
-      "widgetBtn": "Play Today�s Audio",
-      "widgetFooter": "A new signal every day. <br/> A stronger inner direction over time.",
-      "subtitleDesc": "Daily mind signals for clarity, calm & focus.",
-      "subtitleAuthor": "Created by a Life Coach & Hypnotherapist.",
-      "cta": "Start Mindbanger Daily"
+      "widgetHeadline": "Simplify one thing today.",
+      "widgetQuote": "\"You do not need to solve everything. You need one clear next step.\"",
+      "widgetBtn": "Play Today's Audio Preview",
+      "widgetFooter": "A new daily signal. A calmer and stronger inner direction over time.",
+      "subtitleDesc": "Mindbanger Daily helps you begin the day with clarity, emotional steadiness, and intentional direction.",
+      "subtitleAuthor": "Created by hypnotherapist and life coach Miroslav Jobus.",
+      "cta": "Start Membership"
     },
     "dailyRitual": {
-      "title": "Every day inside Mindbanger Daily:",
+      "title": "What you receive each day inside Mindbanger Daily",
       "features": [
         {
           "title": "Theme of the Day",
-          "desc": "Set your daily direction."
+          "desc": "A clear emotional and mental direction for the day ahead."
         },
         {
           "title": "Daily Mind Signal",
-          "desc": "Guided message for your mindset."
+          "desc": "A short guided message to help reset your mindset from within."
         },
         {
           "title": "Today’s Focus",
-          "desc": "One practical shift for the day."
+          "desc": "One simple shift to carry into your real day."
         },
         {
-          "title": "Affirmation",
-          "desc": "A powerful reinforcing statement."
+          "title": "Daily Affirmation",
+          "desc": "A reinforcing statement that helps anchor your inner state."
         },
         {
           "title": "Audio Reset",
-          "desc": "A short calming voice reset."
+          "desc": "A short voice-led reset for calm, focus, and reconnection."
         }
       ]
     },
     "howItWorks": {
-      "title": "How it works",
+      "title": "How Mindbanger Daily works",
       "steps": [
         {
-          "title": "Join",
-          "desc": "Start your membership in less than a minute."
+          "title": "1. Start your membership",
+          "desc": "Join in under a minute and get immediate access to your daily ritual."
         },
         {
-          "title": "Receive your daily signal",
-          "desc": "Get a fresh message, focus, affirmation and audio reset."
+          "title": "2. Receive your daily signal",
+          "desc": "Each day brings a new theme, a short mindset signal, a focus, an affirmation, and an audio reset."
         },
         {
-          "title": "Build a stronger mind daily",
-          "desc": "Create more clarity, emotional stability and direction over time."
+          "title": "3. Build your inner direction over time",
+          "desc": "With consistent daily use, your mind becomes calmer, clearer, and stronger."
         }
       ]
     },
     "interactivePreview": {
-      "title": "Choose the word that pulls you in first",
+      "title": "Which one do you need most today?",
       "options": [
         {
           "keyword": "Clarity",
-          "desc": "You need less noise and one true direction."
+          "desc": "Less mental noise. One true direction."
         },
         {
           "keyword": "Courage",
-          "desc": "A small honest step can change more than overthinking."
+          "desc": "One honest step can change more than endless overthinking."
         },
         {
           "keyword": "Reset",
-          "desc": "Today is a chance to release yesterday’s weight."
+          "desc": "You do not have to carry yesterday into today."
         }
       ],
-      "buttonActive": "Unlock the full daily signal for {active}",
-      "buttonInactive": "Unlock the full daily signal"
+      "buttonActive": "Start Your Daily Reset",
+      "buttonInactive": "Start Your Daily Reset",
+      "footerLine": "Whatever pulls you in first, that is often where your mind needs support most."
     },
     "benefits": {
       "title": "Mindbanger Daily is for you if you want to…",
       "items": [
-        "Start your mornings with more clarity",
-        "Reduce inner noise and overthinking",
-        "Feel calmer and more focused",
-        "Strengthen your mindset daily",
-        "Reconnect with yourself",
-        "Move through the day with more direction"
+        "Start the day with more clarity instead of chaos",
+        "Quiet overthinking and inner pressure",
+        "Feel calmer, more focused, and more grounded",
+        "Strengthen your mindset in a simple daily way",
+        "Reconnect with yourself before the day pulls you away",
+        "Move through life with more inner direction"
       ]
     },
     "vipZone": {
-      "title": "Inside the VIP Zone",
+      "title": "Inside the Member Area",
       "cards": [
         {
           "title": "Today",
-          "desc": "Your daily signal, focus, affirmation and audio."
+          "desc": "Your daily signal, focus, affirmation, and audio reset in one place."
         },
         {
           "title": "Archive",
-          "desc": "Access previous daily signals anytime."
+          "desc": "Return to past signals anytime you need them."
         },
         {
           "title": "Quick Resets",
-          "desc": "Calm Reset, Focus Reset, Sleep Reset and more."
+          "desc": "Short guided resets for calm, focus, sleep, and emotional reset."
         },
         {
           "title": "Start Here",
-          "desc": "Simple guidance on how to use the ritual for best results."
+          "desc": "Simple guidance to help you get the most from the ritual from day one."
         }
       ]
     },
     "aboutPage": {
-    "title": "Mgr. Miroslav Jobus",
-    "introTitle": "Who stands behind Mindbanger",
-    "introText": "Behind this project stands Miroslav Jobus – hypnotherapist and creator of systems focused on inner human change.",
-    "role": "Hypnotherapist & Mentor",
-    "back": "Back to Mindbanger",
-    "p1": "Miroslav Jobus is a hypnotherapist, mentor, and creator of projects focused on inner transformation, mental well-being, and personal growth. In his work, he combines a sensitive approach to people, a deep interest in how the mind works, and practical guidance towards real change. He doesn't work solely with theory but with real experience, understanding of emotions, habits, inner blocks, and the potential that every person carries within themselves.",
-    "h1": "Trust-based Approach",
-    "p2": "His approach is built on trust, humanity, and the belief that the right spoken word, peace, a safe space, and conscious work with the subconscious can help people change their lives from within.",
-    "h2": "Systems for Change",
-    "p3": "Miroslav creates systems, recordings, and processes designed to help people feel stronger, calmer, more confident, and more in harmony with themselves.",
-    "p4": "Behind his work lies not only a vision but also genuine interest in helping people—whether it's about better sleep, greater inner peace, self-confidence, discipline, or deeper personal awareness.",
-    "quote": "I created Mindbanger with the aim of bringing people simple tools that will help them feel more peace, strength, determination, and inner certainty on a daily level. I have verified myself that if a person can control and direct one specific day and does so regularly, they can positively influence their entire life.",
-    "p5": "It is precisely this original combination of human approach, intention, and authenticity that is implemented into the Mindbanger system and gives it clear added value of humanity and functionality at the same time."
-  },
-  "about": {
-      "badge": "About the Creator",
-      "role": "Life Coach, Hypnotherapist, and mental performance guide.",
-      "quote1": "Mindbanger Daily was created to help people shape each day from the inside out � through",
-      "span1": "clarity",
-      "quote2": ", ",
-      "span2": "calm",
+      "title": "Mgr. Miroslav Jobus",
+      "introTitle": "Who stands behind Mindbanger",
+      "introText": "Behind this project stands Miroslav Jobus – hypnotherapist and creator of systems focused on inner human change.",
+      "role": "Hypnotherapist & Mentor",
+      "back": "Back to Mindbanger",
+      "p1": "Miroslav Jobus is a hypnotherapist, mentor, and creator of projects focused on inner transformation, mental well-being, and personal growth. In his work, he combines a sensitive approach to people, a deep interest in how the mind works, and practical guidance towards real change. He doesn't work solely with theory but with real experience, understanding of emotions, habits, inner blocks, and the potential that every person carries within themselves.",
+      "h1": "Trust-based Approach",
+      "p2": "His approach is built on trust, humanity, and the belief that the right spoken word, peace, a safe space, and conscious work with the subconscious can help people change their lives from within.",
+      "h2": "Systems for Change",
+      "p3": "Miroslav creates systems, recordings, and processes designed to help people feel stronger, calmer, more confident, and more in harmony with themselves.",
+      "p4": "Behind his work lies not only a vision but also genuine interest in helping people—whether it's about better sleep, greater inner peace, self-confidence, discipline, or deeper personal awareness.",
+      "quote": "I created Mindbanger with the aim of bringing people simple tools that will help them feel more peace, strength, determination, and inner certainty on a daily level. I have verified myself that if a person can control and direct one specific day and does so regularly, they can positively influence their entire life.",
+      "p5": "It is precisely this original combination of human approach, intention, and authenticity that is implemented into the Mindbanger system and gives it clear added value of humanity and functionality at the same time."
+    },
+    "about": {
+      "badge": "Created by Miroslav Jobus",
+      "role": "Hypnotherapist, life coach, and mental performance guide",
+      "quote1": "“Mindbanger Daily was created for people who do not want to drift into the day unconsciously.",
+      "span1": "",
+      "quote2": "It is a simple daily ritual designed to help you return to yourself, steady your mind, and move forward with more intention.”",
+      "span2": "",
       "quote3": ", ",
-      "span3": "focus",
+      "span3": "",
       "quote4": " and ",
-      "span4": "intentional mental direction",
+      "span4": "",
       "quote5": "."
     },
     "pricing": {
-      "title1": "Simple daily support.",
-      "title2": "One monthly plan.",
+      "title1": "One simple membership.",
+      "title2": "One powerful daily ritual.",
       "planName": "Mindbanger Daily",
       "price": "€7.99",
-      "period": "/ month",
-      "vatExcluded": "Price excludes VAT",
-      "subtitle": "Less than a cup of coffee per week.",
+      "period": " / month",
+      "vatExcluded": "VAT may apply based on your country.",
+      "subtitle": "A small monthly cost for a stronger daily mind.",
       "features": [
         "Daily mind signal",
         "Daily focus",
         "Daily affirmation",
-        "Audio reset",
+        "Daily audio reset",
         "Archive access",
-        "Bonus resets"
+        "Bonus quick resets"
       ],
-      "cancelText": "Cancel anytime. No questions asked.",
-      "cta": "Start Mindbanger Daily"
+      "cancelText": "Cancel anytime. No long-term commitment.",
+      "cta": "Start Membership"
     },
     "b2bCta": {
-      "title": "Want to bring mental clarity and calm to your team?",
-      "desc": "Reduce workplace stress, boost focus, and build a more resilient team with our special program for businesses.",
-      "btn": "Discover Mindbanger for Teams"
+      "title": "Bring calm, focus, and mental resilience to your team",
+      "desc": "Mindbanger for Teams helps companies support employee well-being with a modern daily mental reset designed to reduce stress, improve focus, and strengthen resilience.",
+      "btn": "Explore Mindbanger for Teams"
     },
     "faq": {
       "title": "Questions",
       "faqs": [
         {
-          "q": "What do I get every day?",
-          "a": "A daily theme, short signal, focus, affirmation and audio reset."
+          "q": "What exactly do I receive each day?",
+          "a": "Each day you receive a theme, a short mindset signal, one practical focus, a reinforcing affirmation, and a short audio reset."
         },
         {
           "q": "Is this a meditation app?",
-          "a": "No. It is a daily mind ritual designed for clarity, calm and direction."
+          "a": "No. Mindbanger Daily is a guided daily mental ritual for clarity, calm, and inner direction."
+        },
+        {
+          "q": "How long does the daily ritual take?",
+          "a": "Only a few minutes. It is designed to fit into real daily life."
         },
         {
           "q": "Can I cancel anytime?",
-          "a": "Yes."
-        },
-        {
-          "q": "Is the content in English?",
-          "a": "Yes. English is the main version."
+          "a": "Yes. You can cancel your membership anytime."
         },
         {
           "q": "Do I get access to past days?",
-          "a": "Yes, through the archive."
+          "a": "Yes. Members can return to past signals through the archive."
+        },
+        {
+          "q": "Is the content in English?",
+          "a": "Yes. English is currently the main version."
+        },
+        {
+          "q": "Who is Mindbanger Daily for?",
+          "a": "It is for people who want less mental chaos, more clarity, and a stronger inner direction in daily life."
+        },
+        {
+          "q": "Is this therapy or medical treatment?",
+          "a": "No. Mindbanger Daily is a personal development and mental well-being tool. It is not a substitute for therapy, diagnosis, or medical care."
         }
       ]
     },
     "finalCta": {
-      "badge": "Start your daily reset",
+      "badge": "Set your mind. Shape your day.",
       "title1": "Set your mind.",
       "title2": "Shape your day.",
-      "quote": "\"The way your mind is set begins to shape your reality.\"",
-      "footer": "Join Mindbanger Daily Waitlist"
+      "quote": "\"A few minutes a day can change the way you move through everything else.\"",
+      "footer": "Start Mindbanger Daily",
+      "cta": "Start Membership"
     },
     "footer": {
       "tagline": "Daily signals for clarity, calm & focus.",

@@ -80,16 +80,33 @@ export default function HeroSection() {
                   <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">{dict?.landing?.hero?.widgetBadge || 'Clarity'}</span>
                 </div>
 
-                <h3 className="text-2xl font-serif text-white mb-2 leading-tight">{dict?.landing?.hero?.widgetHeadline || 'Simplify one thing today'}</h3>
-                <p className="text-indigo-200/80 text-sm font-light italic mb-6">
-                  {dict?.landing?.hero?.widgetQuote || '"I return to clarity by returning to myself."'}
-                </p>
+                  <h3 className="text-2xl font-serif text-white mb-2 leading-tight">{dict?.landing?.hero?.widgetHeadline || 'Simplify one thing today.'}</h3>
+                  <p className="text-indigo-200/80 text-sm font-light italic mb-6">
+                    {dict?.landing?.hero?.widgetQuote || '"You do not need to solve everything. You need one clear next step."'}
+                  </p>
 
-                <button className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-center gap-2 text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-indigo-500/20">
-                  <Play size={16} fill="currentColor" />
-                  {dict?.landing?.hero?.widgetBtn || 'Play Today’s Audio'}
-                </button>
-              </div>
+                  <div className="w-full flex flex-col space-y-3">
+                    <div className="bg-slate-900/60 border border-indigo-500/30 rounded-xl p-3 flex items-center justify-between shadow-indigo-500/10 shadow-lg">
+                      <button className="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center hover:scale-105 transition-all flex-shrink-0 shadow-md">
+                        <Play size={16} className="ml-1 animate-pulse" fill="currentColor" />
+                      </button>
+                      <div className="flex-1 mx-3 flex flex-col justify-center">
+                        <div className="w-full h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
+                          <div className="h-full bg-indigo-400 w-0 md:w-1/3 rounded-full relative">
+                            <div className="absolute top-0 right-0 bottom-0 left-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-1.5 text-[10px] text-slate-400 font-medium">
+                          <span>0:00</span>
+                          <span>0:45</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-center text-[11px] uppercase tracking-wider font-semibold text-indigo-300">
+                      {dict?.landing?.hero?.widgetBtn || "Play Today's Audio Preview"}
+                    </p>
+                  </div>
+                </div>
 
               {/* Small detail below */}
               <div className="text-center space-y-2 pt-2">

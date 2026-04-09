@@ -44,7 +44,7 @@ export default function AboutTrustSection() {
 
         <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm relative">
           <p className="text-slate-300 leading-relaxed text-lg md:text-xl font-light">
-            "{dict?.landing?.about?.quote1} <span className="text-white font-medium">{dict?.landing?.about?.span1}</span>{dict?.landing?.about?.quote2}<span className="text-white font-medium">{dict?.landing?.about?.span2}</span>{dict?.landing?.about?.quote3}<span className="text-white font-medium">{dict?.landing?.about?.span3}</span>{dict?.landing?.about?.quote4}<span className="text-white font-medium">{dict?.landing?.about?.span4}</span>{dict?.landing?.about?.quote5}"
+            {dict?.landing?.about?.quote1} <span className="text-white font-medium">{dict?.landing?.about?.span1}</span> {dict?.landing?.about?.quote2}
           </p>
         </div>
       </div>

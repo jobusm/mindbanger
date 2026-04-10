@@ -119,10 +119,7 @@ function LoginContent() {
       const response = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
+          body: JSON.stringify({ email, lang }),
 
       if (!response.ok) {
          throw new Error(data.error || 'Failed to send the email code.');

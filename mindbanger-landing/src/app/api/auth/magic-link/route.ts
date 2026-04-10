@@ -60,33 +60,42 @@ export async function POST(req: Request) {
       <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: -apple-system, sans-serif; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 40px; text-align: center; }
+        .card { background-color: rgba(30, 41, 59, 1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; text-align: center; }
         .title { font-family: Georgia, serif; font-size: 24px; margin-bottom: 16px; color: #f8fafc; }
-        .text { color: #94a3b8; line-height: 1.6; margin-bottom: 32px; font-size: 16px; }
-        .otp-box { background: #0f172a; border: 1px solid #475569; padding: 24px; border-radius: 12px; margin-bottom: 32px; }
-        .otp-code { color: #fde68a; font-family: monospace; font-size: 40px; font-weight: bold; letter-spacing: 8px; justify-content: center; display: flex;}
+        .text { color: #94a3b8; line-height: 1.6; margin-bottom: 24px; font-size: 16px; }
+        .code-box { background-color: #0f172a; border: 2px dashed #3b82f6; border-radius: 12px; padding: 20px; margin: 24px 0; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #fde68a; justify-content: center; display: flex; }
+        .button { display: inline-block; background: linear-gradient(to right, #fde68a, #f59e0b, #d97706); color: #0f172a !important; font-weight: bold; text-decoration: none; padding: 16px 36px; border-radius: 9999px; box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4); font-size: 16px; margin-top: 10px; }
         .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 12px; }
       </style>
     </head>
     <body style="background-color:#0f172a;">
       <div class="container">
-        <div style="text-align: center; margin-bottom: 40px;">
-          <span style="font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc;">Mindbanger Daily</span>
+        <div class="header" style="text-align: center; margin-bottom: 40px;">
+          <span class="logo" style="font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc;">Mindbanger Daily</span>
         </div>
 
         <div class="card">
-          <h1 class="title">Tvoj pristupovy kod</h1>
+          <h1 class="title">Tvoj overovací kód</h1>
           <p class="text">
-            Zadaj tento bezpecnostny 6-miestny kod pre vstup do aplikacie.
+            Skopíruj si alebo si zapamätaj tento 6-miestny kód:
           </p>
 
-          <div class="otp-box">
-            <span class="otp-code">${otpCode}</span>
+          <div class="code-box">
+            ${otpCode}
           </div>
 
-          <p style="color: #64748b; font-size: 12px;">
-            Tento kod vyprsi o par minut. Ak si o prihlasenie neziadal, mozes tento email ignorovat.
+          <p class="text" style="font-size: 14px;">
+            Ak si sa sem dostal z inej aplikácie, stlač tlačidlo nižšie, ktoré ťa bezpečne prepne späť do prehliadača priamo na zadanie kódu.
           </p>
+          
+          <a href="https://mindbanger.com/login?step=otp&email=${encodeURIComponent(email)}" class="button">
+            Prejsť na zadanie kódu
+          </a>
+        </div>
+        
+        <div class="footer">
+          &copy; 2026 Mindbanger Daily<br/>
+          Tento email bol vygenerovaný automaticky. Ak si o tento kód nežiadal, môžeš túto správu ignorovať.
         </div>
       </div>
     </body>
@@ -110,3 +119,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

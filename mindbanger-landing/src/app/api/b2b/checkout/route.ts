@@ -19,7 +19,8 @@ export async function POST(req: Request) {
       contactEmail, 
       seats, 
       lang,
-      affiliateId
+      affiliateId,
+      billingCycle
     } = body;
 
     if (!companyName || !taxId || !contactEmail || !seats) {
@@ -33,14 +34,30 @@ export async function POST(req: Request) {
 
     // Server-side price calculation logic
     let unitPrice = BASE_PRICE;
-    if (quantity >= 25) {
-      unitPrice = 6.49;
-    } else if (quantity >= 5) {
-      unitPrice = 6.99;
+    const isYearly = billingCycle === 'yearly';
+
+    if (isYearly) {
+      if (quantity < 10) {
+        unitPrice = 7.11;
+      } else {
+        const discountedMonthly = BASE_PRICE * 0.90; // 10% off base => 7.191
+        unitPrice = discountedMonthly * 0.89; // extra 11% off => ~6.40
+      }
+    } else {
+      if (quantity >= 10) {
+        unitPrice = BASE_PRICE * 0.90; // 10% off => 7.191
+      } else {
+        unitPrice = BASE_PRICE;
+      }
     }
 
     // Convert to cents
-    const unitAmountCents = Math.round(unitPrice * 100);
+    let unitAmountCents = Math.round(unitPrice * 100);
+    
+    // If yearly billing, Stripe unit amount must be the yearly equivalent
+    if (isYearly) {
+      unitAmountCents = unitAmountCents * 12;
+    }
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -50,12 +67,12 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: `Mindbanger Daily - B2B License (${quantity} Seats)`,
-              description: `Monthly subscription for ${companyName}. Includes ${quantity} user licenses.`,
+              name: `Mindbanger Daily - B2B License (${quantity} Seats) - ${isYearly ? 'Yearly' : 'Monthly'}`,
+              description: `${isYearly ? 'Yearly' : 'Monthly'} subscription for ${companyName}. Includes ${quantity} user licenses.`,
             },
             unit_amount: unitAmountCents,
             recurring: {
-              interval: 'month',
+              interval: isYearly ? 'year' : 'month',
             },
           },
           quantity: quantity,
@@ -75,6 +92,7 @@ export async function POST(req: Request) {
         contact_email: contactEmail,
         seats: seats, // Keep as string or number
         lang: lang,
+        billing_cycle: isYearly ? 'yearly' : 'monthly',
         affiliate_id: affiliateId || ''
       },
       // Tax Automatic calculation

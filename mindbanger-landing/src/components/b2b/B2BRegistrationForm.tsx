@@ -23,30 +23,44 @@ export default function B2BRegistrationForm({ lang, texts }: B2BFormProps) {
     contactName: '',
     contactEmail: '',
     contactPhone: '',
-    seats: 5
+    seats: 5,
+    billingCycle: 'monthly' // monthly or yearly
   });
 
   const [price, setPrice] = useState({ total: 0, perSeat: 0, discount: 0 });
 
   useEffect(() => {
     calculatePrice();
-  }, [formData.seats]);
+  }, [formData.seats, formData.billingCycle]);
 
   function calculatePrice() {
     const seats = formData.seats;
     let unitPrice = BASE_PRICE;
     let discountFilter = 0;
 
-    if (seats >= 25) {
-      unitPrice = 6.49;
-      discountFilter = 18; // approx percentage
-    } else if (seats >= 5) {
-      unitPrice = 6.99;
-      discountFilter = 12; // approx percentage
+    if (formData.billingCycle === 'yearly') {
+      if (seats < 10) {
+         unitPrice = 7.11;
+         discountFilter = 11;
+      } else {
+         const discountedMonthly = BASE_PRICE * 0.90;
+         unitPrice = discountedMonthly * 0.89; // extra 11% off
+         discountFilter = 20; 
+      }
+    } else {
+      if (seats >= 10) {
+         unitPrice = BASE_PRICE * 0.90; // 10% off
+         discountFilter = 10;
+      } else {
+         unitPrice = BASE_PRICE;
+         discountFilter = 0;
+      }
     }
 
+    const months = formData.billingCycle === 'yearly' ? 12 : 1;
+
     setPrice({
-      total: parseFloat((unitPrice * seats).toFixed(2)),
+      total: parseFloat((unitPrice * seats * months).toFixed(2)),
       perSeat: parseFloat(unitPrice.toFixed(2)),
       discount: discountFilter
     });
@@ -165,6 +179,24 @@ export default function B2BRegistrationForm({ lang, texts }: B2BFormProps) {
 
         {step === 2 && (
           <div className="space-y-6 animate-fadeIn">
+             {/* Billing Cycle Toggle */}
+             <div className="flex bg-slate-800 p-1 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setFormData(p => ({ ...p, billingCycle: 'monthly' }))}
+                  className={`flex-1 py-3 text-sm font-bold rounded-md transition-colors ${formData.billingCycle === 'monthly' ? 'bg-amber-500 text-black' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {lang === 'sk' ? "Mesačne" : "Monthly"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData(p => ({ ...p, billingCycle: 'yearly' }))}
+                  className={`flex-1 py-3 text-sm font-bold rounded-md transition-colors ${formData.billingCycle === 'yearly' ? 'bg-amber-500 text-black' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {lang === 'sk' ? "Ročne (Zvýhodnené)" : "Yearly (Save more)"}
+                </button>
+             </div>
+
              {/* Calculator Section */}
              <div className="bg-slate-800/50 p-6 rounded-xl border border-white/5">
                 <div className="flex items-center justify-between mb-4">
@@ -198,7 +230,7 @@ export default function B2BRegistrationForm({ lang, texts }: B2BFormProps) {
                 <div className="h-px bg-white/10 my-3" />
                 
                 <div className="flex justify-between items-center text-xl font-serif text-white">
-                  <span>Total Monthly (excl. VAT)</span>
+                    <span>{formData.billingCycle === 'yearly' ? 'Total Yearly (excl. VAT)' : 'Total Monthly (excl. VAT)'}</span>
                   <span>€{price.total}</span>
                 </div>
              </div>

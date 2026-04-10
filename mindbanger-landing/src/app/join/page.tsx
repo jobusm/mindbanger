@@ -64,7 +64,7 @@ export default function JoinPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email, 
-          lang,
+          lang: 'sk',
           options: {
              data: {
                terms_accepted: termsAccepted,

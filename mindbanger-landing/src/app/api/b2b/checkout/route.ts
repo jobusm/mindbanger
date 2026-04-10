@@ -18,7 +18,8 @@ export async function POST(req: Request) {
       contactName, 
       contactEmail, 
       seats, 
-      lang 
+      lang,
+      affiliateId
     } = body;
 
     if (!companyName || !taxId || !contactEmail || !seats) {
@@ -33,9 +34,9 @@ export async function POST(req: Request) {
     // Server-side price calculation logic
     let unitPrice = BASE_PRICE;
     if (quantity >= 25) {
-      unitPrice = BASE_PRICE * 0.75;
+      unitPrice = 6.49;
     } else if (quantity >= 5) {
-      unitPrice = BASE_PRICE * 0.85;
+      unitPrice = 6.99;
     }
 
     // Convert to cents
@@ -73,7 +74,8 @@ export async function POST(req: Request) {
         contact_name: contactName,
         contact_email: contactEmail,
         seats: seats, // Keep as string or number
-        lang: lang
+        lang: lang,
+        affiliate_id: affiliateId || ''
       },
       // Tax Automatic calculation
       automatic_tax: { enabled: true },

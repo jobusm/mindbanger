@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     // fallback to SK
     const txt = t[lang] || t.sk;
 
-    const htmlContent = \`
+    const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       </div>
     </body>
     </html>
-    \`;
+    `;
 
     const { success, error } = await sendEmail({
       to: email,

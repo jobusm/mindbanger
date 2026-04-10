@@ -175,6 +175,41 @@ export async function POST(req: Request) {
             customer_email: session.customer_details?.email || ''
           });
 
+          // --- PAYOUT AND AFFILIATE HANDLING START ---
+          if (session.metadata?.refCode || session.metadata?.affiliate_id || session.metadata?.affiliateId) {
+             try {
+                const rawRef = session.metadata?.affiliate_id || session.metadata?.affiliateId || session.metadata?.refCode;
+                const commissionModel = session.metadata?.refMode === 'lifetime' ? 'lifetime_20' : 'second_month';
+                
+                const { data: affiliate } = await supabase.from('affiliates').select('id').eq('id', rawRef).single();
+                
+                if (affiliate) {
+                   const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
+                   let commissionAmount = amountTotal * 0.20; // fallback calculation
+
+                   if (commissionModel === 'lifetime_20') {
+                      commissionAmount = amountTotal * 0.20;
+                   } else {
+                      // second_month model tracks the full subscription amount as the base to calculate the 100% second month payload
+                      commissionAmount = amountTotal;
+                   }
+
+                   await supabase.from('referrals').insert({
+                      affiliate_id: affiliate.id,
+                      referee_user_id: userId || null, 
+                      commission_model: commissionModel,
+                      status: 'pending',
+                      amount: commissionAmount,
+                      stripe_session_id: session.id,
+                   });
+                   console.log('Affiliate referral verified and inserted for session:', session.id);
+                }
+             } catch (affErr) {
+                console.error('Affiliate Tracking Hook Error:', affErr);
+             }
+          }
+          // --- PAYOUT AND AFFILIATE HANDLING END ---
+
 try {
               const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', userId).single();
               let updatePayload: any = { subscription_status: 'premium' };

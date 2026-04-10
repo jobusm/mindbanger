@@ -38,11 +38,11 @@ export default function B2BRegistrationForm({ lang, texts }: B2BFormProps) {
     let discountFilter = 0;
 
     if (seats >= 25) {
-      unitPrice = BASE_PRICE * 0.75;
-      discountFilter = 25;
+      unitPrice = 6.49;
+      discountFilter = 18; // approx percentage
     } else if (seats >= 5) {
-      unitPrice = BASE_PRICE * 0.85;
-      discountFilter = 15;
+      unitPrice = 6.99;
+      discountFilter = 12; // approx percentage
     }
 
     setPrice({
@@ -62,10 +62,12 @@ export default function B2BRegistrationForm({ lang, texts }: B2BFormProps) {
     setLoading(true);
 
     try {
+      const mindbanger_ref = typeof window !== 'undefined' ? localStorage.getItem('mindbanger_ref') : null;
+      
       const response = await fetch('/api/b2b/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, lang, price }),
+        body: JSON.stringify({ ...formData, lang, price, affiliateId: mindbanger_ref }),
       });
 
       const data = await response.json();

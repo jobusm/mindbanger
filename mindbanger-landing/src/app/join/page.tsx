@@ -20,6 +20,17 @@ export default function JoinPage() {
   const [gdprAccepted, setGdprAccepted] = useState(false);
 
   useEffect(() => {
+    // Check URL parameters for OTP step (e.g. returning from email app)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const stepParam = params.get('step');
+      const emailParam = params.get('email');
+      if (stepParam === 'otp' && emailParam) {
+        setStep('otp');
+        setEmail(decodeURIComponent(emailParam));
+      }
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         window.location.href = '/app/today';

@@ -72,10 +72,13 @@ function LoginContent() {
   const [lang, setLang] = useState<'sk' | 'cz' | 'en'>('sk');
 
   const initialMode = searchParams.get('type') === 'b2b' ? 'b2b' : 'personal';
+  const initialStep = searchParams.get('step') === 'otp' ? 'otp' : 'email';
+  const initialEmail = searchParams.get('email') || '';
+
   const [loginMode, setLoginMode] = useState<'personal' | 'b2b'>(initialMode);
-  const [step, setStep] = useState<'email' | 'otp'>('email');
+  const [step, setStep] = useState<'email' | 'otp'>(initialStep);
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialEmail);
   const [otpCode, setOtpCode] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 

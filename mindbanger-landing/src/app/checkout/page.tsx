@@ -94,7 +94,8 @@ function CheckoutContent() {
       
       {/* Main Content Info */}
       <div className="relative z-10 max-w-2xl w-full flex flex-col items-center text-center space-y-8">
-         <Link href="/" className="transition-opacity hover:opacity-80">
+         <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger Daily</span>
           <Image src="/logo.png" alt="Mindbanger Daily" width={180} height={45} className="h-10 w-auto object-contain" />
         </Link>
         

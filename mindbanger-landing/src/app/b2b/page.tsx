@@ -34,7 +34,8 @@ export default async function B2BPage(props: {
       {/* Simple Header */}
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-           <Link href="/" className="transition-opacity hover:opacity-80">
+           <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+              <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger Daily</span>
               <Image src="/logo.png" alt="Mindbanger" width={180} height={45} className="h-10 w-auto object-contain" />
            </Link>
            <B2BLanguageSwitcher initialLang={lang} />

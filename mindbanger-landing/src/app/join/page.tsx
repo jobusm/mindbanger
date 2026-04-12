@@ -124,7 +124,8 @@ export default function JoinPage() {
       
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8 space-y-2 flex flex-col items-center">
-          <Link href="/" className="inline-block transition-opacity hover:opacity-80">
+          <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+            <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger Daily</span>
             <Image src="/logo.png" alt="Mindbanger Daily" width={180} height={45} className="h-10 w-auto object-contain" />
           </Link>
           <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold mt-3">Start Membership</p>

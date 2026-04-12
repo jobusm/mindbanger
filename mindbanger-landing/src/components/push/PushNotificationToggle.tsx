@@ -75,10 +75,10 @@ export default function PushNotificationToggle() {
       if (!res.ok) throw new Error('Failed to save subscription on server');
 
       setIsSubscribed(true);
-      alert((dict.settings as any)?.pushTemp || 'Push notifikácie boli úspešne zapnuté!');
+      alert((dict.settings as any)?.push?.tempSave || 'Push notifikácie boli úspešne zapnuté!');
     } catch (error) {
       console.error('Error subscribing to push:', error);
-      alert((dict.settings as any)?.enablePushError || 'Zaseknuté? Kliknite na "Návod na zapnutie" nižšie.');
+      alert((dict.settings as any)?.push?.errEnable || 'Zaseknuté? Kliknite na "Návod na zapnutie" nižšie.');
       // Update permission state just in case
       if ('Notification' in window) {
          setPermission(Notification.permission);
@@ -92,12 +92,12 @@ export default function PushNotificationToggle() {
   if (!isSupported) {
     return (
       <div className="text-sm text-slate-500 italic p-4 bg-slate-900/50 rounded-xl border border-white/5 space-y-2">
-        <p>{(dict.settings as any)?.pushUnsupported || 'Prehliadač nepodporuje Push Notifikácie.'}</p>
+        <p>{(dict.settings as any)?.push?.unsupported || 'Prehliadač nepodporuje Push Notifikácie.'}</p>
         <p className="text-xs text-amber-500 font-medium">
-             💡 Pre iPhone (iOS): <br/>
-             1. Kliknite na {` `}<strong>Zdieľať</strong> (štvorec so šípkou)<br/>
-             2. Vyberte {` `}<strong>Pridať na plochu</strong> (Add to Home Screen)<br/>
-             3. Otvorte aplikáciu z plochy.
+             {(dict.settings as any)?.push?.iosHeader || '📱 Pre iPhone (iOS):'} <br/>
+             1. {(dict.settings as any)?.push?.iosStep1 || 'Kliknite na'} {` `}<strong>{(dict.settings as any)?.push?.iosStep1Bold || 'Zdieľať'}</strong> {(dict.settings as any)?.push?.iosStep1Suffix || '(štvorec so šípkou)'}<br/>
+             2. {(dict.settings as any)?.push?.iosStep2 || 'Vyberte'} {` `}<strong>{(dict.settings as any)?.push?.iosStep2Bold || 'Pridať na plochu'}</strong> {(dict.settings as any)?.push?.iosStep2Suffix || '(Add to Home Screen)'}<br/>
+             3. {(dict.settings as any)?.push?.iosStep3 || 'Otvorte aplikáciu z plochy a vráťte sa sem.'}
         </p>
       </div>
     );
@@ -111,10 +111,10 @@ export default function PushNotificationToggle() {
         <div>
           <h3 className="text-slate-300 font-medium flex items-center gap-2">
             {isSubscribed ? <Bell className="text-amber-500" size={18} /> : <BellOff className="text-slate-500" size={18} />}
-            {(dict.settings as any)?.pushTitle || 'Notifikácie do zariadenia'}
+            {(dict.settings as any)?.push?.title || 'Notifikácie do zariadenia'}
           </h3>
           <p className="text-xs text-slate-500 mt-1 max-w-xs">
-            {(dict.settings as any)?.pushDesc || 'Dostávaj denné ranné reštarty priamo na uzamknutú obrazovku mobilu.'}
+            {(dict.settings as any)?.push?.desc || 'Dostávaj denné ranné reštarty priamo na uzamknutú obrazovku mobilu.'}
           </p>
         </div>
 
@@ -132,10 +132,10 @@ export default function PushNotificationToggle() {
         >
             {isLoading ? <Loader2 className="animate-spin" size={16} /> : null}
             {isSubscribed 
-              ? ((dict.settings as any)?.pushBtnOn || 'Zapnuté')
+              ? ((dict.settings as any)?.push?.btnOn || 'Zapnuté')
               : permission === 'denied'
-              ? ((dict.settings as any)?.pushBtnBlocked || 'Zablokované')
-              : ((dict.settings as any)?.pushBtnOff || 'Zapnúť')}
+              ? ((dict.settings as any)?.push?.btnBlocked || 'Zablokované')
+              : ((dict.settings as any)?.push?.btnOff || 'Zapnúť')}
         </button>
       </div>
 
@@ -145,7 +145,7 @@ export default function PushNotificationToggle() {
             {permission === 'denied' ? (
                 <div className="flex items-start gap-2 text-red-400">
                     <Info size={14} className="mt-0.5 shrink-0" />
-                    <p>Notifikácie sú v prehliadači zablokované. Musíte ich povoliť ručne.</p>
+                    <p>{(dict.settings as any)?.push?.blockedInfo || 'Notifikácie sú v prehliadači zablokované. Musíte ich povoliť ručne.'}</p>
                 </div>
             ) : null}
 
@@ -155,29 +155,29 @@ export default function PushNotificationToggle() {
               className="text-amber-500 hover:text-amber-400 font-medium underline decoration-dashed underline-offset-4 flex items-center gap-1"
             >
               <Info size={12}/>
-              {(dict.settings as any)?.showHelp || 'Návod: Ako zapnúť notifikácie? ▼'}
+              {(dict.settings as any)?.push?.helpToggle || 'Návod: Ako zapnúť notifikácie? ▼'}
             </button>
             
             {showHelp && (
             <div className="pt-2 text-slate-300 space-y-3 pl-2 border-l-2 border-amber-500/20 ml-1 mt-2">
                 <div className="space-y-1">
-                    <strong className="block text-white text-xs uppercase tracking-wider">🤖 Android / Chrome (Mobil & PC)</strong>
+                    <strong className="block text-white text-xs uppercase tracking-wider">{(dict.settings as any)?.push?.androidTitle || '🤖 Android / Chrome (Mobil & PC)'}</strong>
                     <p>
-                        Kliknite na ikonu zámku 🔒 alebo nastavení v adresnom riadku (hore pri mindbanger.com) → Povolenia → Oznámenia → <strong>Povoliť</strong>.
+                        {(dict.settings as any)?.push?.androidDesc || 'Kliknite na ikonu zámku 🔒 alebo nastavení v adresnom riadku (hore pri mindbanger.com) → Povolenia → Oznámenia →'} <strong>{(dict.settings as any)?.push?.androidDescBold || 'Povoliť.'}</strong>
                     </p>
                 </div>
                 <div className="space-y-1">
-                     <strong className="block text-white text-xs uppercase tracking-wider">🍎 iPhone (iOS)</strong>
+                     <strong className="block text-white text-xs uppercase tracking-wider">{(dict.settings as any)?.push?.iosTitle2 || '📱 iPhone (iOS)'}</strong>
                      <p>
-                        1. Kliknite na <strong>Zdieľať</strong> (štvorec so šípkou)<br/>
-                        2. Vyberte <strong>Pridať na plochu</strong> (Add to Home Screen)<br/>
-                        3. Otvorte aplikáciu z plochy a vráťte sa sem.
+                        1. {(dict.settings as any)?.push?.iosStep1 || 'Kliknite na'} <strong>{(dict.settings as any)?.push?.iosStep1Bold || 'Zdieľať'}</strong> {(dict.settings as any)?.push?.iosStep1Suffix || '(štvorec so šípkou)'}<br/>
+                        2. {(dict.settings as any)?.push?.iosStep2 || 'Vyberte'} <strong>{(dict.settings as any)?.push?.iosStep2Bold || 'Pridať na plochu'}</strong> {(dict.settings as any)?.push?.iosStep2Suffix || '(Add to Home Screen)'}<br/>
+                        3. {(dict.settings as any)?.push?.iosStep3 || 'Otvorte aplikáciu z plochy a vráťte sa sem.'}
                      </p>
                 </div>
                 <div className="space-y-1">
-                     <strong className="block text-white text-xs uppercase tracking-wider">⚠️ Problémy?</strong>
+                     <strong className="block text-white text-xs uppercase tracking-wider">{(dict.settings as any)?.push?.troubleTitle || '⚠️ Problémy?'}</strong>
                      <p>
-                        Skontrolujte, či nemáte zapnutý režim "Nerušiť" alebo "Sústredenie".
+                        {(dict.settings as any)?.push?.troubleDesc || 'Skontrolujte, či nemáte zapnutý režim "Nerušiť" alebo "Sústredenie".'}
                      </p>
                  </div>
             </div>

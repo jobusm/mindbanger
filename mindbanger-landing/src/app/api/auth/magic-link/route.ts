@@ -53,33 +53,25 @@ export async function POST(req: Request) {
       throw new Error("Nepodarilo sa vygenerovat OTP kod zo Supabase.");
     }
 
-    const t: Record<string, any> = {
+        const t: Record<string, any> = {
       sk: {
         title: "Prihlásenie do Mindbanger Daily",
-        subject: "Vstupný kód: ${otpCode}",
-        html: `
-${otpHtml}
-
-    <p style="color: #94a3b8; font-size: 16px; margin-top: 24px;">
-      Alebo môžeš použiť tento link na prihlásenie:
-      <br/>
-      <a href="${magicLink}" style="color: #3b82f6;">Klikni sem pre prihlásenie</a>
-    </p>
-        `
+        subject: `Vstupný kód: ${otpCode}`,
+        subtitle: "Tvoj overovací kód",
+        button: "Prejsť na zadanie kódu",
+        description: "Ak si sa sem dostal z inej aplikácie, stlač tlačidlo vyššie, ktoré ťa bezpečne prepne späť do prehliadača priamo na zadanie kódu.",
+        footer: "Tento email bol vygenerovaný automaticky. Ak si o tento kód nežiadal, môžeš túto správu ignorovať."
       },
       cz: {
         title: "Přihlášení do Mindbanger Daily",
-        subject: "Vstupní kód: ${otpCode}",
-        html: `
-${otpHtml}
-
-    <p style="color: #94a3b8; font-size: 16px; margin-top: 24px;">
-      Nebo můžeš použít tento link pro přihlášení:
-      <br/>
-      <a href="${magicLink}" style="color: #3b82f6;">Klikni sem pro přihlášení</a>
-    </p>
-        `
-      }\n    };\n    
+        subject: `Vstupní kód: ${otpCode}`,
+        subtitle: "Tvůj ověřovací kód",
+        button: "Přejít na zadání kódu",
+        description: "Pokud jsi se sem dostal z jiné aplikace, stiskni tlačítko výše, které tě bezpečně přepne zpět do prohlížeče přímo na zadání kódu.",
+        footer: "Tento email byl vygenerován automaticky. Pokud jsi o tento kód nežádal, můžeš tuto zprávu ignorovat."
+      }
+    };
+    
     // fallback to SK
     const txt = t[lang] || t.sk;
 

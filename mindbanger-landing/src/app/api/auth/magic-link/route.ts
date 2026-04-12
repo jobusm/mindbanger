@@ -110,23 +110,23 @@ export async function POST(req: Request) {
           <img src="https://mindbanger.com/logo.png" alt="Mindbanger" style="height: 40px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
         </div>
         <div class="card">
-          <h1 class="title">\${txt.title}</h1>
+          <h1 class="title">${txt.title}</h1>
           <p class="text" style="margin-bottom: 24px;">
-            \${txt.subtitle}
+            ${txt.subtitle}
           </p>
           <div class="code-box">
-            \${otpCode}
+            ${otpCode}
           </div>
-          <a href="https://mindbanger.com/login?step=otp&email=\${encodeURIComponent(email)}" class="button">
-            \${txt.button}
+          <a href="https://mindbanger.com/login?step=otp&email=${encodeURIComponent(email)}" class="button">
+            ${txt.button}
           </a>
           <p class="text" style="font-size: 14px; margin-top: 24px; color: #64748b;">
-            \${txt.description}
+            ${txt.description}
           </p>
         </div>
         <div class="footer">
           &copy; 2026 Mindbanger Daily<br/>
-          \${txt.footer}
+          ${txt.footer}
         </div>
       </div>
     </body>

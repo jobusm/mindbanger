@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     <body style="background-color:#0f172a;">
       <div class="container">
         <div class="header" style="text-align: center; margin-bottom: 40px;">
-          <span style="font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc; display: inline-block; vertical-align: middle; margin-right: 15px;">Mindbanger Daily</span>
+          <span style="font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc; display: inline-block; vertical-align: middle; margin-right: 15px;">Mindbanger <span style="color: #f59e0b;">Daily</span></span>
           <img src="https://mindbanger.com/logo.png" alt="Mindbanger" style="height: 40px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
         </div>
         <div class="card">

@@ -37,7 +37,7 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger Daily</span>
+          <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger <span className="text-amber-500">Daily</span></span>
           <Image src="/logo.png" alt="Mindbanger" width={180} height={45} className="h-10 w-auto object-contain" />
         </Link>
 

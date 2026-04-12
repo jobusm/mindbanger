@@ -17,7 +17,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start space-y-2">
           <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80 opacity-50">
-            <span className="font-serif font-bold text-xl text-slate-50 tracking-wide">Mindbanger Daily</span>
+            <span className="font-serif font-bold text-xl text-slate-50 tracking-wide">Mindbanger <span className="text-amber-500">Daily</span></span>
             <Image src="/logo.png" alt="Mindbanger Daily" width={140} height={35} className="h-8 w-auto object-contain" />
           </Link>
           <p className="text-xs text-slate-500 max-w-xs text-center md:text-left">

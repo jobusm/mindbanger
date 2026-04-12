@@ -55,31 +55,31 @@ export async function POST(req: Request) {
 
     const t: Record<string, any> = {
       sk: {
-        subject: "Vstupn� k�d - Mindbanger Vault",
-        title: "Tvoj overovac� k�d",
-        subtitle: "Skop�ruj si alebo si zapam�taj tento 6-miestny k�d:",
-        button: "Prejs� na zadanie k�du",
-        description: "Ak si sa sem dostal z inej aplik�cie, stla� tla�idlo vy��ie, ktor� �a bezpe�ne prepne sp� do prehliada�a priamo na zadanie k�du.",
-        footer: "Tento email bol vygenerovan� automaticky. Ak si o tento k�d ne�iadal, m��e� t�to spr�vu ignorova�."
-      },
-      en: {
-        subject: "Access Code - Mindbanger Vault",
-        title: "Your Verification Code",
-        subtitle: "Copy or remember this 6-digit code:",
-        button: "Go to Code Entry",
-        description: "If you opened this in another app, press the button above to safely return to your browser to enter the code.",
-        footer: "This email was generated automatically. If you did not request this, you can ignore this message."
+        title: "Prihlásenie do Mindbanger Daily",
+        subject: "Vstupný kód: ${otpCode}",
+        html: `
+${otpHtml}
+
+    <p style="color: #94a3b8; font-size: 16px; margin-top: 24px;">
+      Alebo môžeš použiť tento link na prihlásenie:
+      <br/>
+      <a href="${magicLink}" style="color: #3b82f6;">Klikni sem pre prihlásenie</a>
+    </p>
+        `
       },
       cz: {
-        subject: "Vstupn� k�d - Mindbanger Vault",
-        title: "Tv�j ov��ovac� k�d",
-        subtitle: "Zkop�ruj si nebo si zapamatuj tento 6m�stn� k�d:",
-        button: "P�ej�t na zad�n� k�du",
-        description: "Pokud jsi to otev�el v jin� aplikaci, stiskni tla��tko v��e, kter� t� bezpe�n� p�epne zp�t do prohl�e�e p��mo na zad�n� k�du.",
-        footer: "Tento email byl vygenerov�n automaticky. Pokud jsi o tento k�d ne��dal, m��e� tuto zpr�vu ignorovat."
-      }
-    };
-    
+        title: "Přihlášení do Mindbanger Daily",
+        subject: "Vstupní kód: ${otpCode}",
+        html: `
+${otpHtml}
+
+    <p style="color: #94a3b8; font-size: 16px; margin-top: 24px;">
+      Nebo můžeš použít tento link pro přihlášení:
+      <br/>
+      <a href="${magicLink}" style="color: #3b82f6;">Klikni sem pro přihlášení</a>
+    </p>
+        `
+      }\n    };\n    
     // fallback to SK
     const txt = t[lang] || t.sk;
 
@@ -87,6 +87,7 @@ export async function POST(req: Request) {
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }

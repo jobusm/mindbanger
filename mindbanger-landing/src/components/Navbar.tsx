@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { useDictionary } from './LanguageProvider';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -34,9 +35,9 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         <Link
           href="/"
-          className="text-white font-serif text-2xl tracking-wide font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-400"
+          className="flex items-center gap-3 transition-opacity hover:opacity-80"
         >
-          Mindbanger
+          <Image src="/logo.png" alt="Mindbanger" width={180} height={45} className="h-10 w-auto object-contain" />
         </Link>
 
         {/* Desktop Buttons */}

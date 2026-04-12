@@ -3,6 +3,7 @@ import { getDictionary } from '@/lib/i18n';
 import B2BRegistrationForm from '@/components/b2b/B2BRegistrationForm';
 import { CheckCircle2, TrendingUp, Users, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import B2BLanguageSwitcher from '@/components/b2b/B2BLanguageSwitcher';
 import { cookies } from 'next/headers';
 
@@ -33,8 +34,8 @@ export default async function B2BPage(props: {
       {/* Simple Header */}
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-           <Link href="/" className="text-2xl font-serif tracking-tighter hover:opacity-80 transition-opacity">
-              Mindbanger<span className="text-amber-500">.</span>
+           <Link href="/" className="transition-opacity hover:opacity-80">
+              <Image src="/logo.png" alt="Mindbanger" width={180} height={45} className="h-10 w-auto object-contain" />
            </Link>
            <B2BLanguageSwitcher initialLang={lang} />
         </div>

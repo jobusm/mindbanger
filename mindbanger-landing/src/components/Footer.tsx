@@ -4,6 +4,7 @@ import { useDictionary } from './LanguageProvider';
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const { dict } = useDictionary();
@@ -15,8 +16,8 @@ export default function Footer() {
         
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start space-y-2">
-          <Link href="/" className="text-white font-serif text-xl font-bold tracking-wide">
-            Mindbanger Daily
+          <Link href="/" className="transition-opacity hover:opacity-80">
+            <Image src="/logo.png" alt="Mindbanger Daily" width={140} height={35} className="h-8 w-auto object-contain opacity-50" />
           </Link>
           <p className="text-xs text-slate-500 max-w-xs text-center md:text-left">
             {dict?.landing?.footer?.tagline || 'Daily signals for clarity, calm & focus.'}

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, KeyRound, Loader2, Sparkles, User, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 
 export default function JoinPage() {
@@ -122,11 +123,11 @@ export default function JoinPage() {
       <div className="absolute top-[20%] right-[20%] w-[300px] h-[300px] bg-amber-600/10 rounded-full blur-[80px] pointer-events-none animate-pulse" />
       
       <div className="relative z-10 w-full max-w-md">
-        <div className="text-center mb-8 space-y-2">
-          <Link href="/" className="inline-block text-2xl font-serif font-bold text-white hover:text-amber-400 transition-colors">
-            Mindbanger Daily
+        <div className="text-center mb-8 space-y-2 flex flex-col items-center">
+          <Link href="/" className="inline-block transition-opacity hover:opacity-80">
+            <Image src="/logo.png" alt="Mindbanger Daily" width={180} height={45} className="h-10 w-auto object-contain" />
           </Link>
-          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold">Start Membership</p>
+          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold mt-3">Start Membership</p>
         </div>
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">

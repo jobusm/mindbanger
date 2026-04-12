@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight, Loader2, Check } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useDictionary } from '@/lib/i18n-client';
 import { useEffect } from 'react';
@@ -93,8 +94,8 @@ function CheckoutContent() {
       
       {/* Main Content Info */}
       <div className="relative z-10 max-w-2xl w-full flex flex-col items-center text-center space-y-8">
-         <Link href="/" className="text-xl font-serif font-bold text-white hover:text-amber-400 transition-colors">
-          Mindbanger Daily
+         <Link href="/" className="transition-opacity hover:opacity-80">
+          <Image src="/logo.png" alt="Mindbanger Daily" width={180} height={45} className="h-10 w-auto object-contain" />
         </Link>
         
         <div className="space-y-4">

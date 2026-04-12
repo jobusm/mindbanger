@@ -1,0 +1,58 @@
+import os
+
+otp_html = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background-color: #0f172a; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #f8fafc; text-decoration: none; }
+    .card { background-color: rgba(30, 41, 59, 1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px 20px; text-align: center; }
+    .title { font-family: Georgia, serif; font-size: 24px; margin-bottom: 16px; color: #f8fafc; }
+    .text { color: #94a3b8; line-height: 1.6; margin-bottom: 24px; font-size: 16px; }
+    .code-box { background-color: #0f172a; border: 2px dashed #3b82f6; border-radius: 12px; padding: 20px; margin: 24px 0; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #fde68a; }
+    .button { display: inline-block; background: linear-gradient(to right, #fde68a, #f59e0b, #d97706); color: #0f172a !important; font-weight: bold; text-decoration: none; padding: 16px 36px; border-radius: 9999px; box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4); font-size: 16px; margin-top: 10px; }
+    .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="logo" style="display: inline-block; vertical-align: middle; margin-right: 15px;">Mindbanger <span style="color: #f59e0b;">Daily</span></span>
+      <img src="https://mindbanger.com/logo.png" alt="Mindbanger" style="height: 40px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
+    </div>
+    
+    <div class="card">
+      <h1 class="title">Tvoj overovací kód</h1>
+      <p class="text">
+        Skopíruj si alebo si zapamätaj tento 6-miestny kód:
+      </p>
+      
+      <div class="code-box">
+        {{ params.token }}
+      </div>
+
+      <p class="text" style="font-size: 14px;">
+        Ak si sa sem dostal z inej aplikácie, stlač tlačidlo nižšie, ktoré ťa bezpečne prepne späť do prehliadača priamo na zadanie kódu.
+      </p>
+      
+      <a href="https://mindbanger.com/login?step=otp&email={{ params.email }}" class="button">
+        Prejsť na zadanie kódu
+      </a>
+    </div>
+    
+    <div class="footer">
+      &copy; 2026 Mindbanger Daily<br/>
+      Tento email bol vygenerovaný automaticky. Ak si o tento kód nežiadal, môžeš túto správu ignorovať.
+    </div>
+  </div>
+</body>
+</html>"""
+
+with open('emails/otp-template.html', 'w', encoding='utf-8') as f:
+    f.write(otp_html)
+
+print("success!")

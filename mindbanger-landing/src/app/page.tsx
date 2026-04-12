@@ -53,7 +53,7 @@ export default async function Home(props: any) {
 
   // Variant B: All main CTAs now direct to free signup instead of checkout
   return (
-    <LanguageProvider dict={dict}>
+    <LanguageProvider dict={dict} lang={lang}>
       <main className="min-h-screen bg-slate-950 text-white selection:bg-amber-500/30 selection:text-amber-100">
         <Navbar /> {/* Ensure Navbar links to /join or /login */}
         <HeroSection />

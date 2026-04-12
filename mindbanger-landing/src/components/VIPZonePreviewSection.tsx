@@ -31,7 +31,7 @@ const cards = [
 ];
 
 export default function VIPZonePreviewSection() {
-  const { dict } = useDictionary();
+  const { dict, lang } = useDictionary();
   return (
     <section className="py-24 bg-slate-950 px-6 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/10 via-slate-950 to-indigo-900/10 pointer-events-none" />
@@ -53,8 +53,8 @@ export default function VIPZonePreviewSection() {
             <div className="absolute top-0 inset-x-0 h-7 w-32 bg-slate-800 mx-auto rounded-b-2xl z-20"></div>
             {/* Placeholder Image (replace src later) */}
             <div className="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-slate-700 border border-slate-800/50 rounded-[2.2rem] m-1 overflow-hidden">
-               {/* <Image src="/app-screen-1.png" alt="App Preview 1" fill className="object-cover" /> */}
-               <span className="text-xs uppercase tracking-widest text-center px-4">Screenshot 1 <br/>(Napr. Profil/Nastavenia)</span>
+               <Image src={`/app-screen-1-${lang}.png`} alt="App Preview 1" fill className="object-cover" />
+               {/* <span className="text-xs uppercase tracking-widest text-center px-4">Screenshot 1 <br/>(Napr. Profil/Nastavenia)</span> */}
             </div>
           </div>
 
@@ -64,8 +64,8 @@ export default function VIPZonePreviewSection() {
             <div className="absolute top-0 inset-x-0 h-8 w-36 bg-slate-800 mx-auto rounded-b-3xl z-20"></div>
             {/* Placeholder Image (replace src later) */}
             <div className="absolute inset-0 bg-[#0f172a] flex flex-col items-center justify-center text-slate-700 border border-slate-800/50 rounded-[2.5rem] m-1.5 overflow-hidden">
-               {/* <Image src="/app-screen-2.png" alt="App Preview 2" fill className="object-cover" /> */}
-               <span className="text-xs uppercase tracking-widest text-center px-4 font-bold text-slate-500">Screenshot 2 <br/>(Hlavný Player / Today)</span>
+               <Image src={`/app-screen-2-${lang}.png`} alt="App Preview 2" fill className="object-cover" />
+               {/* <span className="text-xs uppercase tracking-widest text-center px-4 font-bold text-slate-500">Screenshot 2 <br/>(Hlavný Player / Today)</span> */}
             </div>
           </div>
 
@@ -75,8 +75,8 @@ export default function VIPZonePreviewSection() {
             <div className="absolute top-0 inset-x-0 h-7 w-32 bg-slate-800 mx-auto rounded-b-2xl z-20"></div>
             {/* Placeholder Image (replace src later) */}
             <div className="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-slate-700 border border-slate-800/50 rounded-[2.2rem] m-1 overflow-hidden">
-               {/* <Image src="/app-screen-3.png" alt="App Preview 3" fill className="object-cover" /> */}
-               <span className="text-xs uppercase tracking-widest text-center px-4">Screenshot 3 <br/>(Napr. Archív)</span>
+               <Image src={`/app-screen-3-${lang}.png`} alt="App Preview 3" fill className="object-cover" />
+               {/* <span className="text-xs uppercase tracking-widest text-center px-4">Screenshot 3 <br/>(Napr. Archív)</span> */}
             </div>
           </div>
 

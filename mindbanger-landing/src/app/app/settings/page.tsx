@@ -77,9 +77,12 @@ export default function SettingsPage() {
           notification_time: profile.notification_time || '06:00:00'
         })
         .eq('id', user.id);
+      
+      // Update cookie so that the UI translates immediately inside useDictionary hooks
+      document.cookie = `user-lang=${profile.preferred_language}; path=/; max-age=31536000`;
     }
     setSaving(false);
-    router.refresh(); // Obnovenie SSR dát
+    window.location.reload(); // Obnovenie vsetkych klient/server dat s novym jazykom
   };
 
   const handleLogout = async () => {
@@ -119,17 +122,17 @@ export default function SettingsPage() {
               <div>
                  <h3 className="font-medium text-blue-400 flex items-center gap-2">
                     <Building2 size={18} />
-                    {(dict as any)?.organization?.title || (profile?.preferred_language === 'sk' ? 'Organizácia' : 'Organization')}
+                    {dict.settings?.orgTitle || 'Organization'}
                  </h3>
                  <p className="text-xs text-slate-400 mt-1">
-                    {(dict as any)?.organization?.manageDesc || (profile?.preferred_language === 'sk' ? 'Spravuj svoj tím a predplatné' : 'Manage your team and subscription')}
+                    {dict.settings?.orgDesc || 'Manage your team and subscription'}
                  </p>
               </div>
               <Link 
                 href="/app/organization"
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                 {(dict as any)?.organization?.manageBtn || (profile?.preferred_language === 'sk' ? 'Spravovať' : 'Manage')}
+                 {dict.settings?.orgManageBtn || 'Manage'}
               </Link>
            </div>
         )}

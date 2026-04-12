@@ -131,7 +131,10 @@
     "dangerZone": "Správa odberu & Odhlásenie",
     "dangerDesc": "Tu si môžete spravovať svoju kartu, faktúry cez Stripe alebo sa odhlásiť z aplikácie.",
     "manageStripe": "Spravovať Predplatné v Stripe",
-    "logoutBtn": "Odhlásiť sa"
+    "logoutBtn": "Odhlásiť sa",
+    "orgTitle": "Organizácia",
+    "orgDesc": "Spravuj svoj tím a predplatné",
+    "orgManageBtn": "Spravovať"
   },
   "resets": {
     "backToProducts": "Späť na zoznam produktov",

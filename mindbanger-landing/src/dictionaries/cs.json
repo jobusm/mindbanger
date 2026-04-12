@@ -99,7 +99,10 @@
     "dangerZone": "Správa odběru & Odhlášení",
     "dangerDesc": "Zde si můžete spravovat svou kartu, faktury přes Stripe nebo se odhlásit z aplikace.",
     "manageStripe": "Spravovat Předplatné ve Stripe",
-    "logoutBtn": "Odhlásit se"
+    "logoutBtn": "Odhlásit se",
+    "orgTitle": "Organizace",
+    "orgDesc": "Spravuj svůj tým a předplatné",
+    "orgManageBtn": "Spravovat"
   },
   "resets": {
     "backToProducts": "Zpět na seznam produktů",

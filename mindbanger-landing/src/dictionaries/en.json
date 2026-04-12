@@ -131,7 +131,10 @@
     "dangerZone": "Subscription & Sign Out",
     "dangerDesc": "Manage your card, invoices via Stripe, or sign out.",
     "manageStripe": "Manage Subscription in Stripe",
-    "logoutBtn": "Sign Out"
+    "logoutBtn": "Sign Out",
+    "orgTitle": "Organization",
+    "orgDesc": "Manage your team and subscription",
+    "orgManageBtn": "Manage"
   },
   "resets": {
     "backToProducts": "Back to products",

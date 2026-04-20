@@ -1,9 +1,14 @@
 ﻿import { NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
+import { createClient } from '@/lib/supabase-server';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, userId, refMode, refCode } = body;
+    const { email, refMode, refCode } = body;
+    const supabase = await createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const userId = session.user.id;
 
     if (!email || !userId) {
       return NextResponse.json({ error: 'Missing email or user ID' }, { status: 400 });

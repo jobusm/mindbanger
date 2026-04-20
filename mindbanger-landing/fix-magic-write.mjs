@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server";
+import fs from 'fs';
+
+const correctContent = `import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase-server";
 import { sendEmail } from "@/lib/email";
 
@@ -55,32 +57,32 @@ export async function POST(req: Request) {
       }
     };
 
-    const htmlContent = lang === 'sk' ? `
+    const htmlContent = lang === 'sk' ? \\\`
       <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #0f172a; margin-bottom: 24px;">${t.sk.title}</h1>
+          <h1 style="color: #0f172a; margin-bottom: 24px;">\\\${t.sk.title}</h1>
           <p style="font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
-              ${t.sk.subtitle} <strong>${otpCode}</strong>
+              \\\${t.sk.subtitle} <strong>\\\${otpCode}</strong>
           </p>
           <div style="text-align: center; margin-bottom: 32px;">
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com'}/auth/verify" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                  ${t.sk.button}
+              <a href="\\\${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com'}/auth/verify" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                  \\\${t.sk.button}
               </a>
           </div>
           <p style="font-size: 14px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-              ${t.sk.description}
+              \\\${t.sk.description}
           </p>
-      </div>` : `
+      </div>\\\` : \\\`
       <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #0f172a; margin-bottom: 24px;">Entry Code - Mindbanger Vault</h1>
           <p style="font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
-              Your verification code is: <strong>${otpCode}</strong>
+              Your verification code is: <strong>\\\${otpCode}</strong>
           </p>
           <div style="text-align: center; margin-bottom: 32px;">
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com'}/auth/verify" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+              <a href="\\\${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com'}/auth/verify" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                   Go to verification
               </a>
           </div>
-      </div>`;
+      </div>\\\`;
 
     const { success, error: emailError } = await sendEmail({
       to: email,
@@ -98,3 +100,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to send magic link' }, { status: 500 });
   }
 }
+`;
+fs.writeFileSync('src/app/api/auth/magic-link/route.ts', correctContent);

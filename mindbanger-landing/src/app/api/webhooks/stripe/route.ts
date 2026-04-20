@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import stripe from '@/lib/stripe';
 import { sendEmail } from '@/lib/email';
 import { welcomeEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
+import { sendB2BInviteEmail } from '@/lib/b2b-services';
 
 // Zmena na citanie secretov tak aby bral aj fallback
 export async function POST(req: Request) {

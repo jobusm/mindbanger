@@ -81,18 +81,18 @@ export async function POST(request: Request) {
 
         // Send Push Notification
         try {
-            const { data: subs } = await supabaseAdmin.from('push_subscriptions').select('subscription').eq('user_id', userId);
+            const { data: subs } = await supabaseAdmin.from('push_subscriptions').select('endpoint, p256dh, auth').eq('user_id', userId);
             
             if (subs && subs.length > 0) {
                 const payload = JSON.stringify({
-                    title: 'NovĂˇ osobnĂˇ nahrĂˇvka!',
-                    body: `PrĂˇve pre vĂˇs bola nahratĂˇ novĂˇ nahrĂˇvka: ${title}`,
+                    title: 'Nová osobná nahrávka!',
+                    body: `Práve pre vás bola nahratá nová nahrávka: ${title}`,
                     url: '/app/my-audio'
                 });
 
                 for (const subRow of subs) {
                     try {
-                        const sub = typeof subRow.subscription === 'string' ? JSON.parse(subRow.subscription) : subRow.subscription;
+                        const sub = { endpoint: subRow.endpoint, keys: { p256dh: subRow.p256dh, auth: subRow.auth } };
                         await webpush.sendNotification(sub, payload);
                     } catch(pushErr) {
                         console.error('Push error for sub', pushErr);

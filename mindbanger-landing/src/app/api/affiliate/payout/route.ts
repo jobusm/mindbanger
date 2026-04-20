@@ -55,14 +55,15 @@ export async function POST(req: Request) {
       // Ulozime notifikaciu do nejakej inej formy
       console.error('Insert payout_request error');
       
-      // Pokus poslat si to na support tabulku, ak existuje:
+      // Pokus poslat si to na support logovaciu strukturu:
       try {
         await supabase.from('contact_messages').insert([
-          { email: session.user.email, message: `PAYOUT REQUEST: Affiliate requested ${amount} EUR.` }
+          { email: session.user.email, name: 'Affiliate System', message: `PAYOUT_ERROR|REQUEST: Affiliate requested ${amount} EUR. Please process manually.` }
         ]);
       } catch (err) {
         // Ignorujeme
       }
+      return NextResponse.json({ error: 'Payout process failed, system notified' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

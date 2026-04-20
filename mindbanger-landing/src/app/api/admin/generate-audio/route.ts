@@ -1,3 +1,4 @@
+import { checkAdminAuth } from '@/lib/auth-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
@@ -6,8 +7,6 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { enhanceTextWithSSML } from '@/lib/content-engine/openai';
 
 export const maxDuration = 120; // 2 minutes
-
-const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
 // S3 / R2 config
 let s3Client: S3Client | null = null;
@@ -48,9 +47,7 @@ export async function POST(request: NextRequest) {
   );
 
   const { data: { user }, error: authErr } = await supabase.auth.getUser();
-  if (authErr || !user || !ADMIN_EMAILS.includes(user.email || '')) {
-    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 });
-  }
+  if (!(await checkAdminAuth())) { return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); }
 
   // Client for Database operations (bypasses RLS for Admin actions)
   const supabaseAdmin = createClient(

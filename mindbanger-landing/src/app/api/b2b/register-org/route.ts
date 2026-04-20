@@ -26,24 +26,6 @@ export async function POST(req: Request) {
             }
         }
 
-        // Second Fallback: if user just registered but email is unconfirmed, we might get user ID from body
-        // Only allow this if we pass a special one-time registration token? 
-        // For now, if we don't have a userId, we reject.
-        if (!userId) {
-            // Check if client passed the new user ID explicitly (less secure but required if email confirmation is strictly on without session)
-
-            if (newUserId) {
-                // Verify the user was created very recently (within 5 minutes)
-                const { data: recentUser } = await supabaseAdmin.auth.admin.getUserById(newUserId);
-                if (recentUser?.user) {
-                    const createdTime = new Date(recentUser.user.created_at).getTime();
-                    if (Date.now() - createdTime < 5 * 60 * 1000) {
-                        userId = recentUser.user.id;
-                    }
-                }
-            }
-        }
-
         if (!userId) {
             return new NextResponse('Unauthorized: Please sign in first', { status: 401 });
         }

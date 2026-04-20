@@ -33,7 +33,10 @@ const s3Client = new S3Client({
   },
 });
 
+import { checkAdminAuth } from '@/lib/auth-admin';
+
 export async function POST(request: Request) {
+  if (!(await checkAdminAuth())) return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 });
     try {
         const body = await request.json();
         const { publicUrl, title, userId, userEmail, userName } = body;

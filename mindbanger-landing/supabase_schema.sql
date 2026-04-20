@@ -64,3 +64,22 @@ CREATE POLICY "Users can view their own progress."
 
 CREATE POLICY "Users can insert their own progress." 
   ON public.user_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Atomic increment for play count to fix race conditions
+CREATE OR REPLACE FUNCTION increment_play_count(record_id UUID)
+RETURNS integer
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  new_count integer;
+BEGIN
+  UPDATE individual_recordings
+  SET play_count = COALESCE(play_count, 0) + 1
+  WHERE id = record_id
+  RETURNING play_count INTO new_count;
+
+  RETURN new_count;
+END;
+$$;
+
+ALTER TABLE referrals ADD UNIQUE (stripe_session_id);

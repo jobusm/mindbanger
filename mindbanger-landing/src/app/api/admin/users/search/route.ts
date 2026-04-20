@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
+import { checkAdminAuth } from "@/lib/auth-admin";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  if (!(await checkAdminAuth())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const url = new URL(request.url);
   const q = url.searchParams.get("q") || "";
 
@@ -13,7 +18,7 @@ export async function GET(request: Request) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  const supabaseAdmin = createSupabaseAdminClient(supabaseUrl, supabaseServiceKey);
 
   try {
     // 1. Fetch profiles based on full_name

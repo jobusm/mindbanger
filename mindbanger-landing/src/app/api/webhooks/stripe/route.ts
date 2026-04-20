@@ -1,13 +1,10 @@
 ﻿import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { createAdminClient } from '@/lib/supabase-server';
+import Stripe from 'stripe';
+import stripe from '@/lib/stripe';
 import { sendEmail } from '@/lib/email';
 import { welcomeEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-});
 
 // Zmena na citanie secretov tak aby bral aj fallback
 export async function POST(req: Request) {
@@ -194,7 +191,7 @@ export async function POST(req: Request) {
                       commissionAmount = amountTotal;
                    }
 
-                   await supabase.from('referrals').insert({
+                   await supabase.from('referrals').upsert({
                       affiliate_id: affiliate.id,
                       referee_user_id: userId || null, 
                       commission_model: commissionModel,
@@ -212,7 +209,7 @@ export async function POST(req: Request) {
 
 try {
               const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', userId).single();
-              let updatePayload: any = { subscription_status: 'premium' };
+              const updatePayload: any = { subscription_status: 'premium' };
               if (customerId) {
                 updatePayload.stripe_customer_id = customerId;
               }

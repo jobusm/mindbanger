@@ -128,7 +128,9 @@
       "iosTitle2": "📱 iPhone (iOS)",
       "troubleTitle": "⚠️ Problémy?",
       "troubleDesc": "Zkontrolujte, zda nemáte zapnutý režim \"Nerušit\" nebo \"Soustředění\"."
-    }
+    },
+    "timeLabel": "Čas denní notifikace (tvůj lokální čas)",
+    "timeDesc": "Kdy chceš dostávat denní signál?"
   },
   "resets": {
     "backToProducts": "Zpět na seznam produktů",

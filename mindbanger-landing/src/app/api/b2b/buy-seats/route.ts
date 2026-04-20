@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase-server';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16' as any,
-});
+import stripe from '@/lib/stripe';
 
 const BASE_PRICE = 7.99;
 
@@ -13,11 +9,20 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { orgId, emails, quantity } = body;
 
-    // determine final quantity
+    // Strict validation
+    if (!orgId) {
+      return NextResponse.json({ error: 'Missing orgId' }, { status: 400 });
+    }
+
+    const maxLimit = 1000;
     const finalQuantity = quantity || (Array.isArray(emails) ? emails.length : 0);
 
-    if (!orgId || finalQuantity === 0) {
-      return NextResponse.json({ error: 'Missing orgId or zero quantity' }, { status: 400 });
+    if (finalQuantity <= 0 || finalQuantity > maxLimit) {
+      return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
+    }
+
+    if (Array.isArray(emails) && finalQuantity !== emails.length) {
+      return NextResponse.json({ error: 'Quantity mismatch with provided emails count' }, { status: 400 });
     }
 
     // Server-side price calculation logic

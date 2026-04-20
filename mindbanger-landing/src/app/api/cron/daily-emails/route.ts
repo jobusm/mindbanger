@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { dailyEmailTemplates, generateEmailHtml } from '@/lib/email-templates';
 import { sendEmail } from '@/lib/email';
+import { verifyVercelCron } from '@/lib/cron-auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return new Response('Unauthorized', { status: 401 });
+    const isAuthorized = await verifyVercelCron(request);
+    if (!isAuthorized) {
+      return new Response('Unauthorized Cron Source', { status: 401 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

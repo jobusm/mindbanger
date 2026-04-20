@@ -108,10 +108,10 @@ export async function GET(req: Request) {
             const dailyDates = Array.from(new Set(dailyLogs));
             const corpDates = Array.from(new Set(corpLogs));
 
+            const profiles = m.profiles as any;
             return {
                 id: userId,
-                // @ts-expect-error Types joined table object vs array edgecase
-                name: m.profiles?.full_name || m.email,
+                name: (Array.isArray(profiles) ? profiles[0]?.full_name : profiles?.full_name) || m.email,
                 email: m.email,
                 dailyLogs: dailyDates,
                 corpLogs: corpDates

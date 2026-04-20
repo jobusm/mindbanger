@@ -1,9 +1,8 @@
+import { checkAdminAuth } from '@/lib/auth-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { getSecureAudioUrl } from '@/lib/cloudflare-r2';
-
-const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
 export async function GET(request: NextRequest) {
   const cookieStore = await cookies();
@@ -27,9 +26,7 @@ export async function GET(request: NextRequest) {
   );
 
   const { data: { user }, error: authErr } = await supabase.auth.getUser();     
-  if (authErr || !user || !ADMIN_EMAILS.includes(user.email || '')) {
-    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); 
-  }
+  if (!(await checkAdminAuth())) { return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); }
 
   const { searchParams } = new URL(request.url);
   const fileKey = searchParams.get('fileKey');

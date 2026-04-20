@@ -1,10 +1,9 @@
+import { checkAdminAuth } from '@/lib/auth-admin';
 import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { translateMindset } from '@/lib/content-engine/openai';
-
-const ADMIN_EMAILS = ['miroslav.jobus@gmail.com'];
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -28,9 +27,7 @@ export async function POST(request: NextRequest) {
   );
 
   const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user || !ADMIN_EMAILS.includes(user.email || '')) {
-    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); 
-  }
+  if (!(await checkAdminAuth())) { return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); }
 
   // Client for Database operations (bypasses RLS for Admin actions)
   const supabaseAdmin = createClient(

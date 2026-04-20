@@ -160,7 +160,9 @@
       "iosTitle2": "📱 iPhone (iOS)",
       "troubleTitle": "⚠️ Issues?",
       "troubleDesc": "Check if you have 'Do Not Disturb' or 'Focus' mode enabled."
-    }
+    },
+    "timeLabel": "Daily notification time (your local time)",
+    "timeDesc": "When do you want to receive the daily signal?"
   },
   "resets": {
     "backToProducts": "Back to products",

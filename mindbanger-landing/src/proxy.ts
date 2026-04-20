@@ -12,7 +12,7 @@ const COUNTRY_TO_LANG: Record<string, string> = {
   CZ: 'cs',
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. Initialize response
   let response = NextResponse.next({
     request: {

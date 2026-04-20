@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createClient } from '@/lib/supabase-server';
 
 export async function POST(request: Request) {
   try {
@@ -14,24 +9,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing recordingId' }, { status: 400 });
     }
 
-    // Call Supabase RPC or just fetch and increment (not fully safe from race conditions but enough for play count)
-    // Since we don't have a custom RPC increment, we'll read then update.
-    const { data: rec, error: fetchErr } = await supabaseAdmin
-      .from('individual_recordings')
-      .select('play_count')
-      .eq('id', recordingId)
-      .single();
-      
-    if (fetchErr) throw fetchErr;
+    // Verify session
+    const supabase = await createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const newCount = (rec.play_count || 0) + 1;
+    // Call Supabase RPC for atomic increment
+    const { data: newCount, error } = await supabase
+      .rpc('increment_play_count', { record_id: recordingId });
 
-    const { error: updateErr } = await supabaseAdmin
-      .from('individual_recordings')
-      .update({ play_count: newCount })
-      .eq('id', recordingId);
-
-    if (updateErr) throw updateErr;
+    if (error) {
+      console.error('RPC Error incrementing play count:', error);
+      throw error;
+    }
 
     return NextResponse.json({ success: true, play_count: newCount });
 

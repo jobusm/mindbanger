@@ -1,3 +1,4 @@
+import { checkAdminAuth } from '@/lib/auth-admin';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -5,8 +6,6 @@ import { generateMasterContent } from '@/lib/content-engine/openai';
 import { MasterContent } from '@/lib/content-engine/schemas';
 
 // Hardcoded for now. Move to DB/Env.
-const ADMIN_EMAILS = ['miroslav.jobus@gmail.com']; 
-
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
 
@@ -29,9 +28,7 @@ export async function POST(request: NextRequest) {
 
   // Auth check
   const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user || !ADMIN_EMAILS.includes(user.email || '')) {
-    return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 });
-  }
+  if (!(await checkAdminAuth())) { return NextResponse.json({ error: 'Unauthorized Admin' }, { status: 401 }); }
 
   try {
     const body = await request.json();

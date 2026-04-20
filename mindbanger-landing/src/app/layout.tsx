@@ -24,6 +24,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: 'Mindbanger Daily | Daily mental clarity & focus',
   description: 'Daily mind signals for clarity, calm & focus. Created by a Life Coach & Hypnotherapist. The way your mind is set begins to shape your reality.',
   icons: {

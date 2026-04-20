@@ -1,36 +1,43 @@
 import { NextResponse } from 'next/server';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-/**
- * Validates a request against Vercel's Cron signature / OIDC token
- * or falls back to basic Bearer token with timing-safe equality.
- */
 export async function verifyVercelCron(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (!cronSecret) {
-    return false;
+  // 1. Try secure Vercel OIDC/JWT verification first
+  const oidcToken = req.headers.get('authorization')?.replace('Bearer ', '');
+  if (oidcToken) {
+     try {
+        const jwks = createRemoteJWKSet(new URL('https://vercel.com/api/oidc/jwks'));
+        await jwtVerify(oidcToken, jwks, {
+           issuer: 'https://vercel.com',
+           // You can optionally add audience verification if your project specifies it:
+           // audience: 'your-project-id'
+        });
+        return true;
+     } catch (jwtError) {
+        // Fallthrough if it's not a JWT (e.g. static secret fallback)
+     }
   }
 
-  // To secure against timing attacks for static secrets:
-  if (authHeader) {
-    const token = authHeader.replace('Bearer ', '');
+  // 2. Static secret fallback (CRON_SECRET)
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) return false;
+
+  if (oidcToken) {
     try {
       const crypto = await import('crypto');
-      const isMatch = crypto.timingSafeEqual(
-        Buffer.from(token),
-        Buffer.from(cronSecret)
-      );
-      if (isMatch) return true;
+      // Buffer length must match for timingSafeEqual, we check length first
+      const tokenBuffer = Buffer.from(oidcToken);
+      const secretBuffer = Buffer.from(cronSecret);
+      
+      if (tokenBuffer.length === secretBuffer.length) {
+         if (crypto.timingSafeEqual(tokenBuffer, secretBuffer)) {
+            return true;
+         }
+      }
     } catch (e) {
-      if (token === cronSecret) return true;
+      if (oidcToken === cronSecret) return true;
     }
   }
-
-  // TODO: Add Vercel OIDC or JWT signature validation if you enabled
-  // strict cryptographic OIDC verification in your Vercel Project settings.
-  // const oidcToken = req.headers.get('x-vercel-oidc-token');
-  // if (oidcToken) { ... verify JWT ... }
 
   return false;
 }

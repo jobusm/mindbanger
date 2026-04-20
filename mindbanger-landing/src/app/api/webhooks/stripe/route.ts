@@ -130,19 +130,9 @@ export async function POST(req: Request) {
                     status: 'invited'
                  });
 
-                 // Send email via b2b/invite endpoint (it can be called serverside if we use internal fetch, but simple is fire & forget to domain)
-                 try {
-                     const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mindbanger.com';
-                     await fetch(`${siteUrl}/api/b2b/invite`, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ 
-                             email: em,
-                             orgId: orgId,
-                             inviterName: inviterName,
-                             lang: 'sk' // or fetch from org
-                         })
-                     });
+                   // Send email via internal backend service
+                   try {
+                       await sendB2BInviteEmail(em, orgId, inviterName, 'sk');
                  } catch (e) {
                      console.error('Failed to dispatch invite for', em, e);
                  }
@@ -199,7 +189,7 @@ export async function POST(req: Request) {
                       status: 'pending',
                       amount: commissionAmount,
                       stripe_session_id: session.id,
-                   });
+                   }, { onConflict: 'stripe_session_id' });
                    console.log('Affiliate referral verified and inserted for session:', session.id);
                 }
              } catch (affErr) {

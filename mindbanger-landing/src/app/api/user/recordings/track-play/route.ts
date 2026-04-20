@@ -16,6 +16,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Explicit Ownership Verification
+    const { data: rec, error: recError } = await supabase
+      .from('individual_recordings')
+      .select('id, user_id')
+      .eq('id', recordingId)
+      .single();
+
+    if (recError || !rec) {
+       return NextResponse.json({ error: 'Recording not found' }, { status: 404 });
+    }
+
+    if (rec.user_id !== session.user.id) {
+       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Call Supabase RPC for atomic increment
     const { data: newCount, error } = await supabase
       .rpc('increment_play_count', { record_id: recordingId });

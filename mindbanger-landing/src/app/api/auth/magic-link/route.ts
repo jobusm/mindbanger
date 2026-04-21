@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase-server";
 import { sendEmail } from "@/lib/email";
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
   try {
+    // Basic IP-based rate limiting fallback
+    if (rateLimit) {
+      const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      const { success } = await rateLimit.limit(`magic-link_${ip}`);
+      if (!success) {
+        return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+      }
+    }
+
     const { email, options, lang = "sk" } = await req.json();
     if (!email) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });

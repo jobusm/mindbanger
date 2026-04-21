@@ -83,3 +83,12 @@ END;
 $$;
 
 ALTER TABLE referrals ADD UNIQUE (stripe_session_id);
+
+
+-- Webhook Idempotency Table
+CREATE TABLE IF NOT EXISTS public.processed_stripe_events (
+  id TEXT PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.processed_stripe_events ENABLE ROW LEVEL SECURITY;

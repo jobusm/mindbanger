@@ -34,6 +34,18 @@ export async function POST(req: Request) {
 
   const supabase = await createAdminClient();
 
+  // 1. Webhook Globally Idempotent Guard
+  try {
+    const { data: existingEvent } = await supabase.from('processed_stripe_events').select('id').eq('id', event.id).single();
+    if (existingEvent) {
+       console.log(`[Stripe Webhook] Event ${event.id} already processed. Skipping.`);
+       return new NextResponse('Duplicate Event Skipped', { status: 200 });
+    }
+  } catch (pgErr: any) {
+    console.error('Idempotency Check Error:', pgErr);
+    // Ignore error if table is missing or transient issue. Proceed cautiously.
+  }
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -284,6 +296,10 @@ try {
         break;
       }
     }
+    
+    // Mark event as processed (on success)
+    await supabase.from('processed_stripe_events').insert({ id: event.id });
+    
   } catch (err: any) {
     console.error(`Webhook Action Error: ${err.message}`, err);
     return new NextResponse('Internal Webhook Logic Error', { status: 500 });

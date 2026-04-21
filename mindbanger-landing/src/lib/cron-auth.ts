@@ -7,11 +7,14 @@ export async function verifyVercelCron(req: Request) {
   if (oidcToken) {
      try {
         const jwks = createRemoteJWKSet(new URL('https://vercel.com/api/oidc/jwks'));
-        await jwtVerify(oidcToken, jwks, {
-           issuer: 'https://vercel.com',
-           // You can optionally add audience verification if your project specifies it:
-           // audience: 'your-project-id'
-        });
+        const options: any = { issuer: 'https://vercel.com' };
+        
+        // Strict audience verification via project ID
+        if (process.env.VERCEL_PROJECT_ID) {
+            options.audience = process.env.VERCEL_PROJECT_ID;
+        }
+
+        await jwtVerify(oidcToken, jwks, options);
         return true;
      } catch (jwtError) {
         // Fallthrough if it's not a JWT (e.g. static secret fallback)

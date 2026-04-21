@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS uq_pending_payout ON public.payout_requests (affiliate_id) WHERE status = 'pending';

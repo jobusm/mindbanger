@@ -62,6 +62,7 @@ export async function POST(req: Request) {
       ]);
 
     if (insertError) {
+      if (insertError.code === '23505' || (insertError.message && insertError.message.includes('duplicate'))) { return NextResponse.json({ error: 'Máte už jeden nespracovaný výber (pending). Počkajte na jeho vybavenie.' }, { status: 409 }); }
       // Fallback pre pripad ak tabulka payout_requests este neexistuje v databaze:
       // Ulozime notifikaciu do nejakej inej formy
       console.error('Insert payout_request error');

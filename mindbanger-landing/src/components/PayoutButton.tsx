@@ -14,7 +14,7 @@ export default function PayoutButton({ unpaidBalance, affiliateId }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const handlePayout = async () => {
-    if (unpaidBalance <= 0) return;
+    if (unpaidBalance < 20) return;
     if (!confirm(`Are you sure you want to request payout for €${unpaidBalance.toFixed(2)}?`)) return;
 
     setLoading(true);
@@ -50,7 +50,7 @@ export default function PayoutButton({ unpaidBalance, affiliateId }: Props) {
     <div className="space-y-2">
       <button
         onClick={handlePayout}
-        disabled={unpaidBalance <= 0 || loading}
+        disabled={unpaidBalance < 20.00 || loading}
         className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-slate-900 font-bold hover:shadow-[0_0_15px_rgba(234,179,8,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? <Loader2 size={18} className="animate-spin" /> : <DollarSign size={18} />}

@@ -192,19 +192,23 @@ export async function POST(req: Request) {
           if (session.metadata?.refCode || session.metadata?.affiliate_id || session.metadata?.affiliateId) {
              try {
                 const rawRef = session.metadata?.affiliate_id || session.metadata?.affiliateId || session.metadata?.refCode;
-                const commissionModel = session.metadata?.refMode === 'lifetime' ? 'lifetime_20' : 'second_month';
+                // mapping A/B to proper commission models
+                let commissionModel = 'second_month';
+                if (session.metadata?.refMode === 'B' || session.metadata?.refMode === 'lifetime') {
+                   commissionModel = 'lifetime_20';
+                }
                 
-                const { data: affiliate } = await supabase.from('affiliates').select('id').eq('id', rawRef).single();
+                const { data: affiliate } = await supabase.from('affiliates').select('id').or(`id.eq.${rawRef},user_id.eq.${rawRef}`).single();
                 
                 if (affiliate) {
                    const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
-                   let commissionAmount = amountTotal * 0.20; // fallback calculation
+                   let commissionAmountVal = amountTotal * 0.20; // fallback calculation
 
                    if (commissionModel === 'lifetime_20') {
-                      commissionAmount = amountTotal * 0.20;
+                      commissionAmountVal = amountTotal * 0.20;
                    } else {
                       // second_month model tracks the full subscription amount as the base to calculate the 100% second month payload
-                      commissionAmount = amountTotal;
+                      commissionAmountVal = amountTotal;
                    }
 
                    await supabase.from('referrals').upsert({
@@ -212,7 +216,7 @@ export async function POST(req: Request) {
                       referee_user_id: userId || null, 
                       commission_model: commissionModel,
                       status: 'pending',
-                      amount: commissionAmount,
+                      commission_amount: commissionAmountVal,
                       stripe_session_id: session.id,
                    }, { onConflict: 'stripe_session_id' });
                    console.log('Affiliate referral verified and inserted for session:', session.id);

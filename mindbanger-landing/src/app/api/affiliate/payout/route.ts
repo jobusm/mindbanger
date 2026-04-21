@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const payoutSchema = z.object({
   affiliateId: z.string().uuid('Neplatné ID affiliate partnera'),
-  amount: z.number().positive('Suma musí byť kladná').min(10, 'Minimálna suma na výplatu je 10 EUR'),
+  amount: z.number().positive('Suma musí byť kladná').min(20, 'Minimálna suma na výplatu je 20 EUR'),
 });
 
 export async function POST(req: Request) {
@@ -35,6 +35,17 @@ export async function POST(req: Request) {
 
     if (!affiliate) {
       return NextResponse.json({ error: 'Invalid affiliate' }, { status: 403 });
+    }
+
+    // CHECK: Guard against duplicate pending requests
+    const { count: pendingCount, error: countErr } = await supabase
+        .from('payout_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('affiliate_id', affiliateId)
+        .eq('status', 'pending');
+        
+    if (!countErr && pendingCount !== null && pendingCount > 0) {
+        return NextResponse.json({ error: 'Máte už jeden nespracovaný výber (pending). Počkajte na jeho vybavenie.' }, { status: 409 });
     }
 
     // Tu uložíme požiadavku o výplatu do tabuľky payout_requests

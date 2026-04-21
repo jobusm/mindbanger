@@ -22,19 +22,21 @@ export async function POST(req: Request) {
     const supabase = await createAdminClient();
 
     try {
-      const { data: userList } = await supabase.auth.admin.listUsers();
-      const existingUser = userList.users.find(u => u.email === email);
+      const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single();
       
-      if (!existingUser) {
+      if (!profile?.id) {
         await supabase.auth.admin.createUser({
             email: email,
             email_confirm: true,
             user_metadata: options?.data
         });
       } else if (options?.data) {
-        await supabase.auth.admin.updateUserById(existingUser.id, {
-            user_metadata: { ...existingUser.user_metadata, ...options.data }
-        });
+        const { data: { user } } = await supabase.auth.admin.getUserById(profile.id);
+        if (user) {
+           await supabase.auth.admin.updateUserById(profile.id, {
+               user_metadata: { ...user.user_metadata, ...options.data }
+           });
+        }
       }
     } catch (createError: any) {
     }

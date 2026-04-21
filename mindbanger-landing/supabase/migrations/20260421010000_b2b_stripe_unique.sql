@@ -1,0 +1,1 @@
+ALTER TABLE public.organizations ADD CONSTRAINT uq_org_subscription UNIQUE (stripe_subscription_id);

@@ -56,7 +56,7 @@ export async function POST(req: Request) {
            const meta = session.metadata;
            
            // 1. Create Organization
-           const { data: org, error: orgError } = await supabase.from('organizations').insert({
+           const { data: org, error: orgError } = await supabase.from('organizations').upsert({
               name: meta.company_name,
               tax_id: meta.tax_id,
               vat_id: meta.vat_id,
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: session.subscription as string,
               seats_limit: parseInt(meta.seats || '5'),
-           }).select().single();
+           }, { onConflict: 'stripe_subscription_id' }).select().single();
 
            if (orgError) {
               console.error('B2B Org Creation Error:', orgError);
@@ -80,21 +80,23 @@ export async function POST(req: Request) {
            
            const userId = existingUser?.id;
 
-           // Helper: Create Member
-           await supabase.from('organization_members').insert({
-              organization_id: org.id,
-              user_id: userId || null, // If null, they are just invited by email
-              email: meta.contact_email,
-              role: 'owner',
-              status: existingUser ? 'active' : 'invited'
-           });
+           // Helper: Create Member (Idempotent)
+           if (org) {
+             await supabase.from('organization_members').upsert({
+                organization_id: org.id,
+                user_id: userId || null, // If null, they are just invited by email
+                email: meta.contact_email,
+                role: 'owner',
+                status: existingUser ? 'active' : 'invited'
+             }, { onConflict: 'organization_id,email' });
+           }
 
            // 3. Send Welcome Email (B2B Specific)
            // We reuse the email logic but with B2B template
            const b2bSubject = meta.lang === 'sk' ? 'Vitajte v Mindbanger B2B' : 'Welcome to Mindbanger B2B';
            // ... (Email sending logic would go here - simplified for now)
            
-           return new NextResponse('B2B Handled', { status: 200 });
+           break; // Let the event be marked as processed at the end
         }
         // --- B2B HANDLING END ---
 
@@ -134,13 +136,14 @@ export async function POST(req: Request) {
                  
                  const { data: existingUser } = await supabase.from('profiles').select('id').eq('email', em).single();
                  
-                 await supabase.from('organization_members').insert({
+                 // Upsert to handle event replays safely without triggering constraint violations
+                 await supabase.from('organization_members').upsert({
                     organization_id: orgId,
                     user_id: existingUser?.id || null,
                     email: em,
                     role: 'member',
                     status: 'invited'
-                 });
+                 }, { onConflict: 'organization_id,email' });
 
                    // Send email via internal backend service
                    try {
@@ -152,7 +155,7 @@ export async function POST(req: Request) {
              }
            }
            
-           return new NextResponse('B2B Upgrade Processed', { status: 200 });
+           break; // Let the event be marked as processed at the end
         }
         // --- B2B UPGRADE HANDLING END ---
 

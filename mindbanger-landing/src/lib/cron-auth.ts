@@ -10,9 +10,13 @@ export async function verifyVercelCron(req: Request) {
         const options: any = { issuer: 'https://vercel.com' };
         
         // Strict audience verification via project ID
-        if (process.env.VERCEL_PROJECT_ID) {
-            options.audience = process.env.VERCEL_PROJECT_ID;
+        // Mandate VERCEL_PROJECT_ID for OIDC!
+        if (!process.env.VERCEL_PROJECT_ID) {
+            console.error('Missing VERCEL_PROJECT_ID for Cron OIDC verification');
+            return false;
         }
+        
+        options.audience = process.env.VERCEL_PROJECT_ID;
 
         await jwtVerify(oidcToken, jwks, options);
         return true;

@@ -34,16 +34,21 @@ export async function POST(req: Request) {
 
   const supabase = await createAdminClient();
 
-  // 1. Webhook Globally Idempotent Guard
+  // 1. Webhook Globally Idempotent Guard (Atomic)
   try {
-    const { data: existingEvent } = await supabase.from('processed_stripe_events').select('id').eq('id', event.id).single();
-    if (existingEvent) {
-       console.log(`[Stripe Webhook] Event ${event.id} already processed. Skipping.`);
-       return new NextResponse('Duplicate Event Skipped', { status: 200 });
+    const { error: insertError } = await supabase.from('processed_stripe_events').insert({ id: event.id });
+    if (insertError) {
+      // 23505 is the Postgres error code for unique violation
+      if (insertError.code === '23505' || insertError.message?.includes('duplicate')) {
+         console.log(`[Stripe Webhook] Event ${event.id} already processed. Skipping.`);
+         return new NextResponse('Duplicate Event Skipped', { status: 200 });
+      }
+      console.error('Idempotency Insert Error:', insertError);
+      return new NextResponse('Database Error during Idempotency Check', { status: 500 });
     }
   } catch (pgErr: any) {
     console.error('Idempotency Check Error:', pgErr);
-    // Ignore error if table is missing or transient issue. Proceed cautiously.
+    return new NextResponse('Internal Idempotency Error', { status: 500 });
   }
 
   try {
@@ -299,9 +304,6 @@ try {
         break;
       }
     }
-    
-    // Mark event as processed (on success)
-    await supabase.from('processed_stripe_events').insert({ id: event.id });
     
   } catch (err: any) {
     console.error(`Webhook Action Error: ${err.message}`, err);

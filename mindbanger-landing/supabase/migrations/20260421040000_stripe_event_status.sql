@@ -1,0 +1,1 @@
+ALTER TABLE public.processed_stripe_events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'processing';

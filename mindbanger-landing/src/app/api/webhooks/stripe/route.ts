@@ -36,10 +36,15 @@ export async function POST(req: Request) {
 
   // 1. Webhook Globally Idempotent Guard (Atomic)
   try {
-    const { error: insertError } = await supabase.from('processed_stripe_events').insert({ id: event.id });
+    const { error: insertError } = await supabase.from('processed_stripe_events').insert({ id: event.id, status: 'processing' });
     if (insertError) {
       // 23505 is the Postgres error code for unique violation
       if (insertError.code === '23505' || insertError.message?.includes('duplicate')) {
+         const { data: existing } = await supabase.from('processed_stripe_events').select('status').eq('id', event.id).single();
+         if (existing?.status === 'processing') {
+             // Another instance is currently processing this event. Return 409 to trigger a later Stripe retry.
+             return new NextResponse('Event currently processing', { status: 409 });
+         }
          console.log(`[Stripe Webhook] Event ${event.id} already processed. Skipping.`);
          return new NextResponse('Duplicate Event Skipped', { status: 200 });
       }
@@ -314,6 +319,12 @@ try {
       console.error(`Failed to rollback idempotency marker for event ${event.id}:`, delErr);
     }
     return new NextResponse('Internal Webhook Logic Error', { status: 500 });
+  }
+
+  try {
+    await supabase.from('processed_stripe_events').update({ status: 'completed' }).eq('id', event.id);
+  } catch (updateErr) {
+    console.error(`Failed to mark event ${event.id} as completed:`, updateErr);
   }
 
   return new NextResponse('Success', { status: 200 });

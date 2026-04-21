@@ -307,6 +307,12 @@ try {
     
   } catch (err: any) {
     console.error(`Webhook Action Error: ${err.message}`, err);
+    // CRITICAL FIX: If business logic fails, remove idempotency marker so Stripe can retry
+    try {
+      await supabase.from('processed_stripe_events').delete().eq('id', event.id);
+    } catch (delErr) {
+      console.error(`Failed to rollback idempotency marker for event ${event.id}:`, delErr);
+    }
     return new NextResponse('Internal Webhook Logic Error', { status: 500 });
   }
 

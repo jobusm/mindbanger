@@ -21,29 +21,9 @@ export async function verifyVercelCron(req: Request) {
         await jwtVerify(oidcToken, jwks, options);
         return true;
      } catch (jwtError) {
-        // Fallthrough if it's not a JWT (e.g. static secret fallback)
+        console.error('CRON OIDC validation failed', jwtError);
+        return false;
      }
-  }
-
-  // 2. Static secret fallback (CRON_SECRET)
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) return false;
-
-  if (oidcToken) {
-    try {
-      const crypto = await import('crypto');
-      // Buffer length must match for timingSafeEqual, we check length first
-      const tokenBuffer = Buffer.from(oidcToken);
-      const secretBuffer = Buffer.from(cronSecret);
-      
-      if (tokenBuffer.length === secretBuffer.length) {
-         if (crypto.timingSafeEqual(tokenBuffer, secretBuffer)) {
-            return true;
-         }
-      }
-    } catch (e) {
-      if (oidcToken === cronSecret) return true;
-    }
   }
 
   return false;

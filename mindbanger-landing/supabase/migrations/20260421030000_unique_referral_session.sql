@@ -1,0 +1,1 @@
+ALTER TABLE public.referrals ADD CONSTRAINT uq_referrals_stripe_session UNIQUE (stripe_session_id);

@@ -39,6 +39,9 @@ export async function POST(req: Request) {
         }
       }
     } catch (createError: any) {
+      console.error('[Magic Link] Error creating or updating user via admin API:', createError);
+      // Let it fall through, the generateLink below might still work if user exists,
+      // but we log heavily for incident response visibility.
     }
 
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({

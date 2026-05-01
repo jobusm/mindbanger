@@ -19,8 +19,10 @@ function CheckoutContent() {
   
   const searchParams = useSearchParams();
   const router = useRouter();
-  const refMode = searchParams.get('refMode');
-  const refCode = searchParams.get('refCode');
+  
+  // Primárne parametre berieme z URL, sekundárne ako fallback z localStorage (ak užívateľ prešiel organicky cez registráciu)
+  const refMode = searchParams.get('refMode') || (typeof window !== 'undefined' ? localStorage.getItem('mb_refMode') : null);
+  const refCode = searchParams.get('refCode') || (typeof window !== 'undefined' ? localStorage.getItem('mb_refCode') : null);
 
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);

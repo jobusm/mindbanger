@@ -7,13 +7,20 @@ export default function AffiliateTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Ak URL obsahuje parameter ?ref=... uložime ho
-    const ref = searchParams?.get('ref');
+    // Ak URL obsahuje parametre refMode a refCode uložíme ich
+    const refMode = searchParams?.get('refMode');
+    const refCode = searchParams?.get('refCode');
     
-    if (ref) {
-      // Ukladáme referrer do localStorage (platnosť si definuje systém neskôr, tu to necháme perzistentné)
-      localStorage.setItem('mindbanger_ref', ref);
-      console.log('Affiliate referer saved:', ref);
+    // Fallback na starý systém
+    const oldRef = searchParams?.get('ref');
+
+    if (refMode && refCode) {
+      // Ukladáme referrer do localStorage
+      localStorage.setItem('mb_refMode', refMode);
+      localStorage.setItem('mb_refCode', refCode);
+      console.log('Affiliate referer saved:', { refMode, refCode });
+    } else if (oldRef) {
+      localStorage.setItem('mindbanger_ref', oldRef);
     }
   }, [searchParams]);
 

@@ -114,7 +114,7 @@ export default async function AffiliateDashboardPage() {
             </p>
             <div className="pt-4 mt-auto">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refA_label}</label>
-              <CopyLink link={`https://mindbanger.com/checkout?refMode=A&refCode=${affiliate.id}`} />
+              <CopyLink link={`https://mindbanger.com/?refMode=A&refCode=${affiliate.id}`} />
             </div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default async function AffiliateDashboardPage() {
             </p>
             <div className="pt-4 mt-auto">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refB_label}</label>
-              <CopyLink link={`https://mindbanger.com/checkout?refMode=B&refCode=${affiliate.id}`} />
+              <CopyLink link={`https://mindbanger.com/?refMode=B&refCode=${affiliate.id}`} />
             </div>
           </div>
         </div>

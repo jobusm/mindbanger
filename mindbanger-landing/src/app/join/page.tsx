@@ -59,6 +59,10 @@ export default function JoinPage() {
         throw new Error('Please accept the Terms and Privacy Policy to continue.');
       }
 
+      // Get affiliate info from storage (captured by AffiliateTracker on visited pages)
+      const refMode = typeof window !== 'undefined' ? localStorage.getItem('mb_refMode') : null;
+      const refCode = typeof window !== 'undefined' ? localStorage.getItem('mb_refCode') : null;
+
       // 1. Send code via our API (handling user creation if new)
       const response = await fetch('/api/auth/magic-link', {
         method: 'POST',
@@ -70,7 +74,9 @@ export default function JoinPage() {
              data: {
                terms_accepted: termsAccepted,
                privacy_policy_accepted: gdprAccepted,
-               consents_timestamp: new Date().toISOString()
+               consents_timestamp: new Date().toISOString(),
+               ...(refMode && { refMode }),
+               ...(refCode && { refCode })
              }
           }
         }),

@@ -198,9 +198,9 @@ export async function POST(req: Request) {
                    commissionModel = 'lifetime_20';
                 }
                 
-                const { data: affiliate } = await supabase.from('affiliates').select('id').or(`id.eq.${rawRef},user_id.eq.${rawRef}`).single();
+                const { data: affiliate } = await supabase.from('affiliates').select('id, user_id').or(`id.eq.${rawRef},user_id.eq.${rawRef}`).single();
                 
-                if (affiliate) {
+                if (affiliate && affiliate.user_id !== userId) {
                    const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
                    let commissionAmountVal = amountTotal * 0.20; // fallback calculation
 
@@ -211,15 +211,21 @@ export async function POST(req: Request) {
                       commissionAmountVal = amountTotal;
                    }
 
+                   const initialStatus = commissionModel === 'second_month' ? 'waiting_second_month' : 'pending';
+                   
+                   // Store concrete logical subscription key to safely link multiple different subscriptions
+                   // to correct payout entries. Stripe sessions represent checkout for specific sub lines.
+                   const subKey = subscriptionId || session.id;
+
                    await supabase.from('referrals').upsert({
                       affiliate_id: affiliate.id,
                       referee_user_id: userId || null, 
                       commission_model: commissionModel,
-                      status: 'pending',
+                      status: initialStatus,
                       commission_amount: commissionAmountVal,
-                      stripe_session_id: session.id,
+                      stripe_session_id: subKey,
                    }, { onConflict: 'stripe_session_id' });
-                   console.log('Affiliate referral verified and inserted for session:', session.id);
+                   console.log('Affiliate referral verified and inserted for session:', session.id, 'Status:', initialStatus, 'SubKey:', subKey);
                 }
              } catch (affErr) {
                 console.error('Affiliate Tracking Hook Error:', affErr);
@@ -286,6 +292,84 @@ try {
                 console.error('Email sending error:', error);
             }
           }
+        }
+        break;
+      }
+
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice;
+        
+        if (invoice.billing_reason === 'subscription_cycle') {
+           // Používame striktne zákaznícku/subskripčnú väzbu na zabránenie nesúladu e-mailov vracajúcich inéo usera
+           const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
+
+           if (customerId) {
+             let userProfile = null;
+             const { data: profiles } = await supabase.from('profiles').select('id').eq('stripe_customer_id', customerId).limit(1);
+             userProfile = profiles?.[0];
+             
+             if (userProfile?.id) {
+               // 1. Spracovanie 'second_month'
+               const targetSubscriptionId = (invoice as any).subscription as string | undefined;
+               let query = supabase.from('referrals')
+                  .select('id, stripe_session_id')
+                  .eq('referee_user_id', userProfile.id)
+                  .eq('commission_model', 'second_month')
+                  .eq('status', 'waiting_second_month');
+
+               // Match the exact subscription lineage if it exists so we safely process 
+               // overlapping cycles per single user (e.g., they bought multiple things)
+               if (typeof targetSubscriptionId === 'string') {
+                   query = query.eq('stripe_session_id', targetSubscriptionId);
+               }
+                  
+               const { data: waitingRefs } = await query.order('created_at', { ascending: true }).limit(1);
+                  
+               if (waitingRefs && waitingRefs.length > 0) {
+                 // Pokiaľ by náhodou mal užívateľ multi-tier referrals (napr viacero active sessions s waiting_second_month), 
+                 // odomkneme bezpečne iba jeden prislúchajúci najstaršiemu záznamu.
+                 const targetRef = waitingRefs[0];
+                 await supabase.from('referrals').update({ status: 'pending' }).eq('id', targetRef.id);
+                 console.log(`Zmeneny status referralu ohladom second_month na pending po zaplateni dalsej faktury. Referral ID: ${targetRef.id}`);
+               }
+
+               // 2. Spracovanie 'lifetime_20' opakovanej platby
+               const { data: lifetimeRefs } = await supabase.from('referrals')
+                  .select('affiliate_id')
+                  .eq('referee_user_id', userProfile.id)
+                  .eq('commission_model', 'lifetime_20');
+                  
+               if (lifetimeRefs && lifetimeRefs.length > 0) {
+                   // Odstranime duplicity affiliate_id aby sme nepridali proviziu viackrat za toho isteho uzivatela pre toho isteho affil partnera
+                   const uniqueAffiliates = Array.from(new Set(lifetimeRefs.map((r: any) => r.affiliate_id)));
+                   
+                   const amountPaid = invoice.amount_paid ? invoice.amount_paid / 100 : 0;
+                   if (amountPaid > 0) {
+                      const commAmount = amountPaid * 0.20;
+
+                      for (const affId of uniqueAffiliates) {
+                        try {
+                           await supabase.from('referrals').insert({
+                              affiliate_id: affId,
+                              referee_user_id: userProfile.id,
+                              commission_model: 'lifetime_20',
+                              status: 'pending',
+                              commission_amount: commAmount,
+                              stripe_session_id: `invoice_${invoice.id}_${affId}`,
+                           });
+                        } catch (e: any) {
+                           if (e.code === '23505') {
+                              // Duplicate stripe_session_id insert - already processed this invoice
+                              continue;
+                           }
+                           console.error('Error inserting lifetime_20 recurring referral:', e);
+                        }
+                      }
+                      console.log(`Pridana opakovana provizia lifetime_20 pre ${uniqueAffiliates.length} affiliate-ov. Invoice: ${invoice.id}, sum: ${commAmount}`);
+                   }
+                }
+             }
+           }
         }
         break;
       }

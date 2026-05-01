@@ -47,28 +47,26 @@ export default function PayoutsManager() {
 
     setProcessingId(payout.id);
     
-    // 1. Update payout request status
-    const { error: payoutError } = await supabase
-      .from('payout_requests')
-      .update({ status: 'paid' })
-      .eq('id', payout.id);
+    try {
+      const response = await fetch('/api/admin/affiliate/settle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payoutId: payout.id })
+      });
 
-    if (payoutError) {
-      toast.error('Error');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Nastala chyba pri potvrdzovaní výplaty');
+      }
+
+      toast.success('Výplata úspešne spracovaná!');
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      await fetchPayouts();
       setProcessingId(null);
-      return;
     }
-
-    // 2. Všetky nevyplatené provízie (pending) daného affiliate označíme za vyriešené (paid)
-    // Týmto sa mu "Unpaid Balance" preklopí do "Total Earned"
-    await supabase
-      .from('referrals')
-      .update({ status: 'paid' })
-      .eq('affiliate_id', payout.affiliate_id)
-      .eq('status', 'pending');
-
-    await fetchPayouts();
-    setProcessingId(null);
   }
 
   if (loading) return <div className="text-slate-400">Načítavam žiadosti o výplatu...</div>;

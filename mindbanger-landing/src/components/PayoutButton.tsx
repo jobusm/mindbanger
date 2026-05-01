@@ -24,7 +24,7 @@ export default function PayoutButton({ unpaidBalance, affiliateId }: Props) {
       const res = await fetch('/api/affiliate/payout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ affiliateId, amount: unpaidBalance }),
+        body: JSON.stringify({ affiliateId }),
       });
 
       const data = await res.json();

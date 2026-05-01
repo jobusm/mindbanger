@@ -1,0 +1,1 @@
+ALTER TABLE public.referrals ADD COLUMN IF NOT EXISTS payout_request_id UUID REFERENCES public.payout_requests(id) ON DELETE SET NULL;

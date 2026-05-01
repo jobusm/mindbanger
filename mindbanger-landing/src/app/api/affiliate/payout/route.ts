@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { getServiceSupabase } from '@/lib/supabase-service';
 import { z } from 'zod';
 
 const payoutSchema = z.object({
   affiliateId: z.string().uuid('Neplatné ID affiliate partnera'),
-  amount: z.number().positive('Suma musí byť kladná').min(20, 'Minimálna suma na výplatu je 20 EUR'),
 });
 
 export async function POST(req: Request) {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     }
 
-    const { affiliateId, amount } = result.data;
+    const { affiliateId } = result.data;
 
     // Over, že affiliateId patrí prihlásenému používateľovi
     const { data: affiliate } = await supabase
@@ -37,50 +37,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid affiliate' }, { status: 403 });
     }
 
-    // CHECK: Guard against duplicate pending requests
-    const { count: pendingCount, error: countErr } = await supabase
-        .from('payout_requests')
-        .select('*', { count: 'exact', head: true })
-        .eq('affiliate_id', affiliateId)
-        .eq('status', 'pending');
-        
-    if (!countErr && pendingCount !== null && pendingCount > 0) {
+    const adminDb = getServiceSupabase();
+
+    // Zavolanie atómovej RPC funkcie s explicitným chybovým handlingom
+    const { data: payoutId, error: rpcError } = await adminDb.rpc('create_payout_request', {
+      p_affiliate_id: affiliateId,
+      p_paypal_email: affiliate.paypal_email || 'Not provided'
+    });
+
+    if (rpcError) {
+      if (rpcError.message.includes('nespracovaný výber')) {
         return NextResponse.json({ error: 'Máte už jeden nespracovaný výber (pending). Počkajte na jeho vybavenie.' }, { status: 409 });
-    }
-
-    // Tu uložíme požiadavku o výplatu do tabuľky payout_requests
-    // Ak tabuľka neexistuje alebo zlyhá, môžeme to zalogovať. V produkcii by mal existovať webhook alebo DB table.
-    const { error: insertError } = await supabase
-      .from('payout_requests')
-      .insert([
-        {
-          affiliate_id: affiliateId,
-          amount: amount,
-          status: 'pending',
-          paypal_email: affiliate.paypal_email || 'Not provided',
-        }
-      ]);
-
-    if (insertError) {
-      if (insertError.code === '23505' || (insertError.message && insertError.message.includes('duplicate'))) { return NextResponse.json({ error: 'Máte už jeden nespracovaný výber (pending). Počkajte na jeho vybavenie.' }, { status: 409 }); }
-      // Fallback pre pripad ak tabulka payout_requests este neexistuje v databaze:
-      // Ulozime notifikaciu do nejakej inej formy
-      console.error('Insert payout_request error');
-      
-      // Pokus poslat si to na support logovaciu strukturu:
-      try {
-        await supabase.from('contact_messages').insert([
-          { email: session.user.email, name: 'Affiliate System', message: `PAYOUT_ERROR|REQUEST: Affiliate requested ${amount} EUR. Please process manually.` }
-        ]);
-      } catch (err) {
-        // Ignorujeme
       }
-      return NextResponse.json({ error: 'Payout process failed, system notified' }, { status: 500 });
+      if (rpcError.message.includes('minimálny výber')) {
+        return NextResponse.json({ error: 'Vypočítaná suma je menšia ako minimálny výber (20 EUR)' }, { status: 400 });
+      }
+      
+      console.error('Create payout RPC error:', rpcError);
+      
+      // Fallback logovanie pre support
+      try {
+        await adminDb.from('contact_messages').insert([
+          { email: session.user.email, name: 'Affiliate System', message: `PAYOUT_ERROR|REQUEST: Error processing payout creation via RPC. UUID: ${affiliateId}` }
+        ]);
+      } catch (_) {}
+
+      return NextResponse.json({ error: 'Nastala chyba pri spracovaní žiadosti o výplatu' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, payoutId });
   } catch (error: any) {
-    console.error('Payout request failed');
+    console.error('Payout request failed:', error);
     return NextResponse.json({ error: 'Nastala chyba pri spracovaní žiadosti o výplatu' }, { status: 500 });
   }
 }

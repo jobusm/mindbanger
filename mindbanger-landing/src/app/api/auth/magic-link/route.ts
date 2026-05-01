@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase-server";
+import { getServiceSupabase } from "@/lib/supabase-service";
 import { sendEmail } from "@/lib/email";
 import { rateLimit } from '@/lib/rate-limit';
 
@@ -7,10 +7,14 @@ export async function POST(req: Request) {
   try {
     // Basic IP-based rate limiting fallback
     if (rateLimit) {
-      const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-      const { success } = await rateLimit.limit(`magic-link_${ip}`);
-      if (!success) {
-        return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+      try {
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+        const { success } = await rateLimit.limit(`magic-link_${ip}`);
+        if (!success) {
+          return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+        }
+      } catch (rateLimitErr) {
+        console.warn('Rate limit failed or threw an error, ignoring:', rateLimitErr);
       }
     }
 
@@ -19,7 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    const supabase = await createAdminClient();
+    const supabase = getServiceSupabase();
 
     try {
       const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single();
@@ -109,7 +113,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, message: 'Link sent' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to send magic link' }, { status: 500 });
+  } catch (error: any) {
+    console.error('[Magic Link Route Error]:', error);
+    return NextResponse.json({ error: 'Failed to send magic link', details: error?.message || String(error) }, { status: 500 });
   }
 }

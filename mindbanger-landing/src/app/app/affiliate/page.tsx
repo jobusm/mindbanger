@@ -50,28 +50,43 @@ export default async function AffiliateDashboardPage() {
   // Fetch all referrals to calculate stats
   const { data: allReferrals } = await supabase
     .from('referrals')
-    .select('commission_model, status, commission_amount')
-    .eq('affiliate_id', affiliate.id);
+    .select('id, referee_user_id, commission_model, status, commission_amount, created_at')
+    .eq('affiliate_id', affiliate.id)
+    .order('created_at', { ascending: false });
+
+  const refereeIds = (allReferrals || []).map(r => r.referee_user_id).filter(Boolean);
+  let refereeProfiles: Record<string, string> = {};
+  if (refereeIds.length > 0) {
+     const { data: profiles } = await supabase.from('profiles').select('id, email').in('id', refereeIds);
+     if (profiles) {
+        profiles.forEach(p => { refereeProfiles[p.id] = p.email || 'Neznámy'; });
+     }
+  }
 
   let pendingRefA = 0;
   let activeRefB = 0;
   let unpaidBalance = 0;
   let totalEarned = 0;
 
+  const registeredUsers: any[] = [];
+  const activeSubscriptions: any[] = [];
+
   if (allReferrals) {
     allReferrals.forEach(ref => {
-      if (ref.commission_model === 'second_month' && ref.status === 'pending') {
-        pendingRefA++;
-      }
-      if (ref.commission_model === 'lifetime_20' && ref.status === 'paid') {
-        activeRefB++;
-      }
+      const isA = ref.commission_model === 'second_month';
+      const isB = ref.commission_model === 'lifetime_20';
+      
+      if (isA && ref.status === 'pending') pendingRefA++;
+      if (isB && ref.status === 'paid') activeRefB++;
       
       const amount = Number(ref.commission_amount) || 0;
-      if (ref.status === 'pending') {
-        unpaidBalance += amount;
-      } else if (ref.status === 'paid') {
-        totalEarned += amount;
+      if (ref.status === 'pending') unpaidBalance += amount;
+      else if (ref.status === 'paid') totalEarned += amount;
+
+      if (ref.status === 'registered') {
+         registeredUsers.push(ref);
+      } else {
+         activeSubscriptions.push(ref);
       }
     });
   }
@@ -178,6 +193,89 @@ export default async function AffiliateDashboardPage() {
             <span className="text-sm">{dict.affiliate.stat_total}</span>
           </div>
           <div className="text-2xl font-bold text-emerald-500">€{totalEarned.toFixed(2)}</div>
+        </div>
+      </div>
+
+      <div className="pt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-white">{dict.affiliate?.registrations_title || 'Nové registrácie'}</h2>
+          <p className="text-slate-400">
+            {dict.affiliate?.registrations_desc || 'Užívatelia, ktorí sa zaregistrovali cez váš odkaz.'}
+          </p>
+        </div>
+
+        <div className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden">
+          {registeredUsers && registeredUsers.length > 0 ? (
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-slate-900 text-slate-400 border-b border-white/5">
+                <tr>
+                  <th className="p-4 font-medium">Dátum</th>
+                  <th className="p-4 font-medium">Užívateľ</th>
+                  <th className="p-4 font-medium text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {registeredUsers.map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 whitespace-nowrap text-white">{refereeProfiles[req.referee_user_id] || 'Neznámy (Zmazaný)'}</td>
+                    <td className="p-4 text-right">
+                       <span className="px-2 py-1 bg-slate-500/10 text-slate-400 rounded-full text-xs">Registrovaný</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+             <div className="text-center py-8 text-slate-500 text-sm">
+                Zatiaľ žiadne registrácie
+             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Subscriptions */}
+      <div className="pt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-white">{dict.affiliate?.subscriptions_title || 'Zoznam predplatných a provízií'}</h2>
+          <p className="text-slate-400">
+            {dict.affiliate?.subscriptions_desc || 'Užívatelia s aktívnym alebo minulým predplatným.'}
+          </p>
+        </div>
+
+        <div className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden">
+          {activeSubscriptions && activeSubscriptions.length > 0 ? (
+            <table className="w-full text-left text-sm text-slate-300 block overflow-x-auto w-full display-block">
+              <thead className="bg-slate-900 text-slate-400 border-b border-white/5">
+                <tr>
+                  <th className="p-4 font-medium">Dátum</th>
+                  <th className="p-4 font-medium">Užívateľ</th>
+                  <th className="p-4 font-medium">Model</th>
+                  <th className="p-4 font-medium">Provízia</th>
+                  <th className="p-4 font-medium text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 w-full">
+                {activeSubscriptions.map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 whitespace-nowrap text-white">{refereeProfiles[req.referee_user_id] || 'Neznámy (Zmazaný)'}</td>
+                    <td className="p-4 whitespace-nowrap text-slate-400 text-xs uppercase tracking-wider">{req.commission_model.replace('_', ' ')}</td>
+                    <td className="p-4 whitespace-nowrap font-bold text-emerald-400">€{Number(req.commission_amount).toFixed(2)}</td>
+                    <td className="p-4 whitespace-nowrap text-right">
+                      {req.status === 'pending' && <span className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs">Čaká</span>}
+                      {req.status === 'waiting_second_month' && <span className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs">Čaká na 2. mesiac</span>}
+                      {req.status === 'paid' && <span className="px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-xs">Vyplatené</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+             <div className="text-center py-8 text-slate-500 text-sm">
+                Zatiaľ žiadne záznamy o predplatnom.
+             </div>
+          )}
         </div>
       </div>
 

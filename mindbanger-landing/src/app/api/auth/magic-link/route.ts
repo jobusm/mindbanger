@@ -29,11 +29,27 @@ export async function POST(req: Request) {
       const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single();
       
       if (!profile?.id) {
-        await supabase.auth.admin.createUser({
+        const { data: newUser } = await supabase.auth.admin.createUser({
             email: email,
             email_confirm: true,
             user_metadata: options?.data
         });
+
+        // Insert referral record for the newly registered user
+        if (newUser?.user?.id && options?.data?.mb_refCode) {
+          try {
+            await supabase.from('referrals').insert({
+              affiliate_id: options.data.mb_refCode,
+              referee_user_id: newUser.user.id,
+              commission_model: options.data.mb_refMode === 'B' ? 'lifetime_20' : 'second_month',
+              status: 'registered',
+              commission_amount: 0
+            });
+            console.log('[Magic Link] Referral inserted for new user', newUser.user.id);
+          } catch (refErr) {
+            console.error('[Magic Link] Referral insert error:', refErr);
+          }
+        }
       } else if (options?.data) {
         const { data: { user } } = await supabase.auth.admin.getUserById(profile.id);
         if (user) {

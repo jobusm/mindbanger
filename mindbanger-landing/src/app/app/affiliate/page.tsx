@@ -50,7 +50,7 @@ export default async function AffiliateDashboardPage() {
   // Fetch all referrals to calculate stats
   const { data: allReferrals } = await supabase
     .from('referrals')
-    .select('id, referee_user_id, commission_model, status, commission_amount, created_at')
+    .select('id, referee_user_id, commission_model, status, amount, created_at')
     .eq('affiliate_id', affiliate.id)
     .order('created_at', { ascending: false });
 
@@ -79,7 +79,7 @@ export default async function AffiliateDashboardPage() {
       if (isA && ref.status === 'pending') pendingRefA++;
       if (isB && ref.status === 'paid') activeRefB++;
       
-      const amount = Number(ref.commission_amount) || 0;
+      const amount = Number(ref.amount) || 0;
       if (ref.status === 'pending') unpaidBalance += amount;
       else if (ref.status === 'paid') totalEarned += amount;
 
@@ -261,7 +261,7 @@ export default async function AffiliateDashboardPage() {
                     <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
                     <td className="p-4 whitespace-nowrap text-white">{refereeProfiles[req.referee_user_id] || 'Neznámy (Zmazaný)'}</td>
                     <td className="p-4 whitespace-nowrap text-slate-400 text-xs uppercase tracking-wider">{req.commission_model.replace('_', ' ')}</td>
-                    <td className="p-4 whitespace-nowrap font-bold text-emerald-400">€{Number(req.commission_amount).toFixed(2)}</td>
+                    <td className="p-4 whitespace-nowrap font-bold text-emerald-400">€{Number(req.amount).toFixed(2)}</td>
                     <td className="p-4 whitespace-nowrap text-right">
                       {req.status === 'pending' && <span className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs">Čaká</span>}
                       {req.status === 'waiting_second_month' && <span className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs">Čaká na 2. mesiac</span>}

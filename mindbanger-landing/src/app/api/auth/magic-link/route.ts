@@ -46,7 +46,7 @@ export async function POST(req: Request) {
               referee_user_id: newUser.user.id,
               commission_model: refMode === 'B' ? 'lifetime_20' : 'second_month',
               status: 'registered',
-              commission_amount: 0
+              amount: 0
             });
             console.log('[Magic Link] Referral inserted for new user', newUser.user.id);
           } catch (refErr) {

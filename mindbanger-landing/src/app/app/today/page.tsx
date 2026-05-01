@@ -28,12 +28,6 @@ export default async function TodayPage() {
   // CHECK ACCESS LEVEL (Variant B)
   const hasAccess = profile?.subscription_status === 'premium';
 
-  if (!hasAccess) {
-      return (
-        <LockedDashboard title={t.todaysFocus} lang={userLang} />
-      );
-  }
-
   // Get localized today's date in YYYY-MM-DD format based on user's timezone
   const now = new Date();
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -80,8 +74,9 @@ export default async function TodayPage() {
       // Otherwise Day 1 is TODAY.
       const startDayDate = new Date(`${refYear}-${refMonth}-${refDay}T00:00:00`);
       
-      // If purchased after 14:00, add 1 day to start date
-      if (refHour >= 14) {
+      // If purchased after 14:00 (and premium), add 1 day to start date.
+      // Free users should see their test Day 1 immediately, regardless of hour.
+      if (refHour >= 14 && hasAccess === true) {
           startDayDate.setDate(startDayDate.getDate() + 1);
       }
 
@@ -267,13 +262,27 @@ export default async function TodayPage() {
       corporateSignalWithUrls.type = corporateSignalType;
   }
 
-  // Format date for display
+  // format date for display
   const displayDate = new Intl.DateTimeFormat(userLang, {
     timeZone: userTimezone,
     weekday: 'long',
     month: 'long',
     day: 'numeric'
   }).format(now);
+
+  // SECURE ACCESS CONTROL
+  if (!hasAccess) {
+      // Allow viewing ONLY the very first Onboarding Signal as a free test for newly registered users.
+      // If they are past Day 1, or viewing standard generic signals, restrict access.
+      const isFreeTestMindset = personalSignalType === 'onboarding' && personalSignal?.day_number === 1;
+      
+      // Allow corporate test access if needed? Corporate users usually have premium status anyway.
+      const hasCorporateData = Boolean(corporateSignal);
+
+      if (!isFreeTestMindset && !hasCorporateData) {
+          return <LockedDashboard title={t.todaysFocus} lang={userLang} />;
+      }
+  }
 
   return (
     <TodayClientView 

@@ -39,13 +39,13 @@ export async function POST(req: Request) {
         const refCode = options?.data?.mb_refCode || options?.data?.refCode;
         const refMode = options?.data?.mb_refMode || options?.data?.refMode;
 
-        if (newUser?.user?.id && refCode) {
+          if (newUser?.user?.id && refCode) {
           try {
             await supabase.from('referrals').insert({
               affiliate_id: refCode,
               referee_user_id: newUser.user.id,
               commission_model: refMode === 'B' ? 'lifetime_20' : 'second_month',
-              status: 'registered',
+              status: 'pending', // Musime pouzit povoleny status kvoli DB constraintom
               amount: 0
             });
             console.log('[Magic Link] Referral inserted for new user', newUser.user.id);

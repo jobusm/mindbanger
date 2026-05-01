@@ -80,10 +80,12 @@ export default async function AffiliateDashboardPage() {
       if (isB && ref.status === 'paid') activeRefB++;
       
       const amount = Number(ref.amount) || 0;
-      if (ref.status === 'pending') unpaidBalance += amount;
-      else if (ref.status === 'paid') totalEarned += amount;
+      if (amount > 0) {
+        if (ref.status === 'pending') unpaidBalance += amount;
+        else if (ref.status === 'paid') totalEarned += amount;
+      }
 
-      if (ref.status === 'registered') {
+      if (amount === 0) {
          registeredUsers.push(ref);
       } else {
          activeSubscriptions.push(ref);

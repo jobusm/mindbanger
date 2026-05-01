@@ -88,7 +88,7 @@ export default async function AffiliateDashboardPage() {
     .order('created_at', { ascending: false });
 
   return (
-    <div className="p-6 md:p-12 max-w-5xl mx-auto space-y-12 animate-in fade-in duration-500">
+    <div className="w-full p-6 md:p-12 max-w-5xl mx-auto space-y-12 animate-in fade-in duration-500">
       <div className="space-y-4">
         <h1 className="text-3xl md:text-4xl font-serif text-white">{dict.affiliate.title}</h1>
         <p className="text-slate-400 max-w-2xl text-lg">
@@ -98,19 +98,21 @@ export default async function AffiliateDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Model A */}
-        <div className="bg-slate-900/40 p-6 md:p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+        <div className="bg-slate-900/40 p-6 md:p-8 rounded-2xl border border-white/5 relative overflow-hidden group flex flex-col">
           <div className="absolute top-0 right-0 p-6 text-slate-800 group-hover:text-amber-500/10 transition-colors">
             <ArrowUpRight size={120} className="w-24 h-24" />
           </div>
-          <div className="relative z-10 space-y-4">
-            <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-500 text-xs font-bold tracking-wider uppercase rounded-full border border-amber-500/20">
-              {dict.affiliate.modelA_badge}
-            </span>
-            <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelA_title}</h2>
-            <p className="text-slate-400 text-sm h-12">
+          <div className="relative z-10 flex flex-col h-full space-y-4">
+            <div className="space-y-4">
+              <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-500 text-xs font-bold tracking-wider uppercase rounded-full border border-amber-500/20">
+                {dict.affiliate.modelA_badge}
+              </span>
+              <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelA_title}</h2>
+            </div>
+            <p className="text-slate-400 text-sm flex-1">
               {dict.affiliate.modelA_desc}
             </p>
-            <div className="pt-4">
+            <div className="pt-4 mt-auto">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refA_label}</label>
               <CopyLink link={`https://mindbanger.com/checkout?refMode=A&refCode=${affiliate.id}`} />
             </div>
@@ -118,19 +120,21 @@ export default async function AffiliateDashboardPage() {
         </div>
 
         {/* Model B */}
-        <div className="bg-slate-900/40 p-6 md:p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+        <div className="bg-slate-900/40 p-6 md:p-8 rounded-2xl border border-white/5 relative overflow-hidden group flex flex-col">
           <div className="absolute top-0 right-0 p-6 text-slate-800 group-hover:text-indigo-500/10 transition-colors">
             <ArrowUpRight size={120} className="w-24 h-24" />
           </div>
-          <div className="relative z-10 space-y-4">
-            <span className="inline-block px-3 py-1 bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-wider uppercase rounded-full border border-indigo-500/20">
-              {dict.affiliate.modelB_badge}
-            </span>
-            <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelB_title}</h2>
-            <p className="text-slate-400 text-sm h-12">
+          <div className="relative z-10 flex flex-col h-full space-y-4">
+            <div className="space-y-4">
+              <span className="inline-block px-3 py-1 bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-wider uppercase rounded-full border border-indigo-500/20">
+                {dict.affiliate.modelB_badge}
+              </span>
+              <h2 className="text-2xl font-bold text-white">{dict.affiliate.modelB_title}</h2>
+            </div>
+            <p className="text-slate-400 text-sm flex-1">
               {dict.affiliate.modelB_desc}
             </p>
-            <div className="pt-4">
+            <div className="pt-4 mt-auto">
               <label className="text-xs text-slate-500 uppercase tracking-wider mb-2 block">{dict.affiliate.refB_label}</label>
               <CopyLink link={`https://mindbanger.com/checkout?refMode=B&refCode=${affiliate.id}`} />
             </div>

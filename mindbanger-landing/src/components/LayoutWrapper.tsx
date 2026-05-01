@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isWide = pathname?.startsWith('/app/organization');
+  const isWide = pathname?.startsWith('/app/organization') || pathname?.startsWith('/app/affiliate');
 
   return (
     <main

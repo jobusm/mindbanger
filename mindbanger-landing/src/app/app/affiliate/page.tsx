@@ -211,7 +211,7 @@ export default async function AffiliateDashboardPage() {
                 {registeredUsers.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
                     <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? `KLIENT-${req.referee_user_id.split('-')[0].toUpperCase()}` : 'Zmazaný účet'}</td>
+                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? req.referee_user_id.split('-')[0].toUpperCase() : 'Zmazaný účet'}</td>
                     <td className="p-4 text-right">
                        <span className="px-2 py-1 bg-slate-500/10 text-slate-400 rounded-full text-xs">Registrovaný</span>
                     </td>
@@ -252,7 +252,7 @@ export default async function AffiliateDashboardPage() {
                 {activeSubscriptions.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
                     <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? `KLIENT-${req.referee_user_id.split('-')[0].toUpperCase()}` : 'Zmazaný účet'}</td>
+                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? req.referee_user_id.split('-')[0].toUpperCase() : 'Zmazaný účet'}</td>
                     <td className="p-4 whitespace-nowrap text-slate-400 text-xs uppercase tracking-wider">{req.commission_model.replace('_', ' ')}</td>
                     <td className="p-4 whitespace-nowrap font-bold text-emerald-400">€{Number(req.amount).toFixed(2)}</td>
                     <td className="p-4 whitespace-nowrap text-right">

@@ -54,15 +54,6 @@ export default async function AffiliateDashboardPage() {
     .eq('affiliate_id', affiliate.id)
     .order('created_at', { ascending: false });
 
-  const refereeIds = (allReferrals || []).map(r => r.referee_user_id).filter(Boolean);
-  let refereeProfiles: Record<string, string> = {};
-  if (refereeIds.length > 0) {
-     const { data: profiles } = await supabase.from('profiles').select('id, email').in('id', refereeIds);
-     if (profiles) {
-        profiles.forEach(p => { refereeProfiles[p.id] = p.email || 'Neznámy'; });
-     }
-  }
-
   let pendingRefA = 0;
   let activeRefB = 0;
   let unpaidBalance = 0;
@@ -220,7 +211,7 @@ export default async function AffiliateDashboardPage() {
                 {registeredUsers.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
                     <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td className="p-4 whitespace-nowrap text-white">{refereeProfiles[req.referee_user_id] || 'Neznámy (Zmazaný)'}</td>
+                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? `KLIENT-${req.referee_user_id.split('-')[0].toUpperCase()}` : 'Zmazaný účet'}</td>
                     <td className="p-4 text-right">
                        <span className="px-2 py-1 bg-slate-500/10 text-slate-400 rounded-full text-xs">Registrovaný</span>
                     </td>
@@ -261,7 +252,7 @@ export default async function AffiliateDashboardPage() {
                 {activeSubscriptions.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-800/50 transition-colors">
                     <td className="p-4 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td className="p-4 whitespace-nowrap text-white">{refereeProfiles[req.referee_user_id] || 'Neznámy (Zmazaný)'}</td>
+                    <td className="p-4 whitespace-nowrap text-white font-mono text-xs">{req.referee_user_id ? `KLIENT-${req.referee_user_id.split('-')[0].toUpperCase()}` : 'Zmazaný účet'}</td>
                     <td className="p-4 whitespace-nowrap text-slate-400 text-xs uppercase tracking-wider">{req.commission_model.replace('_', ' ')}</td>
                     <td className="p-4 whitespace-nowrap font-bold text-emerald-400">€{Number(req.amount).toFixed(2)}</td>
                     <td className="p-4 whitespace-nowrap text-right">

@@ -5,6 +5,7 @@ import { useDictionary } from './LanguageProvider';
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Instagram } from 'lucide-react';
 
 export default function Footer() {
   const { dict } = useDictionary();
@@ -35,9 +36,16 @@ export default function Footer() {
           <Link href="/affiliate-terms" className="hover:text-white transition-colors">{dict?.landing?.footer?.affiliateTerms || 'Affiliate Terms'}</Link>
         </div>
 
-        {/* Copyright */}
-        <div className="text-xs text-slate-600">
-          &copy; {year} Mindbanger Daily.
+        {/* Social & Copyright */}
+        <div className="flex flex-col items-center md:items-end space-y-4">
+          <div className="flex space-x-4">
+            <a href="https://www.instagram.com/mindbangerdaily" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-500 transition-colors" title="Instagram">
+              <Instagram size={20} />
+            </a>
+          </div>
+          <div className="text-xs text-slate-600">
+            &copy; {year} Mindbanger Daily.
+          </div>
         </div>
       </div>
     </footer>

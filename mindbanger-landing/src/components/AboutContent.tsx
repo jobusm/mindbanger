@@ -3,7 +3,7 @@
 import React from 'react';
 import { useDictionary } from './LanguageProvider';
 import Link from 'next/link';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, User, Instagram, Facebook, Linkedin } from 'lucide-react';
 import Image from 'next/image';
 
 export default function AboutContent() {
@@ -51,6 +51,24 @@ export default function AboutContent() {
               </div>
               <h1 className="text-4xl md:text-6xl font-serif text-white">{t.title}</h1>
               <p className="text-xl text-amber-500/90 font-medium tracking-wide uppercase">{t.role}</p>
+
+              {/* Social Links */}
+              <div className="flex justify-center items-center space-x-5 pt-2">
+                <a href="https://instagram.com/miroslav777" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-500 transition-colors">
+                  <Instagram size={22} />
+                </a>
+                <a href="https://www.facebook.com/jobusm" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-500 transition-colors">
+                  <Facebook size={22} />
+                </a>
+                <a href="https://www.linkedin.com/in/miroslav-jobus/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-500 transition-colors">
+                  <Linkedin size={22} />
+                </a>
+                <a href="https://tiktok.com/@mjobus" target="_blank" rel="noopener noreferrer" title="TikTok" className="text-slate-400 hover:text-amber-500 transition-colors">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                  </svg>
+                </a>
+              </div>
            </header>
 
            {/* Intro Section */}

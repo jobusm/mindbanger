@@ -49,12 +49,12 @@ export default function AboutTrustSection() {
         </div>
 
         {/* Certifications Section */}
-        <div className="pt-10 flex flex-wrap justify-center items-center gap-6 sm:gap-10 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-           <Image src="/certifications/CMA_Logo.png" alt="CMA Certified" width={120} height={60} className="object-contain h-12 sm:h-16 w-auto" />
-           <Image src="/certifications/cpd-logo.png" alt="CPD Certified" width={120} height={60} className="object-contain h-12 sm:h-16 w-auto" />
-           <Image src="/certifications/ICAHP%20logo.png" alt="ICAHP Certified" width={120} height={60} className="object-contain h-12 sm:h-16 w-auto bg-white/10 rounded p-1" />
-           <Image src="/certifications/iphm-final-01.800x0.png" alt="IPHM Certified" width={120} height={60} className="object-contain h-12 sm:h-16 w-auto" />
-           <Image src="/certifications/NCCAP.LOGOtrp.png" alt="NCCAP Certified" width={120} height={60} className="object-contain h-12 sm:h-16 w-auto bg-white/10 rounded p-1" />
+        <div className="pt-10 flex flex-wrap justify-center items-center gap-8 sm:gap-14 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+           <Image src="/certifications/CMA_Logo.png" alt="CMA Certified" width={180} height={90} className="object-contain h-16 sm:h-24 w-auto" />
+           <Image src="/certifications/cpd-logo.png" alt="CPD Certified" width={180} height={90} className="object-contain h-16 sm:h-24 w-auto" />
+           <Image src="/certifications/ICAHP%20logo.png" alt="ICAHP Certified" width={180} height={90} className="object-contain h-16 sm:h-24 w-auto bg-white/10 rounded p-1.5" />
+           <Image src="/certifications/iphm-final-01.800x0.png" alt="IPHM Certified" width={180} height={90} className="object-contain h-16 sm:h-24 w-auto" />
+           <Image src="/certifications/NCCAP.LOGOtrp.png" alt="NCCAP Certified" width={180} height={90} className="object-contain h-16 sm:h-24 w-auto bg-white/10 rounded p-1.5" />
         </div>
       </div>
     </section>

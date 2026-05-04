@@ -111,12 +111,12 @@ export default function AboutContent() {
               )}
 
               {/* Certifications Section */}
-              <div className="pt-16 pb-8 border-t border-white/5 mt-16 flex flex-wrap justify-center items-center gap-8 sm:gap-12 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
-                 <Image src="/certifications/CMA_Logo.png" alt="CMA Certified" width={140} height={70} className="object-contain h-14 sm:h-20 w-auto" />
-                 <Image src="/certifications/cpd-logo.png" alt="CPD Certified" width={140} height={70} className="object-contain h-14 sm:h-20 w-auto" />
-                 <Image src="/certifications/ICAHP%20logo.png" alt="ICAHP Certified" width={140} height={70} className="object-contain h-14 sm:h-20 w-auto bg-white/5 rounded p-2" />
-                 <Image src="/certifications/iphm-final-01.800x0.png" alt="IPHM Certified" width={140} height={70} className="object-contain h-14 sm:h-20 w-auto" />
-                 <Image src="/certifications/NCCAP.LOGOtrp.png" alt="NCCAP Certified" width={140} height={70} className="object-contain h-14 sm:h-20 w-auto bg-white/5 rounded p-2" />
+              <div className="pt-16 pb-8 border-t border-white/5 mt-16 flex flex-wrap justify-center items-center gap-10 sm:gap-16 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
+                 <Image src="/certifications/CMA_Logo.png" alt="CMA Certified" width={200} height={100} className="object-contain h-20 sm:h-28 w-auto" />
+                 <Image src="/certifications/cpd-logo.png" alt="CPD Certified" width={200} height={100} className="object-contain h-20 sm:h-28 w-auto" />
+                 <Image src="/certifications/ICAHP%20logo.png" alt="ICAHP Certified" width={200} height={100} className="object-contain h-20 sm:h-28 w-auto bg-white/5 rounded p-2" />
+                 <Image src="/certifications/iphm-final-01.800x0.png" alt="IPHM Certified" width={200} height={100} className="object-contain h-20 sm:h-28 w-auto" />
+                 <Image src="/certifications/NCCAP.LOGOtrp.png" alt="NCCAP Certified" width={200} height={100} className="object-contain h-20 sm:h-28 w-auto bg-white/5 rounded p-2" />
               </div>
            </div>
 

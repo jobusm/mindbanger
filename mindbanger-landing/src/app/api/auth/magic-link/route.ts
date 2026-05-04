@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServiceSupabase } from "@/lib/supabase-service";
+import { createAdminClient } from "@/lib/supabase-server";
 import { sendEmail } from "@/lib/email";
 import { rateLimit } from '@/lib/rate-limit';
 
@@ -7,14 +7,10 @@ export async function POST(req: Request) {
   try {
     // Basic IP-based rate limiting fallback
     if (rateLimit) {
-      try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-        const { success } = await rateLimit.limit(`magic-link_${ip}`);
-        if (!success) {
-          return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
-        }
-      } catch (rateLimitErr) {
-        console.warn('Rate limit failed or threw an error, ignoring:', rateLimitErr);
+      const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      const { success } = await rateLimit.limit(`magic-link_${ip}`);
+      if (!success) {
+        return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
       }
     }
 
@@ -23,36 +19,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    const supabase = getServiceSupabase();
+    const supabase = await createAdminClient();
 
     try {
       const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single();
       
       if (!profile?.id) {
-        const { data: newUser } = await supabase.auth.admin.createUser({
+        await supabase.auth.admin.createUser({
             email: email,
             email_confirm: true,
             user_metadata: options?.data
         });
-
-        // Insert referral record for the newly registered user
-        const refCode = options?.data?.mb_refCode || options?.data?.refCode;
-        const refMode = options?.data?.mb_refMode || options?.data?.refMode;
-
-          if (newUser?.user?.id && refCode) {
-          try {
-            await supabase.from('referrals').insert({
-              affiliate_id: refCode,
-              referee_user_id: newUser.user.id,
-              commission_model: refMode === 'B' ? 'lifetime_20' : 'second_month',
-              status: 'pending', // Musime pouzit povoleny status kvoli DB constraintom
-              amount: 0
-            });
-            console.log('[Magic Link] Referral inserted for new user', newUser.user.id);
-          } catch (refErr) {
-            console.error('[Magic Link] Referral insert error:', refErr);
-          }
-        }
       } else if (options?.data) {
         const { data: { user } } = await supabase.auth.admin.getUserById(profile.id);
         if (user) {
@@ -132,8 +109,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, message: 'Link sent' });
-  } catch (error: any) {
-    console.error('[Magic Link Route Error]:', error);
-    return NextResponse.json({ error: 'Failed to send magic link', details: error?.message || String(error) }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to send magic link' }, { status: 500 });
   }
 }

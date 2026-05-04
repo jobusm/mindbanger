@@ -117,23 +117,10 @@ function LoginContent() {
     setMessage(null);
 
     try {
-      // Get affiliate info from storage if any
-      const refMode = typeof window !== 'undefined' ? localStorage.getItem('mb_refMode') : null;
-      const refCode = typeof window !== 'undefined' ? localStorage.getItem('mb_refCode') : null;
-
       const response = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          lang,
-          options: {
-             data: {
-               ...(refMode && { refMode }),
-               ...(refCode && { refCode })
-             }
-          }
-        }),
+        body: JSON.stringify({ email, lang }),
       });
 
       const data = await response.json();

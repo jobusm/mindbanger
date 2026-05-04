@@ -222,7 +222,7 @@ export async function POST(req: Request) {
                       referee_user_id: userId || null, 
                       commission_model: commissionModel,
                       status: initialStatus,
-                        amount: commissionAmountVal,
+                      commission_amount: commissionAmountVal,
                       stripe_session_id: subKey,
                    }, { onConflict: 'stripe_session_id' });
                    console.log('Affiliate referral verified and inserted for session:', session.id, 'Status:', initialStatus, 'SubKey:', subKey);
@@ -354,7 +354,7 @@ try {
                               referee_user_id: userProfile.id,
                               commission_model: 'lifetime_20',
                               status: 'pending',
-                                amount: commAmount,
+                              commission_amount: commAmount,
                               stripe_session_id: `invoice_${invoice.id}_${affId}`,
                            });
                         } catch (e: any) {

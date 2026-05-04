@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import MobileNavBar from '@/components/MobileNavBar';
 import PushNotificationBanner from '@/components/push/PushNotificationBanner';
 import LayoutWrapper from '@/components/LayoutWrapper';
+import RequireName from '@/components/app/RequireName';
 
 // This is a minimal protected layout wrapper
 export default async function AppLayout({
@@ -22,7 +23,7 @@ export default async function AppLayout({
   // 2. Over ci ma user aktivne clenstvo
   const { data: profile } = await supabase
     .from('profiles')
-    .select('subscription_status')
+    .select('subscription_status, full_name, preferred_language')
     .eq('id', session.user.id)
     .single();
 
@@ -62,6 +63,13 @@ export default async function AppLayout({
       
       {/* Vlozime PWA Navigaciu */}
       <MobileNavBar />
+
+      {/* Nastavenie Mena pre novych: Ak chyba, povie mu to */}
+      <RequireName 
+        userId={session.user.id} 
+        initialName={profile?.full_name} 
+        lang={profile?.preferred_language || 'sk'} 
+      />
 
       {/* Push Notification Banner */}
       <PushNotificationBanner />

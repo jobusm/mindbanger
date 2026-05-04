@@ -24,7 +24,22 @@ export default async function Home(props: any) {
   const country = typeof searchParams.country === "string" ? searchParams.country : (headersList.get("x-vercel-ip-country") || "SK");
 
   const cookieStore = await cookies();
-  const lang = cookieStore.get('user-lang')?.value || 'en';
+  let lang = cookieStore.get('user-lang')?.value;
+
+  if (!lang) {
+    const acceptLang = headersList.get('accept-language')?.toLowerCase() || '';
+    if (acceptLang.includes('sk')) {
+      lang = 'sk';
+    } else if (acceptLang.includes('cs')) {
+      lang = 'cs';
+    } else if (country === 'SK') {
+      lang = 'sk';
+    } else if (country === 'CZ') {
+      lang = 'cs';
+    } else {
+      lang = 'en';
+    }
+  }
   
   let dict: any = {};
   try {

@@ -157,7 +157,7 @@ export default function SubscriptionsManager() {
                 <th className="p-4 font-medium">Používateľ / Email</th>
                 <th className="p-4 font-medium">Krajina</th>
                 <th className="p-4 font-medium">Suma</th>
-                <th className="p-4 font-medium">Koniec obdobia</th>
+                <th className="p-4 font-medium">Dátum reg.</th>\n                  <th className="p-4 font-medium">Dátum reg.</th>\n                  <th className="p-4 font-medium">Koniec obdobia</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -245,7 +245,7 @@ export default function SubscriptionsManager() {
               ))}
               {filteredSubscriptions.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-500">
+                  <td colSpan={6} className="p-8 text-center text-slate-500">
                     Nenašli sa žiadne odbery.
                   </td>
                 </tr>

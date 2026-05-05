@@ -2,6 +2,8 @@ import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
 import { getDictionary } from '@/lib/i18n';
+import { cookies } from 'next/headers';
+import LockedDashboard from '@/components/app/LockedDashboard';
 
 export const revalidate = 0; // Always dynamic due to day calculation and temporal content lock
 
@@ -19,11 +21,16 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   // Get user profile (language + registration date for temporal lock)
   const { data: profile } = await supabase
     .from('profiles')
-    .select('preferred_language, created_at')
+    .select('preferred_language, created_at, subscription_status')
     .eq('id', session?.user.id)
     .single();
 
-  const userLang = profile?.preferred_language || 'en';
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get('user-lang')?.value;
+  const userLang = cookieLang || profile?.preferred_language || 'en';
+
+  // Check premium access
+  const hasAccess = profile?.subscription_status === 'premium';
   const dict = getDictionary(userLang);
   const t = dict.archive;
   
@@ -40,7 +47,7 @@ export default async function ArchivePage({ searchParams }: PageProps) {
   let signals: any[] = [];
   let quickResets: any[] = [];
 
-  if (currentTab === 'daily') {
+  if (currentTab === 'daily' && hasAccess) {
     const { data } = await supabase
       .from('daily_signals')
       // Map legacy/wrong fields to schema: title->theme, signal_text->focus_text

@@ -20,7 +20,7 @@ export default async function TodayPage() {
     .single();
 
   const cookieStore = await cookies();
-  const userLang = profile?.preferred_language || cookieStore.get('user-lang')?.value || 'en';
+  const userLang = cookieStore.get('user-lang')?.value || profile?.preferred_language || 'en';
   const firstName = profile?.full_name?.split(' ')[0] || 'Member';
   const userTimezone = profile?.timezone || 'UTC';
   

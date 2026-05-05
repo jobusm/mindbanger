@@ -1,6 +1,7 @@
 import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import { getDictionary } from '@/lib/i18n';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 export const revalidate = 0;
@@ -16,7 +17,9 @@ export default async function ResetsPage() {
     .eq('id', session?.user.id)
     .single();
 
-  const userLang = profile?.preferred_language || 'en';
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get('user-lang')?.value;
+  const userLang = cookieLang || profile?.preferred_language || 'en';
   const dict = getDictionary(userLang);
   
   // Custom texts based on language (fallback if not in dict)

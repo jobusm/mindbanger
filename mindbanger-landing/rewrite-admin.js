@@ -1,4 +1,6 @@
-﻿import { NextResponse } from "next/server";
+﻿const fs = require('fs');
+
+const routeCode = \import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { checkAdminAuth } from "@/lib/auth-admin";
 
@@ -11,8 +13,6 @@ export async function GET() {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !supabaseServiceKey) throw new Error('Missing keys');
-  
   const supabaseAdmin = createSupabaseAdminClient(supabaseUrl, supabaseServiceKey);
 
   try {
@@ -44,6 +44,7 @@ export async function GET() {
     const joinedList = authUsers.map(user => {
       const profile = profilesMap.get(user.id);
       const sub = subsMap.get(user.id);
+      
       const st = sub ? sub.status : (profile?.subscription_status || 'free');
 
       return {
@@ -56,8 +57,7 @@ export async function GET() {
         country: sub ? sub.country : null,
         amount_total: sub ? sub.amount_total : 0,
         currency: sub ? sub.currency : 'EUR',
-        customer_email: user.email,
-        display_email: user.email || 'N/A',
+        display_email: user.email || "N/A",
         profiles: profile || null
       };
     });
@@ -65,8 +65,12 @@ export async function GET() {
     joinedList.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     return NextResponse.json(joinedList);
-  } catch (error: any) {
-    console.error('GET users error:', error);
+  } catch (error) {
+    console.error("GET users error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+\;
+
+fs.writeFileSync('src/app/api/admin/subscriptions/route.ts', routeCode);
+console.log('Rewritten API route safely');

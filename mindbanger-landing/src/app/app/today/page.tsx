@@ -1,4 +1,5 @@
 import React from 'react';
+import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase-server';
 import { getSecureAudioUrl } from '@/lib/cloudflare-r2';
 import { getDictionary } from '@/lib/i18n';
@@ -18,7 +19,8 @@ export default async function TodayPage() {
     .eq('id', session?.user.id)
     .single();
 
-  const userLang = profile?.preferred_language || 'en';
+  const cookieStore = await cookies();
+  const userLang = profile?.preferred_language || cookieStore.get('user-lang')?.value || 'en';
   const firstName = profile?.full_name?.split(' ')[0] || 'Member';
   const userTimezone = profile?.timezone || 'UTC';
   
@@ -27,12 +29,6 @@ export default async function TodayPage() {
 
   // CHECK ACCESS LEVEL (Variant B)
   const hasAccess = profile?.subscription_status === 'premium';
-
-  if (!hasAccess) {
-      return (
-        <LockedDashboard title={t.todaysFocus} lang={userLang} />
-      );
-  }
 
   // Get localized today's date in YYYY-MM-DD format based on user's timezone
   const now = new Date();
@@ -124,6 +120,14 @@ export default async function TodayPage() {
      personalSignalType = 'daily';
   }
   // --- ONBOARDING LOGIC END ---
+
+  // Apply access check - block access only if they don't have premium AND they shouldn't see onboarding
+  // We allow access if they are waiting for onboarding to start (Day 0) or strictly inside the onboarding sequence
+  if (!hasAccess && personalSignalType !== 'onboarding' && !isOnboardingWait) {
+      return (
+        <LockedDashboard title={t.todaysFocus} lang={userLang} />
+      );
+  }
 
   // --- CORPORATE LOGIC START ---
   let corporateSignal = null;

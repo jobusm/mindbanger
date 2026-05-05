@@ -35,7 +35,7 @@ export default function HeroSection() {
             {dict?.landing?.hero?.subtitleAuthor || 'Created by a Life Coach & Hypnotherapist.'}
           </p>
 
-          <p className="italic text-slate-400 text-sm font-medium border-l-2 border-indigo-500/50 pl-4 py-1">
+<p className="italic text-slate-300 text-lg md:text-xl font-serif leading-relaxed border-l-4 border-indigo-500/60 pl-5 py-2 mt-4 mb-2 shadow-sm relative before:absolute before:-left-1 before:top-0 before:w-1 before:h-full before:bg-indigo-400 before:blur-sm">
             {dict?.landing?.hero?.quote || '"The way your mind is set begins to shape your reality."'}
           </p>
 

@@ -77,9 +77,7 @@ export default async function TodayPage() {
       const startDayDate = new Date(`${refYear}-${refMonth}-${refDay}T00:00:00`);
       
       // If purchased after 14:00, add 1 day to start date
-      if (refHour >= 14) {
-          startDayDate.setDate(startDayDate.getDate() + 1);
-      }
+      // Disabled refHour 14 rules
 
       // 4. Calculate Current Day Number
       const currentDayDate = new Date(`${year}-${month}-${day}T00:00:00`);
@@ -89,21 +87,38 @@ export default async function TodayPage() {
 
       console.log(`User Day: ${dayNumber} (RefHour: ${refHour}, StartDate: ${startDayDate.toISOString().split('T')[0]})`);
 
-      if (dayNumber < 1) {
-          // Waiting for start (Day 0)
+      if (dayNumber < 1 && hasAccess) {
+          // Waiting for start (Day 0) only for Premium. Free users always get Day 1 immediately.
           isOnboardingWait = true;
       } else {
           // 5. Try Fetch Onboarding Signal
+          // If dayNumber < 1 (but free user), we force day 1
+          const fetchDay = dayNumber < 1 ? 1 : dayNumber;
+          
           const { data: onboardingSignal } = await supabase
             .from('onboarding_signals')
             .select('*')
-            .eq('day_number', dayNumber)
+            .eq('day_number', fetchDay)
             .eq('language', userLang)
             .single();
 
           if (onboardingSignal) {
               personalSignal = onboardingSignal;
               personalSignalType = 'onboarding';
+          } else if (!hasAccess) {
+              const { data: fallbackOnboarding } = await supabase
+                .from('onboarding_signals')
+                .select('*')
+                .eq('day_number', 1)
+                .eq('language', userLang)
+                .single();
+
+              if (fallbackOnboarding) {
+                  personalSignal = fallbackOnboarding;
+                  personalSignalType = 'onboarding';
+                  // Fix for edge case where Day 0 wait triggered, but we force free sample
+                  isOnboardingWait = false; 
+              }
           }
       }
   }
@@ -166,9 +181,7 @@ export default async function TodayPage() {
 
           const startDayDate = new Date(`${refYear}-${refMonth}-${refDay}T00:00:00`);
 
-          if (refHour >= 14) {
-              startDayDate.setDate(startDayDate.getDate() + 1);
-          }
+          // Disabled refHour 14 rules
 
           const currentDayDate = new Date(`${year}-${month}-${day}T00:00:00`);      
           const diffTime = currentDayDate.getTime() - startDayDate.getTime();       

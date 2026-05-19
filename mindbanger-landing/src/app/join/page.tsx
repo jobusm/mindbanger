@@ -8,10 +8,94 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 
+type JoinLang = 'sk' | 'cs' | 'en';
+
+const translations: Record<JoinLang, Record<string, string>> = {
+  sk: {
+    startMembership: 'Začni členstvo',
+    titleEmail: 'Začni svoje členstvo Mindbanger Daily',
+    titleOtp: 'Over svoj email',
+    subtitle: 'Vytvor si účet a začni svoj denný mentálny rituál.',
+    emailLabel: 'Emailová adresa',
+    emailPlaceholder: 'Zadaj svoj email',
+    continueBtn: 'Pokračovať na členstvo',
+    priceLine: '€7.99 / mesiac. DPH sa môže uplatniť. Zruš kedykoľvek.',
+    termsText: 'Súhlasím s',
+    termsLink: 'Podmienkami používania',
+    privacyText: 'Súhlasím s',
+    privacyLink: 'Zásadami ochrany osobných údajov',
+    andDataProcessing: 'a spracovaním údajov.',
+    checkEmailCode: 'Skontroluj email pre 6-miestny kód.',
+    acceptPolicies: 'Pre pokračovanie musíš súhlasiť s Podmienkami a Ochrannou osobných údajov.',
+    sendCodeFail: 'Nepodarilo sa odoslať kód.',
+    codeLabel: 'Zadaj 6-miestny kód',
+    codeSentTo: 'Kód odoslaný na',
+    enterApp: 'Vstúpiť do aplikácie',
+    changeEmail: 'Zmeniť email',
+    codeLengthError: 'Kód musí mať presne 6 číslic.',
+    incorrectCode: 'Nesprávny alebo expirovaný kód.',
+    alreadyMember: 'Už si člen?',
+    logIn: 'Prihlásiť sa',
+  },
+  cs: {
+    startMembership: 'Začni členství',
+    titleEmail: 'Začni své členství Mindbanger Daily',
+    titleOtp: 'Ověř svůj email',
+    subtitle: 'Vytvoř si účet a začni svůj denní mentální rituál.',
+    emailLabel: 'Emailová adresa',
+    emailPlaceholder: 'Zadej svůj email',
+    continueBtn: 'Pokračovat na členství',
+    priceLine: '€7.99 / měsíc. DPH může platit. Zruš kdykoliv.',
+    termsText: 'Souhlasím s',
+    termsLink: 'Podmínkami používání',
+    privacyText: 'Souhlasím se',
+    privacyLink: 'Zásadami ochrany osobních údajů',
+    andDataProcessing: 'a zpracováním údajů.',
+    checkEmailCode: 'Zkontroluj email pro 6místný kód.',
+    acceptPolicies: 'Pro pokračování musíš souhlasit s Podmínkami a Zásadami ochrany osobních údajů.',
+    sendCodeFail: 'Kód se nepodařilo odeslat.',
+    codeLabel: 'Zadej 6místný kód',
+    codeSentTo: 'Kód odeslán na',
+    enterApp: 'Vstoupit do aplikace',
+    changeEmail: 'Změnit email',
+    codeLengthError: 'Kód musí mít přesně 6 číslic.',
+    incorrectCode: 'Nesprávný nebo expirovaný kód.',
+    alreadyMember: 'Už jsi člen?',
+    logIn: 'Přihlásit se',
+  },
+  en: {
+    startMembership: 'Start Membership',
+    titleEmail: 'Start your Mindbanger Daily membership',
+    titleOtp: 'Verify Your Email',
+    subtitle: 'Create your account to begin your daily mental ritual.',
+    emailLabel: 'Email Address',
+    emailPlaceholder: 'Enter your email',
+    continueBtn: 'Continue to Membership',
+    priceLine: '€7.99 / month. VAT may apply. Cancel anytime.',
+    termsText: 'I agree to the',
+    termsLink: 'Terms of Service',
+    privacyText: 'I accept the',
+    privacyLink: 'Privacy Policy',
+    andDataProcessing: 'and data processing.',
+    checkEmailCode: 'Check your email for the 6-digit code.',
+    acceptPolicies: 'Please accept the Terms and Privacy Policy to continue.',
+    sendCodeFail: 'Failed to send code.',
+    codeLabel: 'Enter 6-digit Code',
+    codeSentTo: 'Code sent to',
+    enterApp: 'Enter App',
+    changeEmail: 'Change Email',
+    codeLengthError: 'Code must be exactly 6 digits.',
+    incorrectCode: 'Incorrect or expired code.',
+    alreadyMember: 'Already a member?',
+    logIn: 'Log In',
+  },
+};
+
 export default function JoinPage() {
   const router = useRouter();
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
+  const [lang, setLang] = useState<JoinLang>('en');
   const [email, setEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
@@ -19,6 +103,8 @@ export default function JoinPage() {
   // Consents
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [gdprAccepted, setGdprAccepted] = useState(false);
+
+  const t = translations[lang];
 
   useEffect(() => {
     // Check URL parameters for OTP step (e.g. returning from email app)
@@ -49,6 +135,26 @@ export default function JoinPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const cookieMatch = document.cookie.match(/(?:^|; )user-lang=([^;]+)/);
+    const cookieLang = cookieMatch?.[1]?.toLowerCase();
+
+    if (cookieLang === 'sk' || cookieLang === 'cs' || cookieLang === 'en') {
+      setLang(cookieLang);
+      return;
+    }
+
+    if (cookieLang === 'cz') {
+      setLang('cs');
+      return;
+    }
+
+    const browserLang = navigator.language.slice(0, 2).toLowerCase();
+    setLang(browserLang === 'sk' || browserLang === 'cs' ? browserLang : 'en');
+  }, []);
+
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -56,7 +162,7 @@ export default function JoinPage() {
 
     try {
       if (!termsAccepted || !gdprAccepted) {
-        throw new Error('Please accept the Terms and Privacy Policy to continue.');
+        throw new Error(t.acceptPolicies);
       }
 
       // 1. Send code via our API (handling user creation if new)
@@ -65,7 +171,7 @@ export default function JoinPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email, 
-          lang: 'sk',
+          lang,
           options: {
              data: {
                terms_accepted: termsAccepted,
@@ -83,9 +189,9 @@ export default function JoinPage() {
       }
 
       setStep('otp');
-      setMessage({ type: 'success', text: 'Check your email for the 6-digit code.' });
+      setMessage({ type: 'success', text: t.checkEmailCode });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to send code.' });
+      setMessage({ type: 'error', text: error.message || t.sendCodeFail });
     } finally {
       setLoading(false);
     }
@@ -94,7 +200,7 @@ export default function JoinPage() {
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otpCode.length !== 6) {
-      setMessage({ type: 'error', text: 'Code must be exactly 6 digits.' });
+      setMessage({ type: 'error', text: t.codeLengthError });
       return;
     }
 
@@ -112,7 +218,7 @@ export default function JoinPage() {
       
       // onAuthStateChange handles redirect
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Incorrect or expired code.' });
+      setMessage({ type: 'error', text: error.message || t.incorrectCode });
       setLoading(false);
     }
   };
@@ -128,16 +234,16 @@ export default function JoinPage() {
             <span className="font-serif font-bold text-2xl text-slate-50 tracking-wide">Mindbanger <span className="text-amber-500">Daily</span></span>
             <Image src="/logo.png" alt="Mindbanger Daily" width={180} height={45} className="h-10 w-auto object-contain" />
           </Link>
-          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold mt-3">Start Membership</p>
+          <p className="text-amber-400/80 uppercase tracking-widest text-xs font-bold mt-3">{t.startMembership}</p>
         </div>
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
           <h1 className="text-2xl text-white font-serif mb-2 text-center">
-            {step === 'email' ? 'Start your Mindbanger Daily membership' : 'Verify Your Email'}
+            {step === 'email' ? t.titleEmail : t.titleOtp}
           </h1>
           {step === 'email' && (
             <p className="text-center text-slate-400 text-sm mb-6">
-              Create your account to begin your daily mental ritual.
+              {t.subtitle}
             </p>
           )}
           
@@ -150,7 +256,7 @@ export default function JoinPage() {
           {step === 'email' ? (
             <form onSubmit={handleSendCode} className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-sm mb-2">Email Address</label>
+                <label className="block text-slate-400 text-sm mb-2">{t.emailLabel}</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                   <input 
@@ -159,7 +265,7 @@ export default function JoinPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full bg-slate-800/50 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"
-                    placeholder="Enter your email"
+                    placeholder={t.emailPlaceholder}
                   />
                 </div>
               </div>
@@ -171,13 +277,13 @@ export default function JoinPage() {
               >
                 {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (
                  <>
-                     Continue to Membership
+                     {t.continueBtn}
                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                    </>
                 )}
               </button>
               <p className="text-center text-xs text-slate-500 pt-2">
-                €7.99 / month. VAT may apply. Cancel anytime.
+                {t.priceLine}
               </p>
 
               <div className="space-y-3 pt-4 border-t border-white/10 mt-4">
@@ -192,7 +298,7 @@ export default function JoinPage() {
                     />
                   </div>
                   <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
-                    I agree to the <Link href="/terms" className="text-amber-500 hover:underline" target="_blank">Terms of Service</Link>
+                    {t.termsText} <Link href="/terms" className="text-amber-500 hover:underline" target="_blank">{t.termsLink}</Link>
                   </span>
                 </label>
 
@@ -207,7 +313,7 @@ export default function JoinPage() {
                     />
                   </div>
                   <span className="text-xs text-slate-400 leading-tight group-hover:text-slate-300 transition-colors">
-                    I accept the <Link href="/privacy" className="text-amber-500 hover:underline" target="_blank">Privacy Policy</Link> and data processing.
+                    {t.privacyText} <Link href="/privacy" className="text-amber-500 hover:underline" target="_blank">{t.privacyLink}</Link> {t.andDataProcessing}
                   </span>
                 </label>
               </div>
@@ -215,7 +321,7 @@ export default function JoinPage() {
           ) : (
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-sm mb-2">Enter 6-digit Code</label>
+                <label className="block text-slate-400 text-sm mb-2">{t.codeLabel}</label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                   <input 
@@ -229,7 +335,7 @@ export default function JoinPage() {
                     autoFocus
                   />
                 </div>
-                <p className="text-xs text-slate-500 mt-2 text-center">Code sent to {email}</p>
+                <p className="text-xs text-slate-500 mt-2 text-center">{t.codeSentTo} {email}</p>
               </div>
               
               <button 
@@ -237,7 +343,7 @@ export default function JoinPage() {
                 disabled={loading || otpCode.length !== 6}
                 className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Enter App'}
+                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : t.enterApp}
               </button>
               
               <button
@@ -245,14 +351,14 @@ export default function JoinPage() {
                 onClick={() => setStep('email')}
                 className="w-full text-slate-400 text-sm hover:text-white transition-colors"
               >
-                Change Email
+                {t.changeEmail}
               </button>
             </form>
           )}
         </div>
         
         <p className="mt-8 text-center text-slate-500 text-sm">
-          Already a member? <Link href="/login" className="text-amber-500 hover:text-amber-400">Log In</Link>
+          {t.alreadyMember} <Link href="/login" className="text-amber-500 hover:text-amber-400">{t.logIn}</Link>
         </p>
       </div>
     </div>

@@ -11,7 +11,11 @@ import { supabase } from '@/lib/supabase';
 const getLang = () => {
   if (typeof document !== 'undefined') {
     const match = document.cookie.match(new RegExp('(^| )user-lang=([^;]+)'));
-    if (match) return match[2];
+    if (match) {
+      const value = match[2].toLowerCase();
+      if (value === 'cz') return 'cs';
+      return value;
+    }
   }
   return 'sk'; // default
 };
@@ -33,7 +37,7 @@ const translations = {
     codeLenError: 'Kód musí mať presne 6 číslic.',
     codeSentSuccess: '6-miestny kód bol odoslaný na váš email.',
   },
-  cz: {
+  cs: {
     personalTab: 'Osobní účet',
     companyTab: 'Firemní účet',
     emailSubtitle: 'Přihlášení emailem',
@@ -70,7 +74,7 @@ const translations = {
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [lang, setLang] = useState<'sk' | 'cz' | 'en'>('sk');
+  const [lang, setLang] = useState<'sk' | 'cs' | 'en'>('sk');
 
   const initialMode = searchParams.get('type') === 'b2b' ? 'b2b' : 'personal';
   const initialStep = searchParams.get('step') === 'otp' ? 'otp' : 'email';
@@ -84,7 +88,7 @@ function LoginContent() {
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
   useEffect(() => {
-    setLang((getLang() as 'sk' | 'cz' | 'en') || 'sk');
+    setLang((getLang() as 'sk' | 'cs' | 'en') || 'sk');
   }, []);
 
   const t = translations[lang] || translations.sk;

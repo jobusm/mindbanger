@@ -18,7 +18,12 @@ export async function POST(req: Request) {
       }
     }
 
-    const { email, options, lang = "sk" } = await req.json();
+    const { email, options, lang: rawLang = 'en' } = await req.json();
+    const lang = typeof rawLang === 'string' ? rawLang.toLowerCase() : 'en';
+    const normalizedLang = lang === 'cz' ? 'cs' : lang;
+    const selectedLang = normalizedLang === 'sk' || normalizedLang === 'cs' || normalizedLang === 'en'
+      ? normalizedLang
+      : 'en';
     if (!email) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
@@ -90,10 +95,18 @@ export async function POST(req: Request) {
         button: "Prejsť na zadanie kódu",
         description: "Ak si sa sem dostal z inej aplikácie, stlač tlačidlo vyššie, ktoré ťa bezpečne prepne späť do prehliadača priamo na zadanie kódu.",
         footer: "Tento email bol vygenerovaný automaticky. Ak si o tento kód nežiadal, môžeš túto správu ignorovať."
+      },
+      cs: {
+        subject: 'Vstupní kód - Mindbanger Vault',
+        title: 'Tvůj ověřovací kód',
+        subtitle: 'Zkopíruj si nebo zapamatuj tento 6místný kód:',
+        button: 'Přejít na zadání kódu',
+        description: 'Pokud ses sem dostal z jiné aplikace, klikni na tlačítko výše, které tě bezpečně přepne zpět do prohlížeče přímo na zadání kódu.',
+        footer: 'Tento email byl vygenerován automaticky. Pokud jsi o tento kód nežádal, můžeš tuto zprávu ignorovat.'
       }
     };
 
-    const htmlContent = lang === 'sk' ? `
+    const htmlContent = selectedLang === 'sk' ? `
       <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #0f172a; margin-bottom: 24px;">${t.sk.title}</h1>
           <p style="font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
@@ -107,6 +120,20 @@ export async function POST(req: Request) {
           <p style="font-size: 14px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">
               ${t.sk.description}
           </p>
+          </div>` : selectedLang === 'cs' ? `
+          <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #0f172a; margin-bottom: 24px;">${t.cs.title}</h1>
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
+              ${t.cs.subtitle} <strong>${otpCode}</strong>
+            </p>
+            <div style="text-align: center; margin-bottom: 32px;">
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mindbanger.com'}/auth/verify" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: #0f172a; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                ${t.cs.button}
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+              ${t.cs.description}
+            </p>
       </div>` : `
       <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #0f172a; margin-bottom: 24px;">Entry Code - Mindbanger Vault</h1>
@@ -122,7 +149,7 @@ export async function POST(req: Request) {
 
     const { success, error: emailError } = await sendEmail({
       to: email,
-      subject: lang === 'sk' ? t.sk.subject : "Entry code - Mindbanger Vault",
+      subject: selectedLang === 'sk' ? t.sk.subject : selectedLang === 'cs' ? t.cs.subject : 'Entry code - Mindbanger Vault',
       html: htmlContent
     });
 

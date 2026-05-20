@@ -30,6 +30,14 @@ export default async function TodayPage() {
   // CHECK ACCESS LEVEL (Variant B)
   const hasAccess = profile?.subscription_status === 'premium';
 
+  // First-time unpaid user heuristic: no progress rows yet.
+  const { count: progressCount } = await supabase
+    .from('user_progress')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', session?.user.id);
+
+  const isFirstVisitUnpaid = !hasAccess && (progressCount || 0) === 0;
+
   // Get localized today's date in YYYY-MM-DD format based on user's timezone
   const now = new Date();
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -140,7 +148,12 @@ export default async function TodayPage() {
   // We allow access if they are waiting for onboarding to start (Day 0) or strictly inside the onboarding sequence
   if (!hasAccess && personalSignalType !== 'onboarding' && !isOnboardingWait) {
       return (
-        <LockedDashboard title={t.todaysFocus} lang={userLang} />
+        <LockedDashboard
+          title={t.todaysFocus}
+          lang={userLang}
+          firstName={firstName}
+          isFirstVisit={isFirstVisitUnpaid}
+        />
       );
   }
 

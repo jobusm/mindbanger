@@ -71,8 +71,8 @@ export default async function AppLayout({
         lang={profile?.preferred_language || 'sk'} 
       />
 
-      {/* Push Notification Banner */}
-      <PushNotificationBanner />
+      {/* Subscription CTA banner: only for users without active access */}
+      {!hasAccess && <PushNotificationBanner />}
 
       {/* Main Content Area Conditional Layout*/}
       <LayoutWrapper>
